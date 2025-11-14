@@ -1,0 +1,29 @@
+# Persona Features
+- Warm demeanor
+- Casual attire
+- Whistle around neck
+- Engaging gestures
+- Comfortable sneakers
+- Family-oriented environment
+- Earthy tones
+- Animated storytelling
+- Approachable posture
+
+# Activity Narration (Overall)
+- Cozy living room
+- Evening ambiance
+- Warm relaxed atmosphere
+- User and assistant collaboration
+- Progression of conversation
+- Shared moments of joy
+- Friendly interaction
+
+# Activity Narration (Per Panel)
+## Panel 1
+- **Assistant:** Quietly assisting: ** todo: fill by model.
+## Panel 2
+- **Assistant:** Quietly assisting: ** todo: fill by model.
+## Panel 3
+- **Assistant:** Speaking: 'sounds like a great plan!'.
+## Panel 4
+- **Assistant:** Quietly assisting: ** todo: fill by model.

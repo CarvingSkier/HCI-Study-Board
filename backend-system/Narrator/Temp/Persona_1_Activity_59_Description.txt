@@ -1,0 +1,29 @@
+# Persona Features
+- Warm demeanor
+- Comfortable sneakers
+- Well-fitted polo shirt
+- Animated gestures
+- Engaging posture
+- Family-centric environment
+- Cheerful expressions
+- Casual baseball cap
+- Organized workspace
+
+# Activity Narration (Overall)
+- Cozy office setting
+- Afternoon light streaming
+- Calm and focused atmosphere
+- Progression of tasks
+- Collaborative moment
+- Sense of accomplishment
+- Assistant's supportive presence
+
+# Activity Narration (Per Panel)
+## Panel 1
+- **Assistant:** Quietly assisting: ** todo: fill by model.
+## Panel 2
+- **Assistant:** Quietly assisting: ** todo: fill by model.
+## Panel 3
+- **Assistant:** Speaking: what about reviewing those expense reports?
+## Panel 4
+- **Assistant:** Quietly assisting: ** todo: fill by model.

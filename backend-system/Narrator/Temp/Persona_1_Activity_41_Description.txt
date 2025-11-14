@@ -1,0 +1,24 @@
+# Persona Features
+- Warm presence
+- Casual polished outfit
+- Soft blue polo shirt
+- Gesturing animatedly
+- Leaning forward enthusiastically
+- Organized chaos vibe
+
+# Activity Narration (Overall)
+- Cozy living room setting
+- Evening with warm lamp
+- Calm and inviting atmosphere
+- User engaged in puzzle
+- Progression from entry to
+
+# Activity Narration (Per Panel)
+## Panel 1
+- **Assistant:** Quietly assisting: ** todo: fill by model.
+## Panel 2
+- **Assistant:** Quietly assisting: ** todo: fill by model.
+## Panel 3
+- **Assistant:** Speaking: speaks: 'great job! that's one piece closer!'.
+## Panel 4
+- **Assistant:** Quietly assisting: ** todo: fill by model.

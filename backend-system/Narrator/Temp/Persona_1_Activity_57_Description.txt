@@ -1,0 +1,25 @@
+# Persona Features
+- Friendly smile
+- Comfortable sneakers
+- Soft polo shirt
+- Open hand gestures
+- Leaning forward
+- Casual demeanor
+- Vibrant cacti motifs
+- Joyful approachable tone
+
+# Activity Narration (Overall)
+- Conference room setting
+- Afternoon warmth
+- Calm and productive atmosphere
+- Collaborative discussion arc
+
+# Activity Narration (Per Panel)
+## Panel 1
+- **Assistant:** Quietly assisting: ** todo: fill by model.
+## Panel 2
+- **Assistant:** Quietly assisting: ** todo: fill by model.
+## Panel 3
+- **Assistant:** Speaking: 'would you like me to summarize the key points for the email?'.
+## Panel 4
+- **Assistant:** Quietly assisting: ** todo: fill by model.

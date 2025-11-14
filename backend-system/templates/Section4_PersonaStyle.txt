@@ -1,0 +1,27 @@
+You are a senior prompt engineer. Based on the persona description below, produce a **Persona Style** JSON block following the schema.
+
+GOALS:
+- Visually describe the persona’s identity, attire, and demeanor in the current scenario.
+- Keep tone consistent with Sections 1–3 (warm, realistic, inclusive, human).
+- Use visual, concrete wording — describe what to show, not why.
+- Avoid adding unrelated or fantastical details.
+
+INPUT (JSON):
+{persona_desc}
+
+OUTPUT SCHEMA (JSON):
+{
+  "section": "Persona Style",
+  "summary": "<2–4 sentences summarizing persona’s visual identity and tone within context>",
+  "visual_motifs": ["<3–7 concise recurring motifs from persona’s environment or habits>"],
+  "attire_and_props": ["<3–6 clothing items or personal objects suitable for scenario>"],
+  "color_and_mood": "<1 short phrase describing color harmony and emotional tone>",
+  "style_references": ["<0–3 implied art or mood references>"],
+  "behaviors_and_posture": ["<2–5 physical gestures or poses matching activity and temperament>"],
+  "negative_cues": ["<2–6 elements to avoid (e.g., clutter, stereotypes, cold lighting)>"]
+}
+
+NOTES:
+- Keep concise and visual.
+- Maintain stylistic continuity with the flying emoji assistant aesthetic.
+- All descriptions must be feasible in warm, retro comic illustration style.

@@ -1,0 +1,29 @@
+# Persona Features
+- Warm smile
+- Casual polo shirt
+- Comfortable sneakers
+- Enthusiastic gestures
+- Leaning forward
+- Family game motifs
+- Earthy tones
+- Well-worn cap
+- Inviting demeanor
+
+# Activity Narration (Overall)
+- Cozy living room
+- Evening ambiance
+- Relaxing atmosphere
+- User-focused interaction
+- Movie selection process
+- Warm lighting progression
+- Shared enjoyment moment
+
+# Activity Narration (Per Panel)
+## Panel 1
+- **Assistant:** Quietly assisting: ** todo: fill by model.
+## Panel 2
+- **Assistant:** Quietly assisting: ** todo: fill by model.
+## Panel 3
+- **Assistant:** Speaking: bubbles: 'great choice! enjoy the laughs!'.
+## Panel 4
+- **Assistant:** Quietly assisting: ** todo: fill by model.

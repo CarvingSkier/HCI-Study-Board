@@ -1,0 +1,25 @@
+# Persona Features
+- Casual polo shirt
+- Animated hand gestures
+- Warm smile
+- Leaning in attentively
+- Colorful soccer gear
+- Clipboard for coaching
+
+# Activity Narration (Overall)
+- Cozy bedroom and laundry
+- Early evening warmth
+- Calm and focused atmosphere
+- Gentle lighting transition
+- Productive household chore
+- Human-assistant collaboration
+
+# Activity Narration (Per Panel)
+## Panel 1
+- **Assistant:** Quietly assisting: ** todo: fill by model.
+## Panel 2
+- **Assistant:** Quietly assisting: ** todo: fill by model.
+## Panel 3
+- **Assistant:** Speaking: don't forget the detergent!
+## Panel 4
+- **Assistant:** Quietly assisting: ** todo: fill by model.

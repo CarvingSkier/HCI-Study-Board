@@ -1,0 +1,28 @@
+# Persona Features
+- Warm presence
+- Bright polo shirt
+- Comfortable sneakers
+- Whistle around neck
+- Animated gestures
+- Leaning forward
+- Engaging smile
+- Playful spirit
+- Organized demeanor
+
+# Activity Narration (Overall)
+- Late afternoon setting
+- Calm office atmosphere
+- Warm light filtering in
+- User-focused tasks
+- Collaborative assistant presence
+- Progression towards closure
+
+# Activity Narration (Per Panel)
+## Panel 1
+- **Assistant:** Quietly assisting: ** todo: fill by model.
+## Panel 2
+- **Assistant:** Quietly assisting: ** todo: fill by model.
+## Panel 3
+- **Assistant:** Speaking: 'don’t forget your jacket!'.
+## Panel 4
+- **Assistant:** Quietly assisting: ** todo: fill by model.

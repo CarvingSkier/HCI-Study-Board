@@ -1,0 +1,28 @@
+# Persona Features
+- Warm demeanor
+- Casual polished outfit
+- Engaged posture
+- Smiling warmly
+- Comfortable sneakers
+- Soft cotton polo shirt
+- Clapping hands enthusiastically
+- Leaning forward in conversation
+
+# Activity Narration (Overall)
+- Cozy living room setting
+- Evening with warm lighting
+- Calm and relaxed atmosphere
+- User engaging with phone
+- Moments of laughter and
+- Progression of relaxation
+- Shared joy with assistant
+
+# Activity Narration (Per Panel)
+## Panel 1
+- **Assistant:** Quietly assisting: ** todo: fill by model.
+## Panel 2
+- **Assistant:** Quietly assisting: ** todo: fill by model.
+## Panel 3
+- **Assistant:** Speaking: 'that meme is hilarious!'.
+## Panel 4
+- **Assistant:** Quietly assisting: ** todo: fill by model.

@@ -1,0 +1,5 @@
+{
+  "User Name": "Marybeth",
+  "Activity Description": "Marybeth carries a plate of stir-fry into her cozy living room, excited for dinner and the news. She sits on the couch, places the plate on the coffee table, and reaches for the remote to turn on the TV. After enjoying her meal, she relaxes while watching the weather report, feeling satisfied and informed.",
+  "Smart Assistant Interaction": "PlaceHolderA"
+}

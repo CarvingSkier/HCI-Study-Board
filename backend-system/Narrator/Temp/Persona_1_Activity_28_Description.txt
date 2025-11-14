@@ -1,0 +1,27 @@
+# Persona Features
+- Warm smile
+- Casual polo shirt
+- Sporty sneakers
+- Leaning forward
+- Whistle around neck
+- Notebook in hand
+- Cheerful demeanor
+- Engaging gestures
+
+# Activity Narration (Overall)
+- Office desk setting
+- Afternoon sunlight
+- Calm and focused atmosphere
+- User collaborating with assistant
+- Progression from frustration to
+- Warm light throughout panels
+
+# Activity Narration (Per Panel)
+## Panel 1
+- **Assistant:** Quietly assisting: ** todo: fill by model.
+## Panel 2
+- **Assistant:** Quietly assisting: ** todo: fill by model.
+## Panel 3
+- **Assistant:** Speaking: speaks softly, 'would you like me to double-check those formulas?'.
+## Panel 4
+- **Assistant:** Quietly assisting: ** todo: fill by model.

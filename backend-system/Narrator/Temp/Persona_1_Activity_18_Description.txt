@@ -1,0 +1,23 @@
+# Persona Features
+- Casual polo shirt
+- Whistle around neck
+- Animated gestures
+- Leaning forward
+- Family game boards
+- Vibrant and inviting
+
+# Activity Narration (Overall)
+- Cozy bedroom setting
+- Early morning light
+- Calm and refreshing atmosphere
+- Progression from sleep to
+
+# Activity Narration (Per Panel)
+## Panel 1
+- **Assistant:** Quietly assisting: ** todo: fill by model.
+## Panel 2
+- **Assistant:** Quietly assisting: ** todo: fill by model.
+## Panel 3
+- **Assistant:** Speaking: 'i'll make sure it's just right!'.
+## Panel 4
+- **Assistant:** Quietly assisting: ** todo: fill by model.

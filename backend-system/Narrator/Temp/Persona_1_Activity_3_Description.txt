@@ -1,0 +1,29 @@
+# Persona Features
+- Welcoming warmth
+- Comfortable polo shirt
+- Sporty sneakers
+- Leaning forward
+- Animated gestures
+- Colorful cap
+- Smiling warmly
+- Family-oriented
+- Organized environment
+
+# Activity Narration (Overall)
+- Cozy bedroom and living
+- Morning light streaming in
+- Calm and focused atmosphere
+- Soft warm lighting
+- Daily routine progression
+- Collaborative moments
+- Preparing for the day
+
+# Activity Narration (Per Panel)
+## Panel 1
+- **Assistant:** Quietly assisting: ** todo: fill by model.
+## Panel 2
+- **Assistant:** Quietly assisting: ** todo: fill by model.
+## Panel 3
+- **Assistant:** Speaking: 'don't forget your laptop!'.
+## Panel 4
+- **Assistant:** Quietly assisting: ** todo: fill by model.

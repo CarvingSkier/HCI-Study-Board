@@ -1,0 +1,38 @@
+# Persona Features
+- Maria wears a bright floral apron, reflecting her vibrant personality and nurturing spirit.
+- She has a warm smile, inviting others to engage and share their stories.
+- Her cozy kitchen is adorned with traditional Mexican pottery and colorful textiles.
+- Maria often bends down to tend to her plants, showcasing her connection to nature.
+- She holds knitting needles and yarn, embodying creativity and craftsmanship.
+- The atmosphere is filled with lush greenery from her garden, enhancing her warmth.
+- Maria gestures warmly while speaking, emphasizing her approachable demeanor.
+- She enjoys moments of quiet reflection, leaning in to listen attentively.
+- Her well-worn jeans and woven sun hat suggest a practical yet stylish approach to life.
+
+# Activity Narration (Overall)
+- Maria starts her morning routine, determined to enjoy a peaceful breakfast.
+- She explores breakfast options, savoring the aroma of freshly brewed coffee.
+- As she cooks, her assistant offers friendly reminders and encouragement.
+- Finally, Maria relaxes at the table, appreciating the calm of her morning.
+
+# Activity Narration (Per Panel)
+## Panel 1
+- **Action (Persona):** I walk from the bathroom into the kitchen, looking determined.
+- **Thought (Persona):** I can already smell the coffee brewing.
+- **Assistant:** Quietly assisting: gently glowing, floating nearby.
+- **Interaction:** Ambient.
+## Panel 2
+- **Action (Persona):** I open the fridge and scan the contents for breakfast options.
+- **Thought (Persona):** Eggs and toast sound perfect this morning.
+- **Assistant:** Quietly observing with a soft glow.
+- **Interaction:** Ambient.
+## Panel 3
+- **Action (Persona):** I crack two eggs into a pan, the sizzle filling the kitchen.
+- **Thought (Persona):** This is my favorite part of breakfast.
+- **Assistant:** Bubbles up, saying, 'Don't forget to flip them carefully!'.
+- **Interaction:** With persona.
+## Panel 4
+- **Action (Persona):** I sit at the table, enjoying my breakfast and scrolling through my phone.
+- **Thought (Persona):** I love these peaceful mornings.
+- **Assistant:** Glows softly, saying, 'Enjoy your meal!'.
+- **Interaction:** With persona.

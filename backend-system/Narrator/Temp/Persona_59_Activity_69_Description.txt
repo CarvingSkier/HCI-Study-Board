@@ -1,0 +1,40 @@
+# Persona Features
+- Christine has a gentle smile that radiates warmth and kindness.
+- She wears a faded denim work shirt with rolled-up sleeves, embodying comfort.
+- Her relaxed posture reflects confidence as she engages with her surroundings.
+- The cozy living room is filled with well-loved books and gardening tools.
+- She often gestures animatedly, showing her passion for her interests.
+- A sun hat adorned with flower patterns adds a touch of whimsy to her look.
+- The aroma of home-cooked meals wafts through the inviting space.
+- Christine's earthy-toned attire complements the nurturing vibe of her environment.
+- She enjoys quiet moments of reflection, often pausing with a book in hand.
+- Her scuffed work boots hint at years of hands-on experience and dedication.
+
+# Activity Narration (Overall)
+- Christine settles into her cozy living room for a relaxing evening.
+- She enjoys scrolling through social media, sharing laughs with friends.
+- Thoughtful moments arise as she engages with her friends' posts.
+- The assistant provides gentle reminders, enhancing her experience.
+- Christine feels content and at ease as she unwinds after a long day.
+
+# Activity Narration (Per Panel)
+## Panel 1
+- **Action (Persona):** The user sits comfortably on the couch holding their phone with a cozy blanket draped over.
+- **Thought (Persona):** Finally home, time to catch up on social media.
+- **Assistant:** Quietly glowing beside the user.
+- **Interaction:** Ambient.
+## Panel 2
+- **Action (Persona):** The user scrolls through their social media feed, smiling at a funny meme.
+- **Thought (Persona):** That meme really made my day!
+- **Assistant:** Quietly assisting: Gently pulsating with a soft light as they observe.
+- **Interaction:** Ambient.
+## Panel 3
+- **Action (Persona):** The user types a comment on a friend's vacation photo, looking thoughtful.
+- **Thought (Persona):** I should let them know how jealous I am!
+- **Assistant:** Quietly assisting: Speaking with a dialogue bubble: 'Your friends will appreciate your comment!'.
+- **Interaction:** With persona.
+## Panel 4
+- **Action (Persona):** The user sets the phone aside, looking content and at ease.
+- **Thought (Persona):** That was just what I needed to unwind.
+- **Assistant:** Softly glowing and saying: 'Time to rest now!'.
+- **Interaction:** With persona.

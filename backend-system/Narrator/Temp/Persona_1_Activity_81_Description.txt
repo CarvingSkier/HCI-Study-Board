@@ -1,0 +1,30 @@
+# Persona Features
+- Friendly smile
+- Casual polo shirt
+- Colorful sneakers
+- Open hand gestures
+- Leaning forward
+- Warm demeanor
+- Family-oriented props
+- Earthy tones
+- Engaging at eye level
+
+# Activity Narration (Overall)
+- Cozy home office
+- Late morning light
+- Calm and focused atmosphere
+- Organizing papers
+- Task prioritization
+- Collaborative spirit
+- Sense of accomplishment
+- Preparing for the weekend
+
+# Activity Narration (Per Panel)
+## Panel 1
+- **Assistant:** Quietly assisting: ** todo: fill by model.
+## Panel 2
+- **Assistant:** Quietly assisting: ** todo: fill by model.
+## Panel 3
+- **Assistant:** Speaking: speaks: 'don’t forget to back up your files!'.
+## Panel 4
+- **Assistant:** Quietly assisting: ** todo: fill by model.

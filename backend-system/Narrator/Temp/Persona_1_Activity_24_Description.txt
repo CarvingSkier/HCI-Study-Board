@@ -1,0 +1,25 @@
+# Persona Features
+- Warm smile
+- Casual plaid shirt
+- Comfortable sneakers
+- Leaning forward enthusiastically
+- Engaging with children
+- Whistle on a lanyard
+
+# Activity Narration (Overall)
+- Office break room
+- Mid-morning light
+- Warm and friendly atmosphere
+- User preparing for a
+- Engaging with a coworker
+- Shared laughter and connection
+
+# Activity Narration (Per Panel)
+## Panel 1
+- **Assistant:** Quietly assisting: ** todo: fill by model.
+## Panel 2
+- **Assistant:** Quietly assisting: ** todo: fill by model.
+## Panel 3
+- **Assistant:** Quietly assisting: ** todo: fill by model.
+## Panel 4
+- **Assistant:** Speaking: softly glowing, saying 'enjoy your day!'.

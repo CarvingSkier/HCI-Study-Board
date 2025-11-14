@@ -1,0 +1,23 @@
+# Persona Features
+- Warm and approachable
+- Comfortable sneakers
+- Classic soccer team t-shirt
+- Clipboard for organization
+- Leaning forward with enthusiasm
+- Family photos in the
+
+# Activity Narration (Overall)
+- Cozy home office setting
+- Morning sunlight streaming
+- Calm and focused atmosphere
+- Progression from preparation to
+
+# Activity Narration (Per Panel)
+## Panel 1
+- **Assistant:** Quietly assisting: ** todo: fill by model.
+## Panel 2
+- **Assistant:** Quietly assisting: ** todo: fill by model.
+## Panel 3
+- **Assistant:** Speaking: 'metrics really help show progress!'.
+## Panel 4
+- **Assistant:** Quietly assisting: ** todo: fill by model.

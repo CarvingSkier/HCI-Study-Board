@@ -1,0 +1,38 @@
+# Persona Features
+- Christine wears worn denim overalls and a comfortable cotton shirt, radiating warmth.
+- She kneels to tend to flowering plants, showcasing her love for nature.
+- A gentle smile often graces her face, reflecting her approachable demeanor.
+- Her workspace is organized, filled with books and paintbrushes, creating a cozy atmosphere.
+- She gestures with open hands while explaining, inviting conversation and connection.
+- A small notebook is always nearby for jotting down creative ideas and inspirations.
+- Soft golden light filters through the kitchen, enhancing the inviting ambiance.
+- Sturdy work boots ground her in practicality, reflecting her hands-on profession.
+- Baseball memorabilia decorates her space, hinting at personal interests and hobbies.
+
+# Activity Narration (Overall)
+- Christine enters the kitchen, greeted by the warm morning light and breakfast aromas.
+- She selects simple ingredients, appreciating their potential for a delicious meal.
+- As she cooks, her assistant offers gentle reminders, enhancing the cooking experience.
+- Finally, she enjoys her breakfast, savoring the moment of calm and nourishment.
+
+# Activity Narration (Per Panel)
+## Panel 1
+- **Action (Persona):** I walk into the kitchen, opening the refrigerator door to see what's inside.
+- **Thought (Persona):** What should I have for breakfast today?
+- **Assistant:** Quietly glowing, floating nearby.
+- **Interaction:** Ambient.
+## Panel 2
+- **Action (Persona):** I take out the eggs, butter, and bread, placing them on the counter.
+- **Thought (Persona):** Simple ingredients make the best meals.
+- **Assistant:** Quietly observing, glowing softly.
+- **Interaction:** Ambient.
+## Panel 3
+- **Action (Persona):** I crack the eggs into a sizzling pan while the bread toasts.
+- **Thought (Persona):** This is going to be delicious.
+- **Assistant:** Quietly assisting: Speaking: 'Don't forget to flip the eggs carefully!'.
+- **Interaction:** With persona.
+## Panel 4
+- **Action (Persona):** I sit at the table, enjoying my breakfast with a glass of orange juice.
+- **Thought (Persona):** Just what I needed to kick off my morning.
+- **Assistant:** Gently glowing, saying: 'Enjoy your meal!'.
+- **Interaction:** With persona.

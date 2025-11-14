@@ -1,0 +1,5 @@
+{
+  "User Name": "Thanh",
+  "Activity Description": "Thanh walks down a sunny downtown street toward her parked car, feeling happy after her outing. She sits inside the car, adjusting the rearview mirror, and prepares to drive home, smiling as she starts the engine. Finally, she parks at home, stepping out of the car with a relaxed demeanor.",
+  "Smart Assistant Interaction": "PlaceHolderA"
+}

@@ -1,0 +1,30 @@
+# Persona Features
+- Warm presence
+- Casual polo shirt
+- Comfortable jeans
+- Enthusiastic gestures
+- Open posture
+- Stylish sneakers
+- Well-worn cap
+- Family-oriented
+- Inviting smile
+
+# Activity Narration (Overall)
+- Cozy living room
+- Early evening ambiance
+- Calm and productive atmosphere
+- Soft warm lighting
+- Cluttered coffee table
+- User organizing space
+- Collaborative moment
+- Sense of accomplishment
+
+# Activity Narration (Per Panel)
+## Panel 1
+- **Assistant:** Quietly assisting: ** todo: fill by model.
+## Panel 2
+- **Assistant:** Quietly assisting: ** todo: fill by model.
+## Panel 3
+- **Assistant:** Quietly assisting: ** todo: fill by model.
+## Panel 4
+- **Assistant:** Speaking: soft glow, saying: 'great job! enjoy your evening.'.

@@ -1,0 +1,5 @@
+{
+  "User Name": "Thanh",
+  "Activity Description": "Thanh is enjoying a cozy morning routine at home. She finishes her breakfast at the kitchen table, then heads to the bathroom with a towel draped over her shoulder, ready to unwind with a long shower before getting dressed and checking her appearance in the mirror.",
+  "Smart Assistant Interaction": "PlaceHolderA"
+}

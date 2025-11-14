@@ -1,0 +1,5 @@
+{
+  "User Name": "Barbara",
+  "Activity Description": "Barbara enters her cozy kitchen with grocery bags, determined to unpack and organize her items. She methodically lays out the groceries on the counter, then focuses on arranging them in the fridge. Finally, she wipes down the counter, feeling satisfied with her organized kitchen.",
+  "Smart Assistant Interaction": "PlaceHolderA"
+}

@@ -1,0 +1,102 @@
+You are a storyboard planner. Using the provided context_scenario, generate an **Activity of the Panel** JSON block that describes a 4-panel comic.
+
+REQUIREMENTS:
+- Each panel must contain:
+  1. A simple scene description (what is happening visually)
+  2. The user’s narration or inner monologue (1 short sentence) that will be rendered **inside the panel** (thought bubble or subtle in-panel text)
+  3. The smart assistant present and either speaking (speech bubble) or quietly waiting (ambient)
+- At least one panel must include an explicit dialogue exchange (speech bubbles) between the assistant and user.
+- The assistant is a small, flying, blue glowing emoji orb — **never inside a device screen**.
+- Keep tone natural, calm, and realistic (like a cozy morning routine or friendly workspace moment).
+- Do **NOT** create any text or captions that are meant to sit outside or below the panels. All visible text must be imagined as inside the panel frames.
+
+INPUT (JSON):
+{activity}
+
+OUTPUT SCHEMA (JSON):
+{
+  "section": "Activity of the Panel",
+  "global_context": {
+    "setting": "<concise environment derived from context>",
+    "time_of_day": "<time and lighting cues>",
+    "atmosphere": "<overall tone (e.g., calm, focused, warm)>",
+    "lighting_cue": "<lighting progression across panels, or note that it stays consistent>"
+  },
+  "panels": [
+    {
+      "panel": 1,
+      "action": "<simple visual description of what is happening>",
+      "composition": "<framing and arrangement within the panel>",
+      "camera": "<angle or viewpoint (e.g., eye-level, over-the-shoulder)>",
+      "key_objects": ["<2–5 objects in scene>"],
+      "scene_note": "<short internal planning note only – DO NOT render as visible text>",
+      "narration": "<user's inner monologue or reflection, 1 short sentence, intended to appear INSIDE the panel>",
+      "assistant_presence": "must_show",
+      "assistant_action": "<assistant dialogue text or quiet glow behavior, as speech bubble or in-panel expression>",
+      "assistant_position": "<TL|TR|BL|BR|foreground|background|over-shoulder>",
+      "assistant_scale": "<small|medium>",
+      "assistant_interaction": "<with persona|with object|ambient>",
+      "assistant_visibility_rule": "Never omit; always clearly visible."
+    },
+    {
+      "panel": 2,
+      "action": "<next small step in activity>",
+      "composition": "<framing within panel>",
+      "camera": "<angle>",
+      "key_objects": ["<...>"],
+      "scene_note": "<internal planning note only – DO NOT render>",
+      "narration": "<user thought or brief reflection, 1 short sentence, appears INSIDE the panel>",
+      "assistant_presence": "must_show",
+      "assistant_action": "<quietly observing, softly assisting, or short supportive line>",
+      "assistant_position": "<...>",
+      "assistant_scale": "<small|medium>",
+      "assistant_interaction": "<with persona|with object|ambient>",
+      "assistant_visibility_rule": "Never omit."
+    },
+    {
+      "panel": 3,
+      "action": "<moment of interaction — assistant speaks or reminds>",
+      "composition": "<composition that highlights the interaction>",
+      "camera": "<angle>",
+      "key_objects": ["<...>"],
+      "scene_note": "<internal planning note only – DO NOT render>",
+      "narration": "<user's brief inner thought, 1 short sentence, inside the panel>",
+      "assistant_presence": "must_show",
+      "assistant_action": "<assistant's dialogue bubble text, short and friendly>",
+      "assistant_position": "<...>",
+      "assistant_scale": "<small|medium>",
+      "assistant_interaction": "<with persona>",
+      "assistant_visibility_rule": "Never omit."
+    },
+    {
+      "panel": 4,
+      "action": "<closure or resolution scene>",
+      "composition": "<framing that shows resolution or calm>",
+      "camera": "<angle>",
+      "key_objects": ["<...>"],
+      "scene_note": "<closure planning note – DO NOT render>",
+      "narration": "<reflective or satisfied inner thought, 1 short sentence, inside the panel>",
+      "assistant_presence": "must_show",
+      "assistant_action": "<soft closing glow or gentle farewell line, as a speech bubble or subtle in-panel cue>",
+      "assistant_position": "<...>",
+      "assistant_scale": "<small|medium>",
+      "assistant_interaction": "<with persona>",
+      "assistant_visibility_rule": "Never omit."
+    }
+  ],
+  "negative_cues": [
+    "assistant inside a screen",
+    "any visible text drawn outside or below the panels",
+    "subtitle-like bars or caption bands under the panels",
+    "missing narration or assistant presence in a panel",
+    "dark or cold lighting that breaks the warm tone",
+    "cluttered or chaotic scenes that distract from the interaction",
+    "robotic or lifeless tone in dialogue"
+  ]
+}
+
+NOTES:
+- Do NOT include any `caption` fields in the JSON. Use `scene_note` only for internal planning; it must NOT be treated as visible text.
+- All visible text (narration, dialogue) should be imagined as rendered INSIDE each panel (e.g., speech bubbles, thought bubbles, or small in-panel notes).
+- Maintain a 2×2 layout with visual rhythm and emotional continuity.
+- Dialogue and narration must stay short, natural, and easy to place inside the panels.

@@ -1,0 +1,30 @@
+# Persona Features
+- Warm smile
+- Casual attire
+- Leaning forward
+- Animated gestures
+- Comfortable sneakers
+- Family-oriented
+- Relaxed posture
+- Colorful accessories
+- Inviting presence
+
+# Activity Narration (Overall)
+- Cozy living room
+- Evening ambiance
+- Relaxed atmosphere
+- Engaging with a show
+- Anticipation builds
+- Friendly interaction
+- Delivery surprise
+- Warm lighting progression
+
+# Activity Narration (Per Panel)
+## Panel 1
+- **Assistant:** Quietly assisting: ** todo: fill by model.
+## Panel 2
+- **Assistant:** Quietly assisting: ** todo: fill by model.
+## Panel 3
+- **Assistant:** Speaking: 'that was unexpected, wasn't it?'.
+## Panel 4
+- **Assistant:** Quietly assisting: ** todo: fill by model.

@@ -1,0 +1,28 @@
+# Persona Features
+- Warm presence
+- Casual polo shirt
+- Comfortable sneakers
+- Engaging gestures
+- Family-oriented
+- Enthusiastic clapping
+- Relaxed posture
+- Cozy environment
+- Joyful atmosphere
+
+# Activity Narration (Overall)
+- Cozy living room
+- Evening warmth
+- Relaxed atmosphere
+- User enjoying dinner
+- Assistant supporting interaction
+- Progression of meal enjoyment
+
+# Activity Narration (Per Panel)
+## Panel 1
+- **Assistant:** Quietly assisting: ** todo: fill by model.
+## Panel 2
+- **Assistant:** Quietly assisting: ** todo: fill by model.
+## Panel 3
+- **Assistant:** Speaking: bubble: 'did you catch that weather update?'.
+## Panel 4
+- **Assistant:** Quietly assisting: ** todo: fill by model.

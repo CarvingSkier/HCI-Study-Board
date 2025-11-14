@@ -1,0 +1,27 @@
+# Persona Features
+- Warm demeanor
+- Casual navy polo
+- Khaki shorts
+- Comfortable sneakers
+- Friendly smile
+- Engaging gestures
+- Family-oriented
+- Relaxed posture
+
+# Activity Narration (Overall)
+- Cozy bedroom setting
+- Evening ambiance
+- Soft warm lighting
+- Winding down routine
+- User-assistant collaboration
+- Calm and serene atmosphere
+
+# Activity Narration (Per Panel)
+## Panel 1
+- **Assistant:** Quietly assisting: ** todo: fill by model.
+## Panel 2
+- **Assistant:** Quietly assisting: ** todo: fill by model.
+## Panel 3
+- **Assistant:** Quietly assisting: ** todo: fill by model.
+## Panel 4
+- **Assistant:** Speaking: softly glowing, saying: 'goodnight! sleep well!'.

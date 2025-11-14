@@ -1,0 +1,40 @@
+# Persona Features
+- Maria has a gentle smile that radiates warmth and approachability.
+- She wears a flowy floral blouse paired with comfortable denim jeans.
+- Often seen with a stylish sun hat, reflecting her love for gardening.
+- Her canvas tote bag is filled with fresh produce from her garden.
+- Maria gestures warmly while speaking, inviting conversation and connection.
+- She kneels to tend to plants, showcasing her nurturing spirit.
+- The living room is decorated with traditional Mexican textiles and community flyers.
+- Soft ambient light creates a cozy atmosphere, enhancing her relaxed demeanor.
+- Maria's posture is open and inviting, reflecting her vibrant energy.
+- She often holds a steaming dish with pride, sharing her culinary passion.
+
+# Activity Narration (Overall)
+- Maria enjoys a cozy evening at home, scrolling through her phone.
+- She finds joy in sharing a funny meme with friends online.
+- The assistant hovers nearby, providing gentle support and encouragement.
+- Maria feels relaxed and satisfied after her online interactions.
+- A shared moment of connection brings warmth to her evening routine.
+
+# Activity Narration (Per Panel)
+## Panel 1
+- **Action (Persona):** User sits on the couch, scrolling through their phone with a relaxed posture.
+- **Thought (Persona):** Ah, finally some time to catch up on everything.
+- **Assistant:** Quietly assisting: softly glowing, quietly waiting.
+- **Interaction:** Ambient.
+## Panel 2
+- **Action (Persona):** User scrolls through social media, smiling at a funny meme.
+- **Thought (Persona):** This ones too good not to share!
+- **Assistant:** Quietly observing.
+- **Interaction:** Ambient.
+## Panel 3
+- **Action (Persona):** User types a comment on the meme, assistant floats closer.
+- **Thought (Persona):** I wonder if they'll find it as funny as I do.
+- **Assistant:** What do you want to say?
+- **Interaction:** With persona.
+## Panel 4
+- **Action (Persona):** User sets the phone down, feeling satisfied and relaxed.
+- **Thought (Persona):** That was just what I needed.
+- **Assistant:** Quietly assisting: Glad to help you unwind!
+- **Interaction:** With persona.

@@ -1,0 +1,28 @@
+# Persona Features
+- Vibrant soccer coach
+- Comfortable sports polo
+- Whistle around neck
+- Energetic gestures
+- Warm inviting smile
+- Engaging posture
+- Family-oriented environment
+- Colorful soccer motifs
+
+# Activity Narration (Overall)
+- Cozy neighborhood street
+- Early evening ambiance
+- Calm refreshing atmosphere
+- Gentle dusk light transition
+- User's reflective journey
+- Friendly neighborhood interactions
+- Sense of satisfaction and
+
+# Activity Narration (Per Panel)
+## Panel 1
+- **Assistant:** Quietly assisting: ** todo: fill by model.
+## Panel 2
+- **Assistant:** Quietly assisting: ** todo: fill by model.
+## Panel 3
+- **Assistant:** Speaking: bubbles with a friendly reminder, 'keep up the brisk pace!'.
+## Panel 4
+- **Assistant:** Quietly assisting: ** todo: fill by model.

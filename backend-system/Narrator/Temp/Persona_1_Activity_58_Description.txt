@@ -1,0 +1,24 @@
+# Persona Features
+- Warm presence
+- Casual tidy outfit
+- Engaging posture
+- Smiling demeanor
+- Family-oriented props
+- Earthy color tones
+
+# Activity Narration (Overall)
+- Cozy office desk
+- Afternoon light
+- Calm and focused atmosphere
+- Sense of accomplishment
+- User-assistant collaboration
+
+# Activity Narration (Per Panel)
+## Panel 1
+- **Assistant:** Quietly assisting: ** todo: fill by model.
+## Panel 2
+- **Assistant:** Quietly assisting: ** todo: fill by model.
+## Panel 3
+- **Assistant:** Speaking: bubbles up, saying, 'remember to summarize the key points!'.
+## Panel 4
+- **Assistant:** Quietly assisting: ** todo: fill by model.

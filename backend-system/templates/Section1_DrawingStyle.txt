@@ -1,0 +1,31 @@
+{
+  "section": "Drawing Style",
+
+  "style_summary": "Warm retro flat comic style with clear shapes, soft shading, and clean framing. Each panel shows a simple everyday moment involving the user and a friendly smart assistant.",
+  "color_palette": "Muted warm tones: soft browns, warm grays, gentle blues, and pastel accents.",
+  "line_quality": "Clean, confident outlines with consistent stroke weight; no handwriting-like textures.",
+  "lighting": "Soft ambient lighting with subtle gradients. Shadows remain gentle and unobtrusive.",
+  "setting": "Cozy and tidy environments with simple, readable props. No busy backgrounds and no in-world text labels.",
+  "layout": "4 equal panels arranged in a 2×2 grid, each fully self-contained. Do NOT include any bottom caption bar, footer text, or subtitle region under the panels.",
+  "tone": "Warm, relaxed, friendly, and subtly humorous.",
+
+  "interaction_emphasis": "Focus on clear human–assistant interaction, with readable expressions and gentle gestures.",
+  "symbolic_motif": "A soft blue assistant glow that communicates friendliness, not abstraction.",
+
+  "hard_constraints": [
+    "Do NOT draw any bottom caption strips, subtitle bars, or descriptive text under any panel.",
+    "Do NOT place narration sentences, scene descriptions, or internal monologue as visible text in the artwork.",
+    "Do NOT put text onto walls, objects, or backgrounds unless it is a speech bubble.",
+    "All visible text MUST be inside speech bubbles only.",
+    "Smart assistant must NEVER appear inside a computer or phone screen."
+  ],
+
+  "negative_cues": [
+    "bottom text or repeated dialogue under panels",
+    "narration sentences floating in the scene",
+    "text written on walls, furniture, windows, posters, or objects",
+    "random labels or annotation-style text",
+    "messy or cluttered compositions",
+    "overly complex backgrounds that distract from characters"
+  ]
+}

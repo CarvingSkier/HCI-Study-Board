@@ -1,0 +1,24 @@
+# Persona Features
+- Warm smile
+- Comfortable sneakers
+- Lightweight jacket
+- Open arms while coaching
+- Engaging with children
+- Earthy tones attire
+
+# Activity Narration (Overall)
+- Cozy bedroom setting
+- Late evening ambiance
+- Warm and peaceful atmosphere
+- Gradual dimming of light
+- Preparing for restful sleep
+
+# Activity Narration (Per Panel)
+## Panel 1
+- **Assistant:** Quietly assisting: ** todo: fill by model.
+## Panel 2
+- **Assistant:** Quietly assisting: ** todo: fill by model.
+## Panel 3
+- **Assistant:** Speaking: glowing softly, saying, 'sweet dreams!'.
+## Panel 4
+- **Assistant:** Quietly assisting: ** todo: fill by model.

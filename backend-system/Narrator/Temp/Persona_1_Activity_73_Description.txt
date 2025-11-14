@@ -1,0 +1,29 @@
+# Persona Features
+- Friendly smile
+- Comfortable polo shirt
+- Whistle around neck
+- Confident posture
+- Gesturing animatedly
+- Warm earthy tones
+- Engaging with children
+- Practical sneakers
+- Clipboard for coaching
+
+# Activity Narration (Overall)
+- Cozy bedroom and bathroom
+- Early morning light
+- Calm and refreshing atmosphere
+- Gradual lighting progression
+- Morning routine unfolding
+- User-focused actions
+- Assistant's supportive presence
+
+# Activity Narration (Per Panel)
+## Panel 1
+- **Assistant:** Quietly assisting: ** todo: fill by model.
+## Panel 2
+- **Assistant:** Quietly assisting: ** todo: fill by model.
+## Panel 3
+- **Assistant:** Speaking: speaking with a friendly tone, 'ready for a refreshing start?'.
+## Panel 4
+- **Assistant:** Quietly assisting: ** todo: fill by model.

@@ -1,0 +1,38 @@
+# macOS
+.DS_Store
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.pytest_cache/
+*.log
+
+# venv
+venv/
+backend-system/venv/
+
+# Node
+node_modules/
+frontend-viewer/node_modules/
+
+# build
+dist/
+frontend-viewer/dist/
+.vite/
+frontend-viewer/.vite/
+
+# 不上传的大文件/中间结果
+backend-system/Unuse/
+backend-system/images/
+backend-system/prompts/
+
+# Editor
+.vscode/
+.idea/
+
+# never commit secrets
+.env
+backend-system/.env
+backend-system/backend/.env

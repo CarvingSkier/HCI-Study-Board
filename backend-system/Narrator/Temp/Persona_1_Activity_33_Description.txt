@@ -1,0 +1,28 @@
+# Persona Features
+- Warm energy
+- Casual athletic attire
+- Soccer whistle
+- Animated gestures
+- Engaging posture
+- Vibrant cap
+- Family-oriented
+- Cheerful demeanor
+
+# Activity Narration (Overall)
+- Cozy kitchen setting
+- Early evening warmth
+- Relaxed atmosphere
+- User feeling tired
+- Food delivery focus
+- Collaborative decision-making
+- Satisfying conclusion
+
+# Activity Narration (Per Panel)
+## Panel 1
+- **Assistant:** Quietly assisting: ** todo: fill by model.
+## Panel 2
+- **Assistant:** Quietly assisting: ** todo: fill by model.
+## Panel 3
+- **Assistant:** Speaking: speaks: 'great choice! ready to check out?'.
+## Panel 4
+- **Assistant:** Quietly assisting: ** todo: fill by model.

@@ -1,0 +1,28 @@
+# Persona Features
+- Warm demeanor
+- Comfortable polo shirt
+- Cheerful hand gestures
+- Open arms
+- Whistle around neck
+- Colorful sneakers
+- Leaning forward when speaking
+- Positive energy
+
+# Activity Narration (Overall)
+- Cozy living room
+- Early evening glow
+- Calm and inviting atmosphere
+- User unwinding after a
+- Collaborative decision-making
+- Light-hearted engagement
+- Shared moments of relaxation
+
+# Activity Narration (Per Panel)
+## Panel 1
+- **Assistant:** Quietly assisting: ** todo: fill by model.
+## Panel 2
+- **Assistant:** Quietly assisting: ** todo: fill by model.
+## Panel 3
+- **Assistant:** Speaking: bubbles up, saying, 'how about that new sitcom everyones talking about?'.
+## Panel 4
+- **Assistant:** Quietly assisting: ** todo: fill by model.

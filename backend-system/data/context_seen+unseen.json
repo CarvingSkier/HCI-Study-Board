@@ -1,0 +1,802 @@
+[
+  {
+    "start_timestamp": "2025-02-19 11:00:00 am",
+    "activity": "Take mid-morning break and get coffee.",
+    "expanded_activity": "Step 1: I save my presentation work and stand up to stretch [LOCATION: office_desk, TIME: 11:00:00 am]. Step 2: I walk to the office break room, feeling good about my progress on the presentation. Step 3: I pour myself a cup of coffee from the communal pot and add cream [LOCATION: break_room, TIME: 11:03:00 am]. Step 4: Another coworker is in the break room, and we chat briefly about our weekend plans. Step 5: I sip my coffee while standing near the window, looking out at the city below. Step 6: After about 10 minutes, I feel refreshed and ready to continue working. Step 7: I return to my desk with my coffee.",
+    "end_timestamp": "2025-02-19 11:15:00 am",
+    "reasoning": "Taking breaks during work helps maintain focus and energy levels.",
+    "seed_category": "Work & Productivity"
+  },
+  {
+    "start_timestamp": "2025-02-19 11:15:00 am",
+    "activity": "Continue work tasks and respond to emails.",
+    "expanded_activity": "Step 1: I sit back down at my desk and check my email [LOCATION: office_desk, TIME: 11:15:00 am]. Step 2: Several new messages have arrived, including one from my manager about next week's schedule. Step 3: I respond to the urgent emails first, typing clear and concise replies. Step 4: I flag a few emails that require more detailed responses for later. Step 5: I switch back to working on other tasks - reviewing a document from a colleague and making suggestions. Step 6: I stay focused on my work, making steady progress.",
+    "end_timestamp": "2025-02-19 12:00:00 pm",
+    "reasoning": "Managing emails and various work tasks is standard office work.",
+    "seed_category": "Work & Productivity"
+  },
+  {
+    "start_timestamp": "2025-02-19 12:00:00 pm",
+    "activity": "Lunch break with coworkers at office cafeteria.",
+    "expanded_activity": "Step 1: A coworker stops by my desk and asks if I want to join them for lunch [LOCATION: office_desk, TIME: 12:00:00 pm]. Step 2: I agree and save my work, then grab my wallet. Step 3: We walk together to the building's cafeteria on the ground floor [LOCATION: cafeteria, TIME: 12:05:00 pm]. Step 4: I browse the food options - salad bar, hot entrees, sandwiches - and decide on a chicken caesar salad. Step 5: I pay for my food and find a table where other coworkers are already sitting. Step 6: We eat together, talking about work projects, a funny video someone saw online, and plans for the upcoming long weekend. Step 7: The conversation is lighthearted and enjoyable, providing a mental break from work. Step 8: After about 40 minutes, we clear our trays and head back upstairs.",
+    "end_timestamp": "2025-02-19 12:45:00 pm",
+    "reasoning": "Social lunch breaks strengthen workplace relationships and provide necessary rest.",
+    "seed_category": "Social & Communication"
+  },
+  {
+    "start_timestamp": "2025-02-19 12:45:00 pm",
+    "activity": "Final preparation for afternoon client presentation.",
+    "expanded_activity": "Step 1: I return to my desk and open my presentation one more time [LOCATION: office_desk, TIME: 12:45:00 pm]. Step 2: I do a complete run-through, timing myself to ensure it fits within the allotted 30 minutes. Step 3: I make a few final tweaks to the wording on certain slides. Step 4: I test the presentation in slideshow mode to check how it looks on screen. Step 5: I gather my notes and print out a few copies of key handouts for the meeting. Step 6: I take a few deep breaths, mentally preparing myself for the presentation. Step 7: I feel nervous but ready.",
+    "end_timestamp": "2025-02-19 1:15:00 pm",
+    "reasoning": "Final preparation before an important meeting is a natural focus of attention.",
+    "seed_category": "Work & Productivity"
+  },
+  {
+    "start_timestamp": "2025-02-19 1:15:00 pm",
+    "activity": "Walk to conference room for client presentation.",
+    "expanded_activity": "Step 1: I gather my laptop, notes, and handouts [LOCATION: office_desk, TIME: 1:15:00 pm]. Step 2: I walk down the hallway to the large conference room where the meeting will be held. Step 3: I arrive a few minutes early to set up [LOCATION: conference_room, TIME: 1:18:00 pm]. Step 4: I connect my laptop to the projector and test that my slides display correctly. Step 5: I arrange the handouts at each seat around the table. Step 6: Other attendees begin arriving - my manager, a colleague, and three clients. Step 7: We exchange greetings and small talk as everyone gets settled.",
+    "end_timestamp": "2025-02-19 1:30:00 pm",
+    "reasoning": "Arriving early to set up for a presentation is good professional practice.",
+    "seed_category": "Work & Productivity"
+  },
+  {
+    "start_timestamp": "2025-02-19 1:30:00 pm",
+    "activity": "Deliver client presentation and answer questions.",
+    "expanded_activity": "Step 1: My manager opens the meeting and introduces me to present [LOCATION: conference_room, TIME: 1:30:00 pm]. Step 2: I stand and begin my presentation, speaking clearly and making eye contact with the clients. Step 3: I walk through each slide, explaining our proposed strategy and the data supporting it. Step 4: I use a pointer to highlight key charts and figures. Step 5: The clients listen attentively, occasionally taking notes. Step 6: After completing the prepared slides, I open the floor for questions. Step 7: The clients ask several thoughtful questions, which I answer as thoroughly as possible. Step 8: My manager adds a few points to support my responses. Step 9: The meeting concludes with positive feedback from the clients, and we discuss next steps.",
+    "end_timestamp": "2025-02-19 2:30:00 pm",
+    "reasoning": "Delivering the presentation is the culmination of the morning's preparation.",
+    "seed_category": "Work & Productivity"
+  },
+  {
+    "start_timestamp": "2025-02-19 2:30:00 pm",
+    "activity": "Debrief with manager after presentation.",
+    "expanded_activity": "Step 1: The clients leave, and my manager asks me to stay for a few minutes [LOCATION: conference_room, TIME: 2:30:00 pm]. Step 2: We sit back down at the conference table. Step 3: My manager provides positive feedback on the presentation, noting specific things I did well. Step 4: We discuss a couple of the client questions and how we might address their concerns moving forward. Step 5: My manager asks me to follow up with an email summarizing the key points. Step 6: I feel relieved and proud that the presentation went well. Step 7: We wrap up the conversation and leave the conference room.",
+    "end_timestamp": "2025-02-19 2:45:00 pm",
+    "reasoning": "Debriefing after important meetings helps reinforce learning and plan next steps.",
+    "seed_category": "Work & Productivity"
+  },
+  {
+    "start_timestamp": "2025-02-19 2:45:00 pm",
+    "activity": "Return to desk and draft follow-up email.",
+    "expanded_activity": "Step 1: I return to my desk feeling accomplished but ready to complete the follow-up task [LOCATION: office_desk, TIME: 2:45:00 pm]. Step 2: I open my email and start a new message to the clients. Step 3: I write a professional email thanking them for their time and summarizing the key points from the presentation. Step 4: I attach the presentation slides and relevant documents. Step 5: I review the email carefully for any errors before sending. Step 6: I copy my manager and colleague on the email and hit send. Step 7: I feel satisfied that I've completed the task promptly.",
+    "end_timestamp": "2025-02-19 3:10:00 pm",
+    "reasoning": "Following up promptly after meetings demonstrates professionalism.",
+    "seed_category": "Work & Productivity"
+  },
+  {
+    "start_timestamp": "2025-02-19 3:10:00 pm",
+    "activity": "Work on routine administrative tasks.",
+    "expanded_activity": "Step 1: With the presentation complete, I shift to other work tasks [LOCATION: office_desk, TIME: 3:10:00 pm]. Step 2: I update my time tracking sheet with hours spent on various projects this week. Step 3: I organize files on my computer, moving completed projects to archive folders. Step 4: I review and approve expense reports that need my signature. Step 5: I update my task management system, checking off completed items and adding new ones. Step 6: The administrative work is less exciting but necessary. Step 7: I work steadily through my list.",
+    "end_timestamp": "2025-02-19 4:00:00 pm",
+    "reasoning": "Administrative tasks are a regular part of work that must be managed alongside primary duties.",
+    "seed_category": "Work & Productivity"
+  },
+  {
+    "start_timestamp": "2025-02-19 4:00:00 pm",
+    "activity": "Participate in team brainstorming session.",
+    "expanded_activity": "Step 1: I receive a calendar reminder for a team brainstorming session [LOCATION: office_desk, TIME: 4:00:00 pm]. Step 2: I grab a notebook and pen and head to a smaller meeting room. Step 3: Five team members are gathered around a whiteboard [LOCATION: meeting_room, TIME: 4:03:00 pm]. Step 4: Our team lead explains we're brainstorming ideas for improving our internal processes. Step 5: We go around the room sharing ideas, someone writing them all on the whiteboard. Step 6: I contribute a few suggestions, and the group discusses their feasibility. Step 7: The energy is collaborative and creative, with people building on each other's ideas. Step 8: After 45 minutes, we've generated a solid list of potential improvements to explore further.",
+    "end_timestamp": "2025-02-19 4:45:00 pm",
+    "reasoning": "Collaborative brainstorming sessions are common in team-based work environments.",
+    "seed_category": "Work & Productivity"
+  },
+  {
+    "start_timestamp": "2025-02-19 4:45:00 pm",
+    "activity": "Wrap up work for the day.",
+    "expanded_activity": "Step 1: I return to my desk and begin wrapping up for the day [LOCATION: office_desk, TIME: 4:45:00 pm]. Step 2: I review my task list and make notes about what to prioritize tomorrow. Step 3: I send a couple of quick emails that need to go out before end of day. Step 4: I save all my open documents and back up important files. Step 5: I straighten my desk, filing papers and organizing my workspace. Step 6: I shut down my computer and pack my laptop into my bag. Step 7: I put on my jacket and say goodbye to coworkers still at their desks.",
+    "end_timestamp": "2025-02-19 5:10:00 pm",
+    "reasoning": "Ending the workday properly helps create closure and preparation for tomorrow.",
+    "seed_category": "Work & Productivity"
+  },
+  {
+    "start_timestamp": "2025-02-19 5:10:00 pm",
+    "activity": "Stop by grocery store on way home.",
+    "expanded_activity": "Step 1: I leave the office and walk to my car [LOCATION: parking_structure, TIME: 5:10:00 pm]. Step 2: Instead of driving straight home, I decide to stop at the grocery store since I need a few items. Step 3: I drive to the supermarket near my apartment [LOCATION: car/commute, TIME: 5:20:00 pm]. Step 4: I park and grab a shopping basket as I enter [LOCATION: supermarket, TIME: 5:25:00 pm]. Step 5: I walk through the aisles picking up milk, bread, eggs, fresh vegetables, and chicken. Step 6: I also grab some snacks and a box of pasta. Step 7: I check out at the register, paying with my credit card. Step 8: I carry the grocery bags to my car and place them in the trunk.",
+    "end_timestamp": "2025-02-19 5:50:00 pm",
+    "reasoning": "Stopping for groceries on the way home is an efficient use of commute time.",
+    "seed_category": "Shopping & Errands"
+  },
+  {
+    "start_timestamp": "2025-02-19 5:50:00 pm",
+    "activity": "Drive home from grocery store.",
+    "expanded_activity": "Step 1: I get in my car and start the engine [LOCATION: supermarket_parking, TIME: 5:50:00 pm]. Step 2: I drive the short distance to my apartment complex. Step 3: Traffic is moderate but moves steadily [LOCATION: car/commute, TIME: 5:53:00 pm]. Step 4: I arrive at my apartment and park in my usual spot. Step 5: I gather my work bag and grocery bags from the car. Step 6: I walk to my front door, fumbling slightly with the keys while holding everything. Step 7: I unlock the door and step inside, setting everything down with relief.",
+    "end_timestamp": "2025-02-19 6:05:00 pm",
+    "reasoning": "Returning home completes the commute after running errands.",
+    "seed_category": "Transportation & Commute"
+  },
+  {
+    "start_timestamp": "2025-02-19 6:05:00 pm",
+    "activity": "Put away groceries and change clothes.",
+    "expanded_activity": "Step 1: I carry the grocery bags to the kitchen [LOCATION: kitchen, TIME: 6:05:00 pm]. Step 2: I unpack each item, putting refrigerated items in the fridge and pantry items in cabinets. Step 3: I fold up the reusable bags and store them for next time. Step 4: I walk to the bedroom and change out of my work clothes into comfortable loungewear [LOCATION: bedroom, TIME: 6:12:00 pm]. Step 5: I hang up my work clothes and feel immediately more relaxed. Step 6: I return to the kitchen to decide what to make for dinner.",
+    "end_timestamp": "2025-02-19 6:20:00 pm",
+    "reasoning": "Putting away groceries and changing clothes are typical transition activities after arriving home.",
+    "seed_category": "Cleaning & Maintenance"
+  },
+  {
+    "start_timestamp": "2025-02-19 6:20:00 pm",
+    "activity": "Cook dinner - chicken stir-fry with vegetables.",
+    "expanded_activity": "Step 1: I decide to make a stir-fry using the fresh ingredients I just bought [LOCATION: kitchen, TIME: 6:20:00 pm]. Step 2: I take out the chicken, bell peppers, broccoli, and onion from the refrigerator. Step 3: I wash and chop all the vegetables on a cutting board, creating neat piles. Step 4: I cut the chicken into bite-sized pieces and season them with salt and pepper. Step 5: I heat oil in a large wok on the stove over high heat. Step 6: I add the chicken first, stirring constantly until it's cooked through. Step 7: I add the vegetables and stir-fry them until they're tender-crisp. Step 8: I add soy sauce and garlic, tossing everything together. The kitchen fills with delicious aromas. Step 9: I serve the stir-fry over rice and sit down to eat.",
+    "end_timestamp": "2025-02-19 7:05:00 pm",
+    "reasoning": "Cooking a fresh meal using newly purchased groceries is a satisfying evening activity.",
+    "seed_category": "Cooking & Kitchen"
+  },
+  {
+    "start_timestamp": "2025-02-19 7:05:00 pm",
+    "activity": "Eat dinner while watching news.",
+    "expanded_activity": "Step 1: I carry my plate to the living room and turn on the TV [LOCATION: living_room, TIME: 7:05:00 pm]. Step 2: I find a news channel showing the evening broadcast. Step 3: I sit on the couch and begin eating while watching stories about local and national events. Step 4: The stir-fry turned out well - the vegetables are crisp and flavorful. Step 5: I pay attention to a segment about upcoming weather patterns. Step 6: I finish my meal feeling satisfied and informed.",
+    "end_timestamp": "2025-02-19 7:30:00 pm",
+    "reasoning": "Eating dinner while catching up on news is a common evening routine.",
+    "seed_category": "Entertainment & Media"
+  },
+  {
+    "start_timestamp": "2025-02-19 7:30:00 pm",
+    "activity": "Clean up kitchen after dinner.",
+    "expanded_activity": "Step 1: I bring my empty plate back to the kitchen [LOCATION: kitchen, TIME: 7:30:00 pm]. Step 2: I rinse the plate and utensils, loading them into the dishwasher. Step 3: I wash the wok and cutting board by hand since they need more thorough cleaning. Step 4: I wipe down the countertops and stovetop, removing any food splatters. Step 5: I put away the leftover rice and any unused ingredients. Step 6: I take out the kitchen trash since it's getting full, replacing the bag. Step 7: The kitchen looks clean and organized again.",
+    "end_timestamp": "2025-02-19 7:50:00 pm",
+    "reasoning": "Cleaning up after cooking maintains a tidy living space.",
+    "seed_category": "Cleaning & Maintenance"
+  },
+  {
+    "start_timestamp": "2025-02-19 7:50:00 pm",
+    "activity": "Go for evening walk around neighborhood.",
+    "expanded_activity": "Step 1: I decide to get some exercise and fresh air with an evening walk [LOCATION: living_room, TIME: 7:50:00 pm]. Step 2: I put on sneakers and grab my keys and phone. Step 3: I leave my apartment and start walking down the sidewalk [LOCATION: neighborhood_street, TIME: 7:53:00 pm]. Step 4: The evening air is cool and pleasant. Street lights are starting to come on as dusk approaches. Step 5: I walk at a brisk pace, enjoying the movement after sitting most of the day. Step 6: I pass neighbors out walking dogs or jogging, exchanging friendly nods. Step 7: I do a loop around the neighborhood, passing familiar houses and shops. Step 8: After about 25 minutes, I feel energized and return home.",
+    "end_timestamp": "2025-02-19 8:20:00 pm",
+    "reasoning": "An evening walk provides exercise and helps decompress from the day.",
+    "seed_category": "Health & Wellness"
+  },
+  {
+    "start_timestamp": "2025-02-19 8:20:00 pm",
+    "activity": "Personal time - browse internet and social media.",
+    "expanded_activity": "Step 1: I return home and settle on the couch with my phone [LOCATION: living_room, TIME: 8:20:00 pm]. Step 2: I open social media apps and scroll through my feeds. Step 3: I see updates from friends - vacation photos, memes, articles people are sharing. Step 4: I like several posts and leave a few comments. Step 5: I browse news websites and read a couple of interesting articles. Step 6: I watch a few short videos that people have shared. Step 7: After about 30 minutes of casual browsing, I feel caught up and set my phone aside.",
+    "end_timestamp": "2025-02-19 8:50:00 pm",
+    "reasoning": "Evening internet browsing is a common way to relax and stay connected.",
+    "seed_category": "Entertainment & Media"
+  },
+  {
+    "start_timestamp": "2025-02-19 8:50:00 pm",
+    "activity": "Watch a movie on streaming service.",
+    "expanded_activity": "Step 1: I decide to watch a movie before bed [LOCATION: living_room, TIME: 8:50:00 pm]. Step 2: I browse through a streaming service, reading descriptions of various films. Step 3: I select a comedy that has good reviews and seems like it will be entertaining. Step 4: I dim the lights and get comfortable on the couch with a blanket. Step 5: The movie starts, and I quickly become engaged in the story. Step 6: I laugh at the funny moments and enjoy the performances. Step 7: The movie is about 90 minutes long and provides enjoyable escapism.",
+    "end_timestamp": "2025-02-19 10:20:00 pm",
+    "reasoning": "Watching a movie is a popular evening entertainment activity.",
+    "seed_category": "Entertainment & Media"
+  },
+  {
+    "start_timestamp": "2025-02-19 10:20:00 pm",
+    "activity": "Evening hygiene routine and prepare for bed.",
+    "expanded_activity": "Step 1: The movie ends and I turn off the TV [LOCATION: living_room, TIME: 10:20:00 pm]. Step 2: I walk to the bathroom and turn on the light [LOCATION: bathroom, TIME: 10:22:00 pm]. Step 3: I brush my teeth thoroughly, following my usual two-minute routine. Step 4: I wash my face with cleanser, rinse with cool water, and pat dry. Step 5: I apply moisturizer and other nighttime skincare products. Step 6: I use the toilet and wash my hands. Step 7: I walk through the apartment, checking that doors are locked and turning off lights. Step 8: I enter the bedroom and change into pajamas.",
+    "end_timestamp": "2025-02-19 10:40:00 pm",
+    "reasoning": "Evening hygiene routine prepares for sleep and maintains personal health.",
+    "seed_category": "Health & Wellness"
+  },
+  {
+    "start_timestamp": "2025-02-19 10:40:00 pm",
+    "activity": "Set alarm and go to sleep.",
+    "expanded_activity": "Step 1: I get into bed and adjust the pillows [LOCATION: bedroom, TIME: 10:40:00 pm]. Step 2: I reach for my phone on the nightstand and open the clock app. Step 3: I set my alarm for 6:30 am and double-check it's properly configured. Step 4: I plug my phone into the charger and place it face-down. Step 5: I turn off the bedside lamp, letting darkness fill the room. Step 6: I lie on my side and pull the covers up comfortably. Step 7: I close my eyes and focus on my breathing, feeling my body relax into the mattress.",
+    "end_timestamp": "2025-02-19 10:55:00 pm",
+    "reasoning": "Going to sleep ends the daily cycle and allows for rest and recovery.",
+    "seed_category": "Health & Wellness"
+  },
+  {
+    "start_timestamp": "2025-02-20 6:30:00 am",
+    "activity": "Wake up and complete morning hygiene routine.",
+    "expanded_activity": "Step 1: My alarm sounds and I reach over to silence it [LOCATION: bedroom, TIME: 6:30:00 am]. Step 2: I sit up and stretch, feeling the stiffness from sleep. Step 3: I walk to the bathroom and turn on the shower [LOCATION: bathroom, TIME: 6:33:00 am]. Step 4: While the water warms, I use the toilet. Step 5: I step into the shower and wash quickly, waking up fully under the warm water. Step 6: After drying off, I brush my teeth and comb my hair. Step 7: I return to the bedroom to get dressed for work.",
+    "end_timestamp": "2025-02-20 6:55:00 am",
+    "reasoning": "Morning routine begins a new day with standard hygiene practices.",
+    "seed_category": "Health & Wellness"
+  },
+  {
+    "start_timestamp": "2025-02-20 6:55:00 am",
+    "activity": "Make coffee and quick breakfast.",
+    "expanded_activity": "Step 1: I walk to the kitchen and start the coffee maker [LOCATION: kitchen, TIME: 6:55:00 am]. Step 2: While coffee brews, I take out yogurt and granola from the refrigerator and pantry. Step 3: I spoon yogurt into a bowl and sprinkle granola on top. Step 4: I slice a banana and add it to the bowl. Step 5: The coffee finishes brewing, and I pour it into my travel mug with cream. Step 6: I eat the yogurt bowl standing at the counter while checking the weather on my phone. Step 7: I rinse the bowl and spoon, placing them in the dishwasher.",
+    "end_timestamp": "2025-02-20 7:15:00 am",
+    "reasoning": "Quick breakfast provides energy for the morning ahead.",
+    "seed_category": "Cooking & Kitchen"
+  },
+  {
+    "start_timestamp": "2025-02-20 7:15:00 am",
+    "activity": "Get ready and leave for work.",
+    "expanded_activity": "Step 1: I gather my work belongings, checking my bag for laptop and essentials [LOCATION: bedroom, TIME: 7:15:00 am]. Step 2: I put on my shoes and jacket near the front door. Step 3: I grab my keys, wallet, and phone [LOCATION: entryway, TIME: 7:20:00 am]. Step 4: I do a final mental checklist to ensure I have everything. Step 5: I pick up my travel mug of coffee. Step 6: I leave home, locking the door behind me.",
+    "end_timestamp": "2025-02-20 7:25:00 am",
+    "reasoning": "Preparing to leave continues the morning routine before commuting.",
+    "seed_category": "Daily Scheduling & Planning"
+  },
+  {
+    "start_timestamp": "2025-02-20 7:25:00 am",
+    "activity": "Commute to work.",
+    "expanded_activity": "Step 1: I walk to my car and get in [LOCATION: parking_area, TIME: 7:25:00 am]. Step 2: I start the engine and back out of my parking space. Step 3: I drive through my neighborhood toward the main road [LOCATION: car/commute, TIME: 7:30:00 am]. Step 4: Traffic is typical for Friday morning - people eager for the weekend ahead. Step 5: I listen to a music playlist during the drive, sipping my coffee at stoplights. Step 6: I arrive at the office parking structure and find a spot. Step 7: I gather my things and head toward the building entrance.",
+    "end_timestamp": "2025-02-20 7:55:00 am",
+    "reasoning": "Daily commute connects home and workplace.",
+    "seed_category": "Transportation & Commute"
+  },
+  {
+    "start_timestamp": "2025-02-20 7:55:00 am",
+    "activity": "Arrive at office and begin work day.",
+    "expanded_activity": "Step 1: I enter the building and take the elevator to my floor [LOCATION: office_building, TIME: 7:55:00 am]. Step 2: I walk to my desk, noticing the office is quieter than usual - it's Friday and some people work from home [LOCATION: office_desk, TIME: 7:58:00 am]. Step 3: I set down my bag and boot up my computer. Step 4: I check my email while the computer loads, noting a few overnight messages. Step 5: I review my calendar for the day - no major meetings scheduled, which is nice for a Friday. Step 6: I organize my task list, prioritizing what needs to be completed before the weekend. Step 7: I begin working on my highest priority task.",
+    "end_timestamp": "2025-02-20 8:20:00 am",
+    "reasoning": "Starting the workday involves settling in and organizing priorities.",
+    "seed_category": "Work & Productivity"
+  },
+  {
+    "start_timestamp": "2025-02-20 8:20:00 am",
+    "activity": "Work on weekly status report.",
+    "expanded_activity": "Step 1: I open a document template for my weekly status report [LOCATION: office_desk, TIME: 8:20:00 am]. Step 2: I review my calendar and notes from the past week to recall all activities and accomplishments. Step 3: I type summaries of the projects I worked on, including the client presentation and brainstorming session. Step 4: I list tasks completed and note any items that rolled over to next week. Step 5: I include metrics and data where relevant to show progress. Step 6: I proofread the report for clarity and completeness. Step 7: I email the report to my manager as required by end of Friday.",
+    "end_timestamp": "2025-02-20 9:30:00 am",
+    "reasoning": "Weekly status reports are common administrative tasks in many jobs.",
+    "seed_category": "Work & Productivity"
+  },
+  {
+    "start_timestamp": "2025-02-20 9:30:00 am",
+    "activity": "Coffee break and chat with coworkers.",
+    "expanded_activity": "Step 1: I finish the status report and decide to take a break [LOCATION: office_desk, TIME: 9:30:00 am]. Step 2: I walk to the break room where several coworkers are gathered [LOCATION: break_room, TIME: 9:33:00 am]. Step 3: I pour myself a cup of coffee from the pot. Step 4: I join the conversation, which is about weekend plans since it's Friday. Step 5: One person is planning to go camping, another has family visiting. Step 6: I mention I'm looking forward to relaxing at home and maybe catching a movie. Step 7: We chat for about 15 minutes, enjoying the casual social time. Step 8: We all gradually head back to our desks.",
+    "end_timestamp": "2025-02-20 9:50:00 am",
+    "reasoning": "Mid-morning breaks provide social connection and mental rest.",
+    "seed_category": "Social & Communication"
+  },
+  {
+    "start_timestamp": "2025-02-20 9:50:00 am",
+    "activity": "Continue working on project tasks.",
+    "expanded_activity": "Step 1: I return to my desk refreshed from the break [LOCATION: office_desk, TIME: 9:50:00 am]. Step 2: I open the project files I've been working on all week. Step 3: I review feedback from a colleague and make the suggested revisions to a document. Step 4: I run data analysis scripts and review the output for accuracy. Step 5: I update project tracking systems with my progress. Step 6: I respond to a few work emails that came in during my break. Step 7: The work is steady but not stressful, which feels appropriate for a Friday.",
+    "end_timestamp": "2025-02-20 11:30:00 am",
+    "reasoning": "Continued work on ongoing projects fills the late morning hours.",
+    "seed_category": "Work & Productivity"
+  },
+  {
+    "start_timestamp": "2025-02-20 11:30:00 am",
+    "activity": "Organize desk and files before weekend.",
+    "expanded_activity": "Step 1: As the week winds down, I decide to organize my workspace [LOCATION: office_desk, TIME: 11:30:00 am]. Step 2: I sort through papers on my desk, filing some and recycling others. Step 3: I organize files on my computer, archiving completed work and clearly labeling in-progress items. Step 4: I update my task list for Monday so I know exactly where to start next week. Step 5: I wipe down my desk surface with a cleaning cloth. Step 6: I ensure my laptop is backed up and ready for the weekend. Step 7: The organized space feels satisfying and sets me up well for the following week.",
+    "end_timestamp": "2025-02-20 12:00:00 pm",
+    "reasoning": "End-of-week organization helps create closure and preparation for the next week.",
+    "seed_category": "Cleaning & Maintenance"
+  },
+  {
+    "start_timestamp": "2025-02-20 12:00:00 pm",
+    "activity": "Lunch break - eat packed lunch at desk.",
+    "expanded_activity": "Step 1: I decide to take my lunch break at my desk today [LOCATION: office_desk, TIME: 12:00:00 pm]. Step 2: I retrieve my packed lunch from the office refrigerator - a sandwich, apple, and chips. Step 3: I return to my desk and unwrap the sandwich, taking a bite while browsing internet news. Step 4: I read articles and watch a couple of short videos while eating. Step 5: The office is quiet with many people out for lunch. Step 6: I finish my meal and throw away the wrapper. Step 7: I take a few more minutes to relax before returning to work mode.",
+    "end_timestamp": "2025-02-20 12:35:00 pm",
+    "reasoning": "Midday lunch break provides necessary nutrition and mental rest.",
+    "seed_category": "Cooking & Kitchen"
+  },
+  {
+    "start_timestamp": "2025-02-20 12:35:00 pm",
+    "activity": "Afternoon work - wrap up weekly tasks.",
+    "expanded_activity": "Step 1: I return my focus to work tasks [LOCATION: office_desk, TIME: 12:35:00 pm]. Step 2: I review my task list to identify anything that must be completed before the weekend. Step 3: I finalize a document that's due today, doing a careful proofread. Step 4: I send the completed document to the appropriate stakeholders via email. Step 5: I respond to any remaining urgent emails in my inbox. Step 6: I check in with a colleague about a collaborative project to ensure we're aligned for next week. Step 7: The pace feels relaxed compared to earlier in the week.",
+    "end_timestamp": "2025-02-20 2:30:00 pm",
+    "reasoning": "Afternoon work focuses on completing weekly obligations.",
+    "seed_category": "Work & Productivity"
+  },
+  {
+    "start_timestamp": "2025-02-20 2:30:00 pm",
+    "activity": "Participate in casual team social hour.",
+    "expanded_activity": "Step 1: My team has a standing Friday afternoon social hour tradition [LOCATION: office_desk, TIME: 2:30:00 pm]. Step 2: Several of us gather in the break room with snacks and drinks that people brought. Step 3: The atmosphere is casual and relaxed - end of the week [LOCATION: break_room, TIME: 2:35:00 pm]. Step 4: We chat about non-work topics: movies, sports, weekend plans, funny stories. Step 5: Someone shares photos from their recent vacation, and we all look at them. Step 6: We laugh together about a humorous incident that happened in the office this week. Step 7: The social time helps build team camaraderie and is a nice way to end the work week. Step 8: After about 45 minutes, people start drifting back to their desks.",
+    "end_timestamp": "2025-02-20 3:15:00 pm",
+    "reasoning": "Friday afternoon social activities help build workplace relationships and morale.",
+    "seed_category": "Social & Communication"
+  },
+  {
+    "start_timestamp": "2025-02-20 3:15:00 pm",
+    "activity": "Final work tasks and prepare to leave early for weekend.",
+    "expanded_activity": "Step 1: I return to my desk for the final hour of the work week [LOCATION: office_desk, TIME: 3:15:00 pm]. Step 2: I do a final check of my email, ensuring nothing urgent was missed. Step 3: I save all my work and close unnecessary programs on my computer. Step 4: I make a few quick notes for myself about Monday's priorities. Step 5: At 4:00 pm, I decide to leave a bit early since it's Friday and I've completed my work [LOCATION: office_desk, TIME: 4:00:00 pm]. Step 6: I shut down my computer and pack my laptop. Step 7: I say goodbye to coworkers and wish them a good weekend. Step 8: I walk out feeling pleased that the week went well.",
+    "end_timestamp": "2025-02-20 4:10:00 pm",
+    "reasoning": "Leaving early on Friday is common when work is complete and provides a weekend transition.",
+    "seed_category": "Work & Productivity"
+  },
+  {
+    "start_timestamp": "2025-02-20 4:10:00 pm",
+    "activity": "Commute home to start weekend.",
+    "expanded_activity": "Step 1: I walk to my car in the parking structure [LOCATION: parking_structure, TIME: 4:10:00 pm]. Step 2: I get in and start driving home, feeling the relief of the weekend ahead. Step 3: Traffic is lighter than usual since I'm leaving earlier [LOCATION: car/commute, TIME: 4:15:00 pm]. Step 4: I listen to upbeat music, feeling my work stress fade away. Step 5: The drive goes smoothly, and I arrive home in good time. Step 6: I park and gather my belongings. Step 7: I walk to my front door, unlock it, and step inside with a sense of freedom.",
+    "end_timestamp": "2025-02-20 4:45:00 pm",
+    "reasoning": "Friday evening commute marks the transition from work week to weekend.",
+    "seed_category": "Transportation & Commute"
+  },
+  {
+    "start_timestamp": "2025-02-20 4:45:00 pm",
+    "activity": "Arrive home and change into weekend clothes.",
+    "expanded_activity": "Step 1: I close the door behind me and set down my work bag [LOCATION: entryway, TIME: 4:45:00 pm]. Step 2: I kick off my work shoes with relief. Step 3: I walk to the bedroom and change into very comfortable clothes - shorts and a t-shirt [LOCATION: bedroom, TIME: 4:48:00 pm]. Step 4: I toss my work clothes in the hamper. Step 5: The mental and physical shift from work mode to weekend mode feels wonderful. Step 6: I feel energized by the prospect of two days off.",
+    "end_timestamp": "2025-02-20 4:55:00 pm",
+    "reasoning": "Changing clothes marks the transition from work to leisure time.",
+    "seed_category": "Health & Wellness"
+  },
+  {
+    "start_timestamp": "2025-02-20 4:55:00 pm",
+    "activity": "Relax and decide on weekend plans.",
+    "expanded_activity": "Step 1: I settle on the couch and pull out my phone [LOCATION: living_room, TIME: 4:55:00 pm]. Step 2: I think about what I want to do this weekend - no major obligations planned. Step 3: I check what movies are playing at local theaters. Step 4: I browse restaurant options for potentially going out to dinner tonight. Step 5: I text a friend to see if they want to hang out tomorrow. Step 6: I feel excited about the freedom and possibilities of the weekend. Step 7: I decide to keep things flexible and spontaneous rather than over-planning.",
+    "end_timestamp": "2025-02-20 5:15:00 pm",
+    "reasoning": "Early weekend planning helps maximize enjoyment of free time.",
+    "seed_category": "Daily Scheduling & Planning"
+  },
+  {
+    "start_timestamp": "2025-02-20 5:15:00 pm",
+    "activity": "Make dinner - order pizza delivery.",
+    "expanded_activity": "Step 1: I decide to treat myself to pizza to celebrate the weekend [LOCATION: living_room, TIME: 5:15:00 pm]. Step 2: I open a pizza delivery app on my phone and browse the menu. Step 3: I order a large pizza with my favorite toppings and an order of breadsticks. Step 4: I add a discount code I have saved and complete the order. Step 5: The app shows an estimated delivery time of 40 minutes. Step 6: I set my phone down and decide to watch TV while waiting.",
+    "end_timestamp": "2025-02-20 5:25:00 pm",
+    "reasoning": "Ordering takeout on Friday night is a common way to celebrate the end of the work week.",
+    "seed_category": "Cooking & Kitchen"
+  },
+  {
+    "start_timestamp": "2025-02-20 5:25:00 pm",
+    "activity": "Watch TV show while waiting for food.",
+    "expanded_activity": "Step 1: I turn on the TV and browse my streaming options [LOCATION: living_room, TIME: 5:25:00 pm]. Step 2: I continue watching the series I've been following this week. Step 3: I get comfortable on the couch with a throw pillow. Step 4: I become absorbed in the episode, which has an engaging plot twist. Step 5: About 35 minutes pass quickly while watching. Step 6: My phone buzzes with a notification that my delivery driver is approaching.",
+    "end_timestamp": "2025-02-20 6:00:00 pm",
+    "reasoning": "Evening entertainment fills the time while waiting for food delivery.",
+    "seed_category": "Entertainment & Media"
+  },
+  {
+    "start_timestamp": "2025-02-20 6:00:00 pm",
+    "activity": "Receive pizza delivery and eat dinner.",
+    "expanded_activity": "Step 1: I hear a knock at the door and get up to answer it [LOCATION: living_room, TIME: 6:00:00 pm]. Step 2: I open the door and greet the delivery driver, taking the pizza boxes. Step 3: I thank them and close the door, carrying the food to the kitchen [LOCATION: kitchen, TIME: 6:02:00 pm]. Step 4: I open the boxes and the smell of hot pizza fills the air. Step 5: I take a couple slices and some breadsticks, putting them on a plate. Step 6: I return to the couch and eat while continuing to watch my show [LOCATION: living_room, TIME: 6:05:00 pm]. Step 7: The pizza is delicious and hits the spot after a long week. Step 8: I eat slowly, savoring the food and enjoying the relaxed Friday evening.",
+    "end_timestamp": "2025-02-20 6:30:00 pm",
+    "reasoning": "Enjoying takeout food on Friday evening is a common weekend celebration.",
+    "seed_category": "Cooking & Kitchen"
+  },
+  {
+    "start_timestamp": "2025-02-20 6:30:00 pm",
+    "activity": "Continue watching TV series.",
+    "expanded_activity": "Step 1: I finish eating and set my plate aside [LOCATION: living_room, TIME: 6:30:00 pm]. Step 2: I settle deeper into the couch, getting very comfortable. Step 3: I continue watching my series, letting the next episode auto-play. Step 4: The storyline is compelling, and I'm invested in the characters. Step 5: I watch two more episodes back-to-back. Step 6: The evening passes peacefully as I lose myself in the show.",
+    "end_timestamp": "2025-02-20 8:15:00 pm",
+    "reasoning": "Extended TV viewing on Friday night is a common way to unwind after the work week.",
+    "seed_category": "Entertainment & Media"
+  },
+  {
+    "start_timestamp": "2025-02-20 8:15:00 pm",
+    "activity": "Text conversation with friend about weekend plans.",
+    "expanded_activity": "Step 1: My phone buzzes with a text from my friend responding to my earlier message [LOCATION: living_room, TIME: 8:15:00 pm]. Step 2: I pause the TV and pick up my phone to read the message. Step 3: They suggest meeting for brunch tomorrow at 11 am at a caf\u00e9 we both like. Step 4: I text back agreeing and confirming the time and place. Step 5: We exchange a few more messages about what we might do after brunch. Step 6: I feel happy about having plans with a friend tomorrow. Step 7: We end the conversation, and I resume watching TV.",
+    "end_timestamp": "2025-02-20 8:30:00 pm",
+    "reasoning": "Making weekend social plans via text is common among friends.",
+    "seed_category": "Social & Communication"
+  },
+  {
+    "start_timestamp": "2025-02-20 8:30:00 pm",
+    "activity": "Play video game for entertainment.",
+    "expanded_activity": "Step 1: I decide to switch from TV to playing a video game [LOCATION: living_room, TIME: 8:30:00 pm]. Step 2: I turn on my gaming console and select a game I've been playing. Step 3: I load my saved game and pick up where I left off. Step 4: The game is an adventure exploration game with puzzles to solve. Step 5: I navigate through a virtual landscape, solving challenges and collecting items. Step 6: I find the gameplay engaging and relaxing. Step 7: Time passes quickly as I make progress in the game.",
+    "end_timestamp": "2025-02-20 9:45:00 pm",
+    "reasoning": "Gaming is a popular evening entertainment activity for relaxation.",
+    "seed_category": "Leisure & Recreation"
+  },
+  {
+    "start_timestamp": "2025-02-20 9:45:00 pm",
+    "activity": "Late evening snack and browse phone.",
+    "expanded_activity": "Step 1: I pause the game and realize I'm a bit hungry [LOCATION: living_room, TIME: 9:45:00 pm]. Step 2: I walk to the kitchen and look through the pantry for a snack. Step 3: I grab some crackers and cheese, preparing a small plate [LOCATION: kitchen, TIME: 9:48:00 pm]. Step 4: I return to the couch and eat the snack while browsing social media on my phone. Step 5: I see updates from friends and scroll through various posts. Step 6: I spend about 20 minutes casually browsing and snacking.",
+    "end_timestamp": "2025-02-20 10:10:00 pm",
+    "reasoning": "Late evening snacking and phone browsing are common wind-down activities.",
+    "seed_category": "Entertainment & Media"
+  },
+  {
+    "start_timestamp": "2025-02-20 10:10:00 pm",
+    "activity": "Evening hygiene routine.",
+    "expanded_activity": "Step 1: I decide it's time to get ready for bed [LOCATION: living_room, TIME: 10:10:00 pm]. Step 2: I walk to the bathroom and turn on the light [LOCATION: bathroom, TIME: 10:12:00 pm]. Step 3: I brush my teeth thoroughly for two minutes. Step 4: I wash my face with cleanser and rinse with cool water. Step 5: I apply my nighttime skincare products. Step 6: I use the toilet and wash my hands. Step 7: I walk through the apartment turning off lights. Step 8: I go to the bedroom and change into pajamas.",
+    "end_timestamp": "2025-02-20 10:30:00 pm",
+    "reasoning": "Nightly hygiene routine prepares for sleep.",
+    "seed_category": "Health & Wellness"
+  },
+  {
+    "start_timestamp": "2025-02-20 10:30:00 pm",
+    "activity": "Read in bed before sleep.",
+    "expanded_activity": "Step 1: I get into bed and arrange the pillows [LOCATION: bedroom, TIME: 10:30:00 pm]. Step 2: I turn on the bedside lamp and pick up my book. Step 3: I open to my bookmarked page and begin reading. Step 4: The mystery novel is nearing its climax, and the plot is exciting. Step 5: I read for about 30 minutes, turning pages steadily. Step 6: My eyes start to feel tired, signaling it's time for sleep. Step 7: I place my bookmark and close the book.",
+    "end_timestamp": "2025-02-20 11:00:00 pm",
+    "reasoning": "Reading before bed helps transition to sleep.",
+    "seed_category": "Leisure & Recreation"
+  },
+  {
+    "start_timestamp": "2025-02-20 11:00:00 pm",
+    "activity": "Go to sleep for the night.",
+    "expanded_activity": "Step 1: I set my book on the nightstand [LOCATION: bedroom, TIME: 11:00:00 pm]. Step 2: Since it's the weekend, I don't set an alarm - planning to sleep in. Step 3: I plug my phone into the charger and place it face-down. Step 4: I turn off the bedside lamp, letting darkness fill the room. Step 5: I lie on my side and pull the covers up comfortably. Step 6: I close my eyes and feel myself drifting toward sleep. Step 7: I feel content after a good week and excited for tomorrow's plans.",
+    "end_timestamp": "2025-02-20 11:15:00 pm",
+    "reasoning": "Going to sleep ends Friday and allows for weekend rest without early alarms.",
+    "seed_category": "Health & Wellness"
+  },
+  {
+    "start_timestamp": "2025-02-21 8:30:00 am",
+    "activity": "Wake up naturally on Saturday morning.",
+    "expanded_activity": "Step 1: I wake up naturally without an alarm, sunlight filtering through the curtains [LOCATION: bedroom, TIME: 8:30:00 am]. Step 2: I stretch in bed, enjoying the luxury of not rushing. Step 3: I check my phone to see the time - satisfied that I slept in a bit. Step 4: I lie in bed for a few more minutes, feeling relaxed and rested. Step 5: Eventually I get up and walk to the bathroom. Step 6: I use the toilet and splash water on my face to wake up gently.",
+    "end_timestamp": "2025-02-21 8:45:00 am",
+    "reasoning": "Weekend mornings allow for leisurely waking without work pressure.",
+    "seed_category": "Health & Wellness"
+  },
+  {
+    "start_timestamp": "2025-02-21 8:45:00 am",
+    "activity": "Make leisurely weekend breakfast.",
+    "expanded_activity": "Step 1: I walk to the kitchen feeling relaxed about the day ahead [LOCATION: kitchen, TIME: 8:45:00 am]. Step 2: I decide to make a proper breakfast since I have time. Step 3: I start coffee brewing and take out eggs, bread, and vegetables. Step 4: I chop bell peppers and onions for an omelet. Step 5: I beat eggs in a bowl and pour them into a heated pan. Step 6: I add the vegetables and cheese, folding the omelet carefully. Step 7: I toast bread and pour my coffee. Step 8: I sit at the table and eat slowly, reading articles on my phone. Step 9: The unhurried breakfast feels luxurious compared to weekday mornings.",
+    "end_timestamp": "2025-02-21 9:30:00 am",
+    "reasoning": "Weekend breakfast can be more elaborate and relaxed than weekday meals.",
+    "seed_category": "Cooking & Kitchen"
+  },
+  {
+    "start_timestamp": "2025-02-21 9:30:00 am",
+    "activity": "Shower and get ready for brunch plans.",
+    "expanded_activity": "Step 1: I finish breakfast and clean up the kitchen [LOCATION: kitchen, TIME: 9:30:00 am]. Step 2: I walk to the bathroom and turn on the shower [LOCATION: bathroom, TIME: 9:35:00 am]. Step 3: I take a longer, more relaxed shower than on weekdays. Step 4: After drying off, I spend time on my hair and appearance. Step 5: I return to the bedroom and select casual but nice clothes for brunch [LOCATION: bedroom, TIME: 9:50:00 am]. Step 6: I get dressed and check my appearance in the mirror. Step 7: I gather my keys, wallet, and phone, preparing to leave.",
+    "end_timestamp": "2025-02-21 10:15:00 am",
+    "reasoning": "Getting ready for social plans involves more attention than a typical morning routine.",
+    "seed_category": "Health & Wellness"
+  },
+  {
+    "start_timestamp": "2025-02-21 10:15:00 am",
+    "activity": "Drive to caf\u00e9 to meet friend for brunch.",
+    "expanded_activity": "Step 1: I leave my apartment and walk to my car [LOCATION: parking_area, TIME: 10:15:00 am]. Step 2: I start the engine and begin driving toward the caf\u00e9. Step 3: Saturday morning traffic is light and pleasant [LOCATION: car/commute, TIME: 10:20:00 am]. Step 4: I listen to music during the drive, feeling in a good mood. Step 5: I arrive at the caf\u00e9 and find parking on a nearby street. Step 6: I walk toward the caf\u00e9 entrance, checking my phone to see if my friend has arrived.",
+    "end_timestamp": "2025-02-21 10:45:00 am",
+    "reasoning": "Driving to meet friends is part of weekend social activities.",
+    "seed_category": "Transportation & Commute"
+  },
+  {
+    "start_timestamp": "2025-02-21 10:45:00 am",
+    "activity": "Brunch with friend at caf\u00e9.",
+    "expanded_activity": "Step 1: I enter the caf\u00e9 and see my friend already seated at a table by the window [LOCATION: caf\u00e9, TIME: 10:45:00 am]. Step 2: I walk over and we hug, greeting each other warmly. Step 3: I sit down and we both look at the menu, discussing what looks good. Step 4: A server comes by and we order - I get avocado toast and a latte, my friend orders a breakfast burrito. Step 5: While waiting for food, we catch up on life - talking about work, relationships, family updates. Step 6: Our food arrives and looks delicious. We eat while continuing our conversation. Step 7: We laugh together about shared memories and current events. Step 8: The conversation flows easily and naturally for over an hour. Step 9: We finish eating and decide to split the check. Step 10: We linger a bit longer over coffee, not wanting to rush.",
+    "end_timestamp": "2025-02-21 12:15:00 pm",
+    "reasoning": "Weekend brunch with friends is a popular social activity.",
+    "seed_category": "Social & Communication"
+  },
+  {
+    "start_timestamp": "2025-02-21 12:15:00 pm",
+    "activity": "Walk around downtown area with friend.",
+    "expanded_activity": "Step 1: We leave the caf\u00e9 and decide to walk around downtown since the weather is nice [LOCATION: downtown_street, TIME: 12:15:00 pm]. Step 2: We stroll down the sidewalk, looking in shop windows and people-watching. Step 3: We stop in a bookstore and browse for about 15 minutes. Step 4: We continue walking, chatting about various topics - books, upcoming plans, mutual friends. Step 5: We pass street musicians playing and stop to listen for a moment. Step 6: We duck into a boutique clothing store and look around. Step 7: After about 45 minutes of walking and window shopping, we decide to part ways. Step 8: We hug goodbye and promise to do this again soon.",
+    "end_timestamp": "2025-02-21 1:00:00 pm",
+    "reasoning": "Post-brunch activities like walking and shopping extend quality time with friends.",
+    "seed_category": "Leisure & Recreation"
+  },
+  {
+    "start_timestamp": "2025-02-21 1:00:00 pm",
+    "activity": "Drive home after social outing.",
+    "expanded_activity": "Step 1: I walk back to where I parked my car [LOCATION: downtown_street, TIME: 1:00:00 pm]. Step 2: I get in and start driving home, feeling happy about the nice time with my friend. Step 3: The drive is short and pleasant [LOCATION: car/commute, TIME: 1:05:00 pm]. Step 4: I think about what to do with the rest of my Saturday afternoon. Step 5: I arrive home and park in my usual spot. Step 6: I walk to my apartment and go inside.",
+    "end_timestamp": "2025-02-21 1:20:00 pm",
+    "reasoning": "Returning home after social activities is the natural next step.",
+    "seed_category": "Transportation & Commute"
+  },
+  {
+    "start_timestamp": "2025-02-21 1:20:00 pm",
+    "activity": "Relax at home and do household chores.",
+    "expanded_activity": "Step 1: I arrive home and change into more comfortable clothes [LOCATION: bedroom, TIME: 1:20:00 pm]. Step 2: I decide to be productive and do some cleaning. Step 3: I start by vacuuming the living room and bedroom [LOCATION: living_room, TIME: 1:25:00 pm]. Step 4: I dust surfaces and wipe down tables and counters. Step 5: I clean the bathroom, scrubbing the sink and toilet. Step 6: I take out the trash and recycling. Step 7: After about an hour of cleaning, the apartment looks noticeably tidier. Step 8: I feel satisfied with the productive use of time.",
+    "end_timestamp": "2025-02-21 2:30:00 pm",
+    "reasoning": "Weekend afternoons are good times for household maintenance.",
+    "seed_category": "Cleaning & Maintenance"
+  },
+  {
+    "start_timestamp": "2025-02-21 2:30:00 pm",
+    "activity": "Do laundry - wash and dry clothes.",
+    "expanded_activity": "Step 1: I gather dirty clothes from the hamper [LOCATION: bedroom, TIME: 2:30:00 pm]. Step 2: I carry the laundry to the laundry room and sort by colors. Step 3: I load the first batch into the washing machine [LOCATION: laundry_room, TIME: 2:35:00 pm]. Step 4: I add detergent and start the wash cycle. Step 5: I set a timer on my phone to remind me to switch loads. Step 6: I return to the living room to relax while the laundry runs.",
+    "end_timestamp": "2025-02-21 2:45:00 pm",
+    "reasoning": "Doing laundry is a common weekend household task.",
+    "seed_category": "Cleaning & Maintenance"
+  },
+  {
+    "start_timestamp": "2025-02-21 2:45:00 pm",
+    "activity": "Watch a movie at home.",
+    "expanded_activity": "Step 1: While waiting for laundry, I decide to watch a movie [LOCATION: living_room, TIME: 2:45:00 pm]. Step 2: I browse streaming services looking for something entertaining. Step 3: I select an action movie that has good reviews. Step 4: I make some popcorn in the microwave for a movie snack. Step 5: I settle on the couch with my popcorn and start the movie. Step 6: I become engaged in the exciting plot and impressive special effects. Step 7: My phone timer goes off partway through - time to switch laundry. Step 8: I pause the movie, switch the laundry to the dryer, and return to finish watching.",
+    "end_timestamp": "2025-02-21 5:00:00 pm",
+    "reasoning": "Weekend movie watching provides entertainment and relaxation.",
+    "seed_category": "Entertainment & Media"
+  },
+  {
+    "start_timestamp": "2025-02-21 5:00:00 pm",
+    "activity": "Fold laundry and put away clothes.",
+    "expanded_activity": "Step 1: The movie ends and I remember the laundry in the dryer [LOCATION: living_room, TIME: 5:00:00 pm]. Step 2: I walk to the laundry room and remove the warm, dry clothes. Step 3: I carry them to the bedroom in a basket [LOCATION: bedroom, TIME: 5:05:00 pm]. Step 4: I dump the clothes on the bed and begin folding systematically. Step 5: I separate items into piles - shirts, pants, socks, underwear. Step 6: I fold each item and put them away in the appropriate drawers. Step 7: I hang items that need hanging in the closet. Step 8: I put the empty basket away, satisfied with completing the chore.",
+    "end_timestamp": "2025-02-21 5:30:00 pm",
+    "reasoning": "Completing laundry tasks keeps household in order.",
+    "seed_category": "Cleaning & Maintenance"
+  },
+  {
+    "start_timestamp": "2025-02-21 5:30:00 pm",
+    "activity": "Prepare dinner at home - cook pasta dish.",
+    "expanded_activity": "Step 1: I head to the kitchen to start making dinner [LOCATION: kitchen, TIME: 5:30:00 pm]. Step 2: I decide to make pasta with marinara sauce and meatballs. Step 3: I put a pot of water on to boil for pasta. Step 4: I heat pre-made meatballs in a pan with marinara sauce. Step 5: Once the water boils, I add pasta and set a timer. Step 6: I stir the sauce occasionally, letting the flavors meld. Step 7: When the pasta is done, I drain it and combine it with the sauce. Step 8: I plate the meal and sit at the table to eat. Step 9: The homemade dinner is satisfying and comforting.",
+    "end_timestamp": "2025-02-21 6:15:00 pm",
+    "reasoning": "Cooking dinner at home is a regular evening activity.",
+    "seed_category": "Cooking & Kitchen"
+  },
+  {
+    "start_timestamp": "2025-02-21 6:15:00 pm",
+    "activity": "Clean up kitchen after dinner.",
+    "expanded_activity": "Step 1: I finish eating and carry my dishes to the sink [LOCATION: kitchen, TIME: 6:15:00 pm]. Step 2: I rinse the dishes and load them into the dishwasher. Step 3: I wash the pots and pans by hand, scrubbing them clean. Step 4: I wipe down the stovetop and counters. Step 5: I put away leftover pasta in a container in the refrigerator. Step 6: I take out the kitchen trash since it's getting full. Step 7: The kitchen is clean and ready for tomorrow.",
+    "end_timestamp": "2025-02-21 6:35:00 pm",
+    "reasoning": "Cleaning after cooking maintains kitchen hygiene.",
+    "seed_category": "Cleaning & Maintenance"
+  },
+  {
+    "start_timestamp": "2025-02-21 6:35:00 pm",
+    "activity": "Evening leisure time - work on hobby project.",
+    "expanded_activity": "Step 1: With the evening free, I decide to work on a hobby project [LOCATION: living_room, TIME: 6:35:00 pm]. Step 2: I get out my jigsaw puzzle that's been sitting on the side table. Step 3: I sit down and study the partially completed image. Step 4: I sort through loose pieces, looking for ones that fit the current section. Step 5: I methodically try pieces, finding satisfying clicks when they fit. Step 6: Over the next hour, I make significant progress on the puzzle. Step 7: The focused activity is meditative and relaxing.",
+    "end_timestamp": "2025-02-21 7:45:00 pm",
+    "reasoning": "Evening hobby time provides creative satisfaction and relaxation.",
+    "seed_category": "Leisure & Recreation"
+  },
+  {
+    "start_timestamp": "2025-02-21 7:45:00 pm",
+    "activity": "Video call with family member.",
+    "expanded_activity": "Step 1: My phone rings with a video call from my sibling [LOCATION: living_room, TIME: 7:45:00 pm]. Step 2: I answer and we greet each other warmly, their face appearing on screen. Step 3: We chat about our weeks and what we've been up to. Step 4: They tell me about their kids' recent school activities and show me drawings the children made. Step 5: I share about my work week and weekend activities. Step 6: We laugh about family stories and childhood memories. Step 7: The conversation is warm and comfortable, lasting about 30 minutes. Step 8: We say goodbye and promise to talk again soon.",
+    "end_timestamp": "2025-02-21 8:15:00 pm",
+    "reasoning": "Family video calls maintain close relationships across distance.",
+    "seed_category": "Social & Communication"
+  },
+  {
+    "start_timestamp": "2025-02-21 8:15:00 pm",
+    "activity": "Watch TV show and browse internet.",
+    "expanded_activity": "Step 1: After the call, I turn on the TV [LOCATION: living_room, TIME: 8:15:00 pm]. Step 2: I continue the series I've been watching this week. Step 3: I get comfortable on the couch with a blanket. Step 4: During the show, I also browse my phone intermittently. Step 5: I check social media, read articles, and respond to a few messages. Step 6: The evening passes in a relaxed, low-key manner. Step 7: I watch two episodes of the show.",
+    "end_timestamp": "2025-02-21 9:45:00 pm",
+    "reasoning": "Evening entertainment is a typical way to wind down before bed.",
+    "seed_category": "Entertainment & Media"
+  },
+  {
+    "start_timestamp": "2025-02-21 9:45:00 pm",
+    "activity": "Evening hygiene routine and prepare for bed.",
+    "expanded_activity": "Step 1: I decide it's time to start getting ready for bed [LOCATION: living_room, TIME: 9:45:00 pm]. Step 2: I turn off the TV and walk to the bathroom. Step 3: I brush my teeth for two minutes [LOCATION: bathroom, TIME: 9:48:00 pm]. Step 4: I wash my face with cleanser and apply nighttime skincare. Step 5: I use the toilet and wash my hands. Step 6: I turn off lights throughout the apartment as I move toward the bedroom. Step 7: I change into comfortable pajamas. Step 8: I check that my phone is charging and the door is locked.",
+    "end_timestamp": "2025-02-21 10:10:00 pm",
+    "reasoning": "Nightly routine prepares for sleep and next day.",
+    "seed_category": "Health & Wellness"
+  },
+  {
+    "start_timestamp": "2025-02-21 10:10:00 pm",
+    "activity": "Read in bed before sleep.",
+    "expanded_activity": "Step 1: I get into bed and arrange my pillows [LOCATION: bedroom, TIME: 10:10:00 pm]. Step 2: I turn on the bedside lamp and pick up my mystery novel. Step 3: I'm near the end now, and the story is reaching its conclusion. Step 4: I read eagerly, wanting to find out how it resolves. Step 5: After about 25 minutes, I finish the book. Step 6: I feel satisfied with the ending and set the book aside. Step 7: I make a mental note to find a new book to start soon.",
+    "end_timestamp": "2025-02-21 10:35:00 pm",
+    "reasoning": "Bedtime reading helps transition to sleep.",
+    "seed_category": "Leisure & Recreation"
+  },
+  {
+    "start_timestamp": "2025-02-21 10:35:00 pm",
+    "activity": "Go to sleep for the night.",
+    "expanded_activity": "Step 1: I set the finished book on my nightstand [LOCATION: bedroom, TIME: 10:35:00 pm]. Step 2: I decide not to set an alarm since it's still the weekend. Step 3: My phone is already charging on the nightstand. Step 4: I turn off the bedside lamp and the room goes dark. Step 5: I settle into a comfortable sleeping position. Step 6: I close my eyes and feel myself relaxing. Step 7: I reflect briefly on the pleasant Saturday I had before drifting toward sleep.",
+    "end_timestamp": "2025-02-21 10:50:00 pm",
+    "reasoning": "Going to sleep ends Saturday and prepares for Sunday.",
+    "seed_category": "Health & Wellness"
+  },
+  {
+    "start_timestamp": "2025-02-22 8:00:00 am",
+    "activity": "Wake up naturally on Sunday morning.",
+    "expanded_activity": "Step 1: I wake up naturally on Sunday morning, feeling well-rested [LOCATION: bedroom, TIME: 8:00:00 am]. Step 2: I stretch in bed and check my phone for the time. Step 3: I lie in bed for a few minutes, enjoying the lazy Sunday feeling. Step 4: Eventually I get up and walk to the bathroom. Step 5: I use the toilet and splash water on my face. Step 6: I look forward to a relaxing day with no specific obligations.",
+    "end_timestamp": "2025-02-22 8:15:00 am",
+    "reasoning": "Sunday morning waking is leisurely without work pressure.",
+    "seed_category": "Health & Wellness"
+  },
+  {
+    "start_timestamp": "2025-02-22 8:15:00 am",
+    "activity": "Make simple Sunday breakfast and coffee.",
+    "expanded_activity": "Step 1: I walk to the kitchen in my pajamas [LOCATION: kitchen, TIME: 8:15:00 am]. Step 2: I start the coffee maker and take out cereal and milk. Step 3: I pour cereal into a bowl and add milk. Step 4: I slice a banana on top for extra nutrition. Step 5: I pour my coffee and add cream. Step 6: I sit at the table and eat while scrolling through news on my phone. Step 7: The slow Sunday morning breakfast feels peaceful and unhurried.",
+    "end_timestamp": "2025-02-22 8:45:00 am",
+    "reasoning": "Sunday breakfast can be simple and relaxed.",
+    "seed_category": "Cooking & Kitchen"
+  },
+  {
+    "start_timestamp": "2025-02-22 8:45:00 am",
+    "activity": "Shower and get dressed for the day.",
+    "expanded_activity": "Step 1: I finish breakfast and clean up my dishes [LOCATION: kitchen, TIME: 8:45:00 am]. Step 2: I walk to the bathroom and turn on the shower [LOCATION: bathroom, TIME: 8:50:00 am]. Step 3: I take a relaxed shower, letting the warm water wake me up fully. Step 4: After drying off, I do my basic morning hygiene routine. Step 5: I return to the bedroom and dress in comfortable casual clothes [LOCATION: bedroom, TIME: 9:10:00 am]. Step 6: I feel refreshed and ready for whatever the day brings.",
+    "end_timestamp": "2025-02-22 9:20:00 am",
+    "reasoning": "Sunday morning routine is more relaxed than weekday mornings.",
+    "seed_category": "Health & Wellness"
+  },
+  {
+    "start_timestamp": "2025-02-22 9:20:00 am",
+    "activity": "Plan and prep for grocery shopping trip.",
+    "expanded_activity": "Step 1: I decide to go grocery shopping since my fridge is getting low on supplies [LOCATION: kitchen, TIME: 9:20:00 am]. Step 2: I check what items I'm running out of, opening cabinets and the refrigerator. Step 3: I make a shopping list on my phone, typing in essentials like milk, eggs, vegetables, and chicken. Step 4: I add a few other items I want to try cooking this week. Step 5: I grab my reusable shopping bags from the closet. Step 6: I get my wallet and keys, preparing to leave. Step 7: I feel organized and ready for the shopping trip.",
+    "end_timestamp": "2025-02-22 9:35:00 am",
+    "reasoning": "Sunday morning is a common time for grocery shopping to prepare for the week ahead.",
+    "seed_category": "Daily Scheduling & Planning"
+  },
+  {
+    "start_timestamp": "2025-02-22 9:35:00 am",
+    "activity": "Drive to supermarket for grocery shopping.",
+    "expanded_activity": "Step 1: I leave my apartment and walk to my car [LOCATION: parking_area, TIME: 9:35:00 am]. Step 2: I get in and start driving to the nearby supermarket. Step 3: Sunday morning traffic is light [LOCATION: car/commute, TIME: 9:40:00 am]. Step 4: I listen to a podcast during the short drive. Step 5: I arrive at the supermarket and find a parking spot. Step 6: I grab my reusable bags and head inside.",
+    "end_timestamp": "2025-02-22 9:50:00 am",
+    "reasoning": "Driving to the store is necessary for grocery shopping.",
+    "seed_category": "Transportation & Commute"
+  },
+  {
+    "start_timestamp": "2025-02-22 9:50:00 am",
+    "activity": "Shop for groceries at supermarket.",
+    "expanded_activity": "Step 1: I enter the supermarket and grab a shopping cart [LOCATION: supermarket, TIME: 9:50:00 am]. Step 2: The store is moderately busy with other Sunday shoppers. Step 3: I start in the produce section, selecting fresh vegetables, fruits, and salad greens. Step 4: I check each item for quality and freshness. Step 5: I move through the dairy section, picking up milk, eggs, and yogurt. Step 6: In the meat department, I select chicken breasts and ground beef. Step 7: I navigate through various aisles, collecting pasta, canned goods, snacks, and other items on my list. Step 8: I occasionally pause to compare prices or read nutrition labels. Step 9: I check off items on my phone list as I collect them. Step 10: After about 40 minutes, I've gathered everything I need. Step 11: I head to the checkout line and wait my turn. Step 12: The cashier rings up my items and I pay with my credit card. Step 13: I load the bags into my cart and head to my car.",
+    "end_timestamp": "2025-02-22 10:45:00 am",
+    "reasoning": "Grocery shopping involves selecting items systematically throughout the store.",
+    "seed_category": "Shopping & Errands"
+  },
+  {
+    "start_timestamp": "2025-02-22 10:45:00 am",
+    "activity": "Drive home with groceries.",
+    "expanded_activity": "Step 1: I load the grocery bags into my car trunk [LOCATION: supermarket_parking, TIME: 10:45:00 am]. Step 2: I return the shopping cart to the cart corral. Step 3: I get in my car and start driving home [LOCATION: car/commute, TIME: 10:48:00 am]. Step 4: The drive is quick and uneventful. Step 5: I arrive home and park. Step 6: I gather the grocery bags from the trunk, carrying as many as I can manage. Step 7: I walk to my apartment and unlock the door.",
+    "end_timestamp": "2025-02-22 11:00:00 am",
+    "reasoning": "Returning home completes the shopping errand.",
+    "seed_category": "Transportation & Commute"
+  },
+  {
+    "start_timestamp": "2025-02-22 11:00:00 am",
+    "activity": "Put away groceries and organize kitchen.",
+    "expanded_activity": "Step 1: I bring all the grocery bags into the kitchen [LOCATION: kitchen, TIME: 11:00:00 am]. Step 2: I unpack each bag systematically. Step 3: I put refrigerated items in the fridge, frozen items in the freezer. Step 4: I organize pantry items on shelves where they belong. Step 5: I group similar items together for easy access. Step 6: I fold up the reusable bags and store them for next time. Step 7: I wipe down the kitchen counter after unpacking. Step 8: I feel satisfied seeing my well-stocked kitchen.",
+    "end_timestamp": "2025-02-22 11:20:00 am",
+    "reasoning": "Putting away groceries properly maintains kitchen organization.",
+    "seed_category": "Cleaning & Maintenance"
+  },
+  {
+    "start_timestamp": "2025-02-22 11:20:00 am",
+    "activity": "Meal prep for the upcoming week.",
+    "expanded_activity": "Step 1: With groceries put away, I decide to do some meal prep [LOCATION: kitchen, TIME: 11:20:00 am]. Step 2: I take out the chicken breasts and vegetables I bought. Step 3: I season and bake chicken in the oven for easy protein throughout the week. Step 4: While chicken cooks, I chop vegetables and portion them into containers. Step 5: I cook a large batch of rice in the rice cooker. Step 6: I hard boil several eggs for quick breakfast or snack options. Step 7: Once everything is cooked and cooled, I portion meals into containers. Step 8: I label containers with contents and dates. Step 9: I stack them neatly in the refrigerator. Step 10: The meal prep will save significant time during busy weeknights.",
+    "end_timestamp": "2025-02-22 12:30:00 pm",
+    "reasoning": "Sunday meal prep is a popular practice for managing busy weekday schedules.",
+    "seed_category": "Cooking & Kitchen"
+  },
+  {
+    "start_timestamp": "2025-02-22 12:30:00 pm",
+    "activity": "Make and eat lunch.",
+    "expanded_activity": "Step 1: After all the cooking, I'm hungry for lunch [LOCATION: kitchen, TIME: 12:30:00 pm]. Step 2: I make a simple sandwich with deli meat, cheese, lettuce, and tomato. Step 3: I add chips and an apple on the side. Step 4: I pour a glass of water. Step 5: I sit at the kitchen table and eat while scrolling through my phone. Step 6: The lunch is quick but satisfying after the morning's activities.",
+    "end_timestamp": "2025-02-22 12:50:00 pm",
+    "reasoning": "Lunch after morning activities provides needed energy.",
+    "seed_category": "Cooking & Kitchen"
+  },
+  {
+    "start_timestamp": "2025-02-22 12:50:00 pm",
+    "activity": "Clean up kitchen after meal prep and lunch.",
+    "expanded_activity": "Step 1: I carry my lunch dishes to the sink [LOCATION: kitchen, TIME: 12:50:00 pm]. Step 2: I load my dishes and all the meal prep containers and utensils into the dishwasher. Step 3: I wash the larger pots and baking sheets by hand. Step 4: I wipe down all the countertops and the stovetop. Step 5: I sweep the floor to catch any dropped food bits. Step 6: I take out the kitchen trash since it's full from packaging. Step 7: The kitchen looks clean and organized again after the busy morning.",
+    "end_timestamp": "2025-02-22 1:15:00 pm",
+    "reasoning": "Cleaning after extensive cooking maintains kitchen hygiene.",
+    "seed_category": "Cleaning & Maintenance"
+  },
+  {
+    "start_timestamp": "2025-02-22 1:15:00 pm",
+    "activity": "Afternoon relaxation - read and rest on couch.",
+    "expanded_activity": "Step 1: After a productive morning, I decide to relax [LOCATION: living_room, TIME: 1:15:00 pm]. Step 2: I settle on the couch with a throw blanket. Step 3: I realize I finished my book last night, so I browse ebooks on my phone. Step 4: I download a new thriller novel that has good reviews. Step 5: I start reading the first chapter, getting drawn into the story. Step 6: The afternoon sunlight streams through the window, creating a cozy atmosphere. Step 7: I read for about an hour, enjoying the peaceful Sunday afternoon.",
+    "end_timestamp": "2025-02-22 2:20:00 pm",
+    "reasoning": "Sunday afternoon relaxation provides rest before the upcoming work week.",
+    "seed_category": "Leisure & Recreation"
+  },
+  {
+    "start_timestamp": "2025-02-22 2:20:00 pm",
+    "activity": "Go for afternoon walk or light exercise.",
+    "expanded_activity": "Step 1: I decide to get some fresh air and exercise [LOCATION: living_room, TIME: 2:20:00 pm]. Step 2: I put on sneakers and grab my keys and phone. Step 3: I leave my apartment and start walking around the neighborhood [LOCATION: neighborhood_street, TIME: 2:25:00 pm]. Step 4: The weather is pleasant - sunny but not too hot. Step 5: I walk at a moderate pace, enjoying being outside. Step 6: I see other people out walking, jogging, or playing with children. Step 7: I do a loop that takes about 30 minutes. Step 8: I feel energized from the movement and fresh air. Step 9: I return home feeling refreshed.",
+    "end_timestamp": "2025-02-22 2:55:00 pm",
+    "reasoning": "Afternoon exercise promotes health and breaks up the day.",
+    "seed_category": "Health & Wellness"
+  },
+  {
+    "start_timestamp": "2025-02-22 2:55:00 pm",
+    "activity": "Personal time - work on hobby or browse internet.",
+    "expanded_activity": "Step 1: I return home and change into more comfortable clothes [LOCATION: bedroom, TIME: 2:55:00 pm]. Step 2: I grab a glass of water from the kitchen. Step 3: I settle back on the couch and browse the internet on my laptop [LOCATION: living_room, TIME: 3:00:00 pm]. Step 4: I check various websites - news, social media, online forums. Step 5: I watch a few YouTube videos on topics I'm interested in. Step 6: I also work a bit more on my jigsaw puzzle during this time. Step 7: The afternoon passes in a relaxed, low-pressure way.",
+    "end_timestamp": "2025-02-22 4:00:00 pm",
+    "reasoning": "Unstructured leisure time on Sunday provides mental rest.",
+    "seed_category": "Leisure & Recreation"
+  },
+  {
+    "start_timestamp": "2025-02-22 4:00:00 pm",
+    "activity": "Weekly planning - review calendar and prepare for work week.",
+    "expanded_activity": "Step 1: I decide to spend some time preparing for the upcoming week [LOCATION: living_room, TIME: 4:00:00 pm]. Step 2: I open my laptop and pull up my work calendar. Step 3: I review all meetings and deadlines scheduled for the week ahead. Step 4: I make notes about tasks I need to prioritize. Step 5: I check my personal calendar for any appointments or commitments. Step 6: I mentally plan my week, thinking through what needs to happen each day. Step 7: I pack my work bag with everything I'll need tomorrow. Step 8: I choose my outfit for Monday and hang it in a visible spot. Step 9: The planning helps me feel organized and reduces Sunday evening anxiety.",
+    "end_timestamp": "2025-02-22 4:30:00 pm",
+    "reasoning": "Sunday planning reduces stress and improves Monday morning efficiency.",
+    "seed_category": "Daily Scheduling & Planning"
+  },
+  {
+    "start_timestamp": "2025-02-22 4:30:00 pm",
+    "activity": "Prepare simple dinner at home.",
+    "expanded_activity": "Step 1: I head to the kitchen to start making dinner [LOCATION: kitchen, TIME: 4:30:00 pm]. Step 2: I decide to make a simple stir-fry using some of the vegetables I prepped earlier. Step 3: I heat oil in a wok and add minced garlic. Step 4: I add vegetables and one of the pre-cooked chicken portions I prepared. Step 5: I season with soy sauce and spices, stirring frequently. Step 6: I serve the stir-fry over some of the rice I made earlier. Step 7: I sit at the table and eat, appreciating how the meal prep makes dinner quick and easy. Step 8: The meal is healthy and satisfying.",
+    "end_timestamp": "2025-02-22 5:15:00 pm",
+    "reasoning": "Sunday dinner can utilize meal-prepped ingredients for efficiency.",
+    "seed_category": "Cooking & Kitchen"
+  },
+  {
+    "start_timestamp": "2025-02-22 5:15:00 pm",
+    "activity": "Clean up after dinner.",
+    "expanded_activity": "Step 1: I carry my dishes to the sink [LOCATION: kitchen, TIME: 5:15:00 pm]. Step 2: I rinse them and load them into the dishwasher. Step 3: I wash the wok and spatula by hand. Step 4: I wipe down the counter and stovetop. Step 5: I put away any ingredients I used. Step 6: The kitchen is clean and ready for the busy work week ahead.",
+    "end_timestamp": "2025-02-22 5:30:00 pm",
+    "reasoning": "Post-dinner cleanup maintains kitchen order.",
+    "seed_category": "Cleaning & Maintenance"
+  },
+  {
+    "start_timestamp": "2025-02-22 5:30:00 pm",
+    "activity": "Sunday evening relaxation - watch TV show.",
+    "expanded_activity": "Step 1: With the evening ahead of me, I settle in to relax [LOCATION: living_room, TIME: 5:30:00 pm]. Step 2: I turn on the TV and continue watching my current series. Step 3: I get comfortable on the couch with a blanket and pillow. Step 4: I become absorbed in the show's storyline. Step 5: The episodes are engaging and help me unwind. Step 6: I watch several episodes in a row, enjoying the entertainment.",
+    "end_timestamp": "2025-02-22 7:30:00 pm",
+    "reasoning": "Sunday evening TV watching provides relaxation before the work week.",
+    "seed_category": "Entertainment & Media"
+  },
+  {
+    "start_timestamp": "2025-02-22 7:30:00 pm",
+    "activity": "Phone call with friend.",
+    "expanded_activity": "Step 1: My phone rings with a call from a friend [LOCATION: living_room, TIME: 7:30:00 pm]. Step 2: I pause my show and answer the call. Step 3: We chat about how our weekends went. Step 4: They tell me about a hiking trip they took, and I share about my productive weekend. Step 5: We discuss plans to meet up again soon, maybe for dinner next weekend. Step 6: We also talk about current events and mutual friends. Step 7: The conversation is easy and enjoyable. Step 8: After about 25 minutes, we wrap up and say goodbye.",
+    "end_timestamp": "2025-02-22 7:55:00 pm",
+    "reasoning": "Sunday evening calls with friends maintain social connections.",
+    "seed_category": "Social & Communication"
+  },
+  {
+    "start_timestamp": "2025-02-22 7:55:00 pm",
+    "activity": "Continue watching TV and browse social media.",
+    "expanded_activity": "Step 1: After the phone call, I resume my show [LOCATION: living_room, TIME: 7:55:00 pm]. Step 2: I also pick up my phone and scroll through social media during commercial breaks. Step 3: I see posts from friends about their weekends. Step 4: I like several posts and leave a few comments. Step 5: I browse various feeds, staying updated on what's happening. Step 6: The evening passes in a relaxed manner as the weekend winds down.",
+    "end_timestamp": "2025-02-22 8:45:00 pm",
+    "reasoning": "Mixed media consumption is common for evening relaxation.",
+    "seed_category": "Entertainment & Media"
+  },
+  {
+    "start_timestamp": "2025-02-22 8:45:00 pm",
+    "activity": "Prepare for Monday - set out clothes and pack lunch.",
+    "expanded_activity": "Step 1: I realize I should prepare a few things for tomorrow [LOCATION: living_room, TIME: 8:45:00 pm]. Step 2: I walk to the bedroom and double-check that my work outfit is ready [LOCATION: bedroom, TIME: 8:47:00 pm]. Step 3: I walk to the kitchen and pack a lunch using my meal-prepped food [LOCATION: kitchen, TIME: 8:50:00 pm]. Step 4: I put a pre-portioned chicken, rice, and vegetable meal in a container. Step 5: I add a piece of fruit and a snack. Step 6: I place the lunch bag in the refrigerator for tomorrow. Step 7: I double-check my work bag has everything I need. Step 8: These preparations will make Monday morning smoother.",
+    "end_timestamp": "2025-02-22 9:05:00 pm",
+    "reasoning": "Sunday evening preparation reduces Monday morning stress.",
+    "seed_category": "Daily Scheduling & Planning"
+  },
+  {
+    "start_timestamp": "2025-02-22 9:05:00 pm",
+    "activity": "Evening wind-down activities.",
+    "expanded_activity": "Step 1: With everything ready for tomorrow, I can relax for the evening [LOCATION: living_room, TIME: 9:05:00 pm]. Step 2: I return to the couch and watch one more episode of my show. Step 3: I also work on my puzzle for a bit, adding a few more pieces. Step 4: I sip water and feel my body starting to wind down naturally. Step 5: The combination of activities helps transition toward bedtime.",
+    "end_timestamp": "2025-02-22 9:45:00 pm",
+    "reasoning": "Evening wind-down helps prepare mentally for sleep.",
+    "seed_category": "Leisure & Recreation"
+  },
+  {
+    "start_timestamp": "2025-02-22 9:45:00 pm",
+    "activity": "Evening hygiene routine.",
+    "expanded_activity": "Step 1: I decide it's time to get ready for bed since I need to wake up early [LOCATION: living_room, TIME: 9:45:00 pm]. Step 2: I turn off the TV and walk to the bathroom. Step 3: I brush my teeth thoroughly [LOCATION: bathroom, TIME: 9:48:00 pm]. Step 4: I wash my face with cleanser and apply my nighttime skincare routine. Step 5: I use the toilet and wash my hands. Step 6: I walk through the apartment, turning off lights and checking locks. Step 7: I go to the bedroom and change into pajamas. Step 8: I plug my phone in to charge on the nightstand.",
+    "end_timestamp": "2025-02-22 10:10:00 pm",
+    "reasoning": "Sunday evening hygiene routine prepares for sleep before the work week.",
+    "seed_category": "Health & Wellness"
+  },
+  {
+    "start_timestamp": "2025-02-22 10:10:00 pm",
+    "activity": "Set alarm and read briefly before sleep.",
+    "expanded_activity": "Step 1: I get into bed and arrange my pillows [LOCATION: bedroom, TIME: 10:10:00 pm]. Step 2: I pick up my phone and set my alarm for 6:30 am. Step 3: I double-check the alarm is properly configured for Monday morning. Step 4: I turn on the bedside lamp and pick up my new book. Step 5: I read for about 15 minutes, but keep it brief since I need good sleep. Step 6: I feel myself getting drowsy. Step 7: I place my bookmark and set the book aside.",
+    "end_timestamp": "2025-02-22 10:25:00 pm",
+    "reasoning": "Setting an alarm and brief reading prepares for sleep and upcoming work week.",
+    "seed_category": "Health & Wellness"
+  },
+  {
+    "start_timestamp": "2025-02-22 10:25:00 pm",
+    "activity": "Go to sleep for the night.",
+    "expanded_activity": "Step 1: I turn off the bedside lamp [LOCATION: bedroom, TIME: 10:25:00 pm]. Step 2: I settle into a comfortable sleeping position. Step 3: I close my eyes and focus on relaxing my body. Step 4: I think briefly about the week ahead, but try to let go of any stress. Step 5: I feel grateful for the restful weekend I had. Step 6: I drift gradually toward sleep, ready to face Monday morning.",
+    "end_timestamp": "2025-02-22 10:40:00 pm",
+    "reasoning": "Getting adequate sleep on Sunday prepares for the work week ahead.",
+    "seed_category": "Health & Wellness"
+  },
+  {
+    "start_timestamp": "2025-02-23 6:30:00 am",
+    "activity": "Wake up to alarm on Monday morning.",
+    "expanded_activity": "Step 1: My alarm sounds at 6:30 am and I reach over to silence it [LOCATION: bedroom, TIME: 6:30:00 am]. Step 2: I sit up in bed, feeling the typical Monday morning grogginess. Step 3: I take a moment to fully wake up before getting out of bed. Step 4: I stand and stretch, preparing to start the week. Step 5: I walk to the bathroom to begin my morning routine. Step 6: The return to the work week structure feels familiar after the weekend break.",
+    "end_timestamp": "2025-02-23 6:40:00 am",
+    "reasoning": "Monday morning begins a new work week with the return to routine.",
+    "seed_category": "Health & Wellness"
+  },
+  {
+    "start_timestamp": "2025-02-23 6:40:00 am",
+    "activity": "Morning shower and hygiene routine.",
+    "expanded_activity": "Step 1: I turn on the shower and wait for it to warm up [LOCATION: bathroom, TIME: 6:40:00 am]. Step 2: I step in and wash quickly but thoroughly. Step 3: The warm water helps wake me up and prepare for the day. Step 4: After drying off, I brush my teeth and comb my hair. Step 5: I complete my basic grooming routine efficiently. Step 6: I feel more alert and ready to face Monday.",
+    "end_timestamp": "2025-02-23 6:55:00 am",
+    "reasoning": "Morning hygiene routine is essential for starting the work day.",
+    "seed_category": "Health & Wellness"
+  },
+  {
+    "start_timestamp": "2025-02-23 6:55:00 am",
+    "activity": "Get dressed in prepared work outfit.",
+    "expanded_activity": "Step 1: I return to the bedroom and find the outfit I set out yesterday [LOCATION: bedroom, TIME: 6:55:00 am]. Step 2: I get dressed in my work clothes. Step 3: The fact that I prepared this outfit yesterday makes the morning smoother. Step 4: I check my appearance in the mirror. Step 5: I feel organized and ready to head to work.",
+    "end_timestamp": "2025-02-23 7:05:00 am",
+    "reasoning": "Getting dressed in pre-selected outfit saves time and decision-making energy.",
+    "seed_category": "Daily Scheduling & Planning"
+  },
+  {
+    "start_timestamp": "2025-02-23 7:05:00 am",
+    "activity": "Quick breakfast and coffee.",
+    "expanded_activity": "Step 1: I walk to the kitchen and start the coffee maker [LOCATION: kitchen, TIME: 7:05:00 am]. Step 2: I grab the pre-made hard-boiled egg from the fridge. Step 3: I toast a piece of bread and spread peanut butter on it. Step 4: I peel and eat the egg with the toast. Step 5: I pour coffee into my travel mug and add cream. Step 6: I eat quickly while checking my phone for any urgent messages. Step 7: The meal prep I did yesterday makes breakfast fast and easy.",
+    "end_timestamp": "2025-02-23 7:20:00 am",
+    "reasoning": "Quick breakfast using meal-prepped items maintains efficiency on busy mornings.",
+    "seed_category": "Cooking & Kitchen"
+  },
+  {
+    "start_timestamp": "2025-02-23 7:20:00 am",
+    "activity": "Gather belongings and leave for work.",
+    "expanded_activity": "Step 1: I grab my pre-packed lunch from the refrigerator [LOCATION: kitchen, TIME: 7:20:00 am]. Step 2: I pick up my work bag that I prepared yesterday evening. Step 3: I walk to the entryway and put on my shoes [LOCATION: entryway, TIME: 7:23:00 am]. Step 4: I grab my keys, wallet, and travel mug of coffee. Step 5: I do a final mental check - everything I need is with me. Step 6: I leave home and lock the door, heading to my car. Step 7: The Sunday preparation made Monday morning significantly less stressful.",
+    "end_timestamp": "2025-02-23 7:30:00 am",
+    "reasoning": "Leaving for work with pre-prepared items demonstrates the value of Sunday planning.",
+    "seed_category": "Daily Scheduling & Planning"
+  },
+  {
+    "start_timestamp": "2025-02-23 7:30:00 am",
+    "activity": "Monday morning commute to work.",
+    "expanded_activity": "Step 1: I get in my car and start the engine [LOCATION: parking_area, TIME: 7:30:00 am]. Step 2: I begin driving toward the office. Step 3: Monday morning traffic is predictably heavy [LOCATION: car/commute, TIME: 7:35:00 am]. Step 4: I sip my coffee at red lights and listen to a morning news podcast. Step 5: The commute takes a bit longer than usual due to traffic. Step 6: I mentally prepare for the work week ahead as I drive. Step 7: I arrive at the office parking structure and find a spot. Step 8: I gather my belongings and head toward the building entrance.",
+    "end_timestamp": "2025-02-23 8:00:00 am",
+    "reasoning": "Monday morning commute marks the full transition from weekend to work week.",
+    "seed_category": "Transportation & Commute"
+  },
+  {
+    "start_timestamp": "2025-02-23 8:00:00 am",
+    "activity": "Arrive at office and start Monday work week.",
+    "expanded_activity": "Step 1: I enter the office building and take the elevator to my floor [LOCATION: office_building, TIME: 8:00:00 am]. Step 2: I walk to my desk, exchanging Monday morning greetings with coworkers. Step 3: I set down my lunch in the office refrigerator [LOCATION: office_kitchen, TIME: 8:03:00 am]. Step 4: I return to my desk and boot up my computer [LOCATION: office_desk, TIME: 8:05:00 am]. Step 5: While it loads, I review the notes I made about this week's priorities. Step 6: I log into my computer and open my email inbox. Step 7: I scan through weekend and overnight emails, flagging urgent items. Step 8: I review my calendar for the day's meetings. Step 9: I feel prepared and organized to start the new week. Step 10: I begin working on my first priority task of the week.",
+    "end_timestamp": "2025-02-23 8:30:00 am",
+    "reasoning": "Starting Monday at work completes the weekend-to-workweek cycle and benefits from Sunday preparation.",
+    "seed_category": "Work & Productivity"
+  },
+  {
+    "start_timestamp": "2025-02-23 8:30:00 am",
+    "activity": "Work on high-priority project tasks.",
+    "expanded_activity": "Step 1: I focus on the most important task for the week - a report due Wednesday [LOCATION: office_desk, TIME: 8:30:00 am]. Step 2: I open the relevant files and review where I left off last week. Step 3: I begin writing new sections, referencing data and previous notes. Step 4: I work steadily, typing and occasionally pausing to think through complex points. Step 5: The office around me fills with the sounds of Monday morning - keyboards clicking, phones ringing, quiet conversations. Step 6: I stay focused on my task, minimizing distractions. Step 7: I make good progress over the next couple of hours.",
+    "end_timestamp": "2025-02-23 10:30:00 am",
+    "reasoning": "Monday morning focus on high-priority tasks sets a productive tone for the week.",
+    "seed_category": "Work & Productivity"
+  }
+]

@@ -1,0 +1,29 @@
+# Persona Features
+- Warm demeanor
+- Earthy-toned polo shirt
+- Casual jeans
+- Whistle around neck
+- Leaning forward when engaging
+- Smiling warmly
+- Family-oriented activities
+- Soccer coaching gestures
+- Cozy home environment
+
+# Activity Narration (Overall)
+- Cozy living room setting
+- Early evening warmth
+- Calm and relaxed atmosphere
+- User preparing for leisure
+- Assistant providing gentle support
+- Progression of relaxation
+- Shared enjoyment of a
+
+# Activity Narration (Per Panel)
+## Panel 1
+- **Assistant:** Quietly assisting: ** todo: fill by model.
+## Panel 2
+- **Assistant:** Quietly assisting: ** todo: fill by model.
+## Panel 3
+- **Assistant:** Speaking: speaks: 'enjoy the show! let me know if you need anything.'.
+## Panel 4
+- **Assistant:** Quietly assisting: ** todo: fill by model.

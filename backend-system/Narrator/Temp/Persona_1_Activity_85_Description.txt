@@ -1,0 +1,27 @@
+# Persona Features
+- Warm smile
+- Casual button-up shirt
+- Comfortable sneakers
+- Leaning forward while listening
+- Engaging with kids
+- Colorful apron
+- Twinkling eyes
+- Cheerful warmth
+
+# Activity Narration (Overall)
+- Cozy office desk
+- Late afternoon light
+- Calm and focused atmosphere
+- Preparing for the weekend
+- Gradual lighting softening
+- Collaborative energy
+
+# Activity Narration (Per Panel)
+## Panel 1
+- **Assistant:** Quietly assisting: ** todo: fill by model.
+## Panel 2
+- **Assistant:** Quietly assisting: ** todo: fill by model.
+## Panel 3
+- **Assistant:** Speaking: 'don't forget to enjoy your weekend!'.
+## Panel 4
+- **Assistant:** Quietly assisting: ** todo: fill by model.

@@ -1,0 +1,47 @@
+{
+  "section": "Smart Assistant Style",
+
+  "character_form": "A small floating blue orb with an extremely clear emoji-style face: two solid dark round eyes and one curved smiling mouth. Facial features must be sharply defined with high contrast, never faint or blurred.",
+  "art_style": "Retro flat comic style with smooth shading and crisp outlines.",
+  "lighting": "Soft blue glow that illuminates nearby surfaces without overpowering the face. The glow must NOT obscure or wash out the facial features.",
+  "facial_expression_style": "Friendly smiling emoji face at all times. Minor variations (blink, small mouth movement during speech) are allowed, but the assistant should always be easily readable and expressive.",
+  "tone": "Warm, supportive, gentle, friendly, never robotic or abstract.",
+  "integration": "Assistant floats clearly within the scene, never inside a device screen. It should visually interact with the user through proximity, eye-line, or bubble placement.",
+
+  "size_defaults": "Small — around one-third the size of the user’s head. Always large enough that the emoji face is clearly readable.",
+  "flight_behavior": "Gentle hovering or subtle motion. Never too fast or erratic.",
+  "interaction_patterns": [
+    "hovering near the user's shoulder with a speech bubble",
+    "floating calmly nearby and observing",
+    "moving closer during dialogue",
+    "softly glowing when assisting"
+  ],
+
+  "speech_bubble_rules": "The assistant's speech must appear inside a speech bubble positioned near the assistant. The assistant’s emoji face must remain visible and unobstructed by the bubble.",
+
+  "count_per_panel": "Each panel must display exactly ONE smart assistant orb. Do NOT duplicate, clone, or show multiple assistants in the same panel.",
+
+  "face_design": {
+    "base_shape": "blue circular orb",
+    "features": "two dark round eyes + one curved smiling mouth",
+    "readability": "The face must be drawn with crisp dark lines and strong contrast so it is instantly recognizable, even at small size.",
+    "anti_glow_rule": "The glow must never overpower or hide the eyes or mouth."
+  },
+
+  "hard_constraints": [
+    "Exactly one assistant orb per panel.",
+    "Do NOT draw multiple assistant orbs or clones.",
+    "Do NOT render the assistant as a featureless glowing sphere.",
+    "Do NOT obscure or blur the eyes or mouth.",
+    "Facial features must remain visible regardless of lighting."
+  ],
+
+  "negative_cues": [
+    "featureless glowing blue sphere",
+    "no facial features",
+    "eyes or mouth too faint to see",
+    "blurred or low-contrast face",
+    "multiple orbs in a panel",
+    "emoji face replaced by symbols, patterns, or abstract shapes"
+  ]
+}

@@ -1,0 +1,39 @@
+# Persona Features
+- Victor wears a soft, oversized sweater that reflects his artistic sensibility.
+- He carries a vintage camera slung over his shoulder, ready to capture moments.
+- His demeanor is reserved yet contemplative, often pausing to observe his surroundings.
+- Victor's environment is filled with art books and sketch pads, showcasing his creativity.
+- He has a gentle smile when discussing art, radiating warmth and approachability.
+- His comfortable sneakers and well-fitted jeans reflect a casual, artistic lifestyle.
+- The earthy tones of his attire blend harmoniously with the cozy atmosphere around him.
+- He often leans slightly forward while listening, showing engagement and interest.
+- Vintage photography motifs are present in his surroundings, enhancing his artistic vibe.
+
+# Activity Narration (Overall)
+- Victor enjoys a peaceful evening at home, engaging with his smart assistant.
+- He scrolls through social media, sharing laughter and connection with friends.
+- The assistant encourages Victor to interact more with his online community.
+- A moment of contentment arises as Victor reflects on his evening activities.
+- The warm atmosphere fosters a sense of relaxation and fulfillment.
+
+# Activity Narration (Per Panel)
+## Panel 1
+- **Action (Persona):** The user is settling on the couch, phone in hand, smiling as they prepare to scroll.
+- **Thought (Persona):** I love these quiet evenings at home.
+- **Assistant:** Quietly assisting: glow softly while hovering above the user.
+- **Interaction:** Ambient.
+## Panel 2
+- **Action (Persona):** The user is scrolling through their social media feed, chuckling at a funny post.
+- **Thought (Persona):** These memes never get old!
+- **Assistant:** Quietly observing with a gentle glow.
+- **Interaction:** Ambient.
+## Panel 3
+- **Action (Persona):** The user types a comment on a friend's vacation photo, looking pleased.
+- **Thought (Persona):** I should say something nice about this!
+- **Assistant:** Speaks with a bubble: 'That looks amazing! Want to share more?'.
+- **Interaction:** With persona.
+## Panel 4
+- **Action (Persona):** The user sets the phone aside, looking content and relaxed.
+- **Thought (Persona):** That was just what I needed.
+- **Assistant:** Glows softly and says, 'Glad you enjoyed it!'.
+- **Interaction:** With persona.

@@ -1,0 +1,4 @@
+# Joey: do not track raw/generated assets
+Unuse/
+images/
+prompts/

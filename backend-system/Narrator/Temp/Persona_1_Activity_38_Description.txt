@@ -1,0 +1,28 @@
+# Persona Features
+- Devoted family man
+- Comfortable sneakers
+- Animated hand gestures
+- Leaning in while listening
+- Warm smile
+- Polo shirt and cargo
+- Confident posture
+- Cheerful earthy tones
+- Family-oriented environment
+
+# Activity Narration (Overall)
+- Cozy living room
+- Evening with warm lamp
+- Anticipation and connection
+- Friendly video call interaction
+- Emotional warmth and joy
+- Shared moments of family
+
+# Activity Narration (Per Panel)
+## Panel 1
+- **Assistant:** Quietly assisting: ** todo: fill by model.
+## Panel 2
+- **Assistant:** Quietly assisting: ** todo: fill by model.
+## Panel 3
+- **Assistant:** Speaking: how's everything going?
+## Panel 4
+- **Assistant:** Quietly assisting: ** todo: fill by model.

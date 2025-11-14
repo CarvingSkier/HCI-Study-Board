@@ -1,0 +1,40 @@
+# Persona Features
+- Victor has a contemplative demeanor, often pausing to reflect on his surroundings.
+- He wears a soft oversized sweater in earthy tones, exuding warmth and comfort.
+- A camera hangs casually over his shoulder, symbolizing his artistic curiosity.
+- His fingers often run through his hair when deep in thought, showcasing introspection.
+- The cozy kitchen setting is filled with morning light, enhancing the inviting atmosphere.
+- Art books are stacked on a nearby table, hinting at his creative pursuits.
+- Victor's stylish yet comfortable sneakers suggest a blend of practicality and flair.
+- He leans slightly forward during conversations, indicating engagement and interest.
+- Nature trails visible through the window reflect his appreciation for serene vistas.
+- The overall color palette is warm and soothing, creating a calm ambiance.
+
+# Activity Narration (Overall)
+- Victor enters the kitchen, ready to prepare a simple breakfast.
+- He selects fresh ingredients, contemplating the perfect morning meal.
+- As he cooks, the assistant offers gentle reminders and encouragement.
+- The breakfast is plated beautifully, marking a satisfying start to the day.
+- Victor enjoys his meal, reflecting on the peaceful morning routine.
+
+# Activity Narration (Per Panel)
+## Panel 1
+- **Action (Persona):** I walk into the kitchen, opening the refrigerator door.
+- **Thought (Persona):** I wonder what I should make today.
+- **Assistant:** Quietly glowing, observing the user.
+- **Interaction:** Ambient.
+## Panel 2
+- **Action (Persona):** I take out eggs, butter, and bread from the fridge.
+- **Thought (Persona):** Simple ingredients for a delicious start.
+- **Assistant:** Quietly glowing, watching intently.
+- **Interaction:** Ambient.
+## Panel 3
+- **Action (Persona):** I crack the eggs into a sizzling pan.
+- **Thought (Persona):** I hope these yolks stay intact.
+- **Assistant:** Quietly assisting: Speaking: Just flip them gently!
+- **Interaction:** With persona.
+## Panel 4
+- **Action (Persona):** I plate the eggs and toast, sitting at the table.
+- **Thought (Persona):** This is just what I needed to start the day.
+- **Assistant:** Quietly assisting: Softly glowing: Enjoy your meal!
+- **Interaction:** With persona.

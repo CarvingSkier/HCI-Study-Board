@@ -1,0 +1,29 @@
+# Persona Features
+- Warm demeanor
+- Comfortable polo shirt
+- Engaging eyes
+- Leaning forward
+- Gesturing animatedly
+- Family-oriented
+- Sports cap
+- Clipboard in hand
+- Earthy tones
+
+# Activity Narration (Overall)
+- Cozy entryway and kitchen
+- Evening with warm light
+- Calm and inviting atmosphere
+- Soft golden light
+- Mail sorting process
+- Discovering surprises
+- Organizing important items
+
+# Activity Narration (Per Panel)
+## Panel 1
+- **Assistant:** Quietly assisting: ** todo: fill by model.
+## Panel 2
+- **Assistant:** Quietly assisting: ** todo: fill by model.
+## Panel 3
+- **Assistant:** Quietly assisting: ** todo: fill by model.
+## Panel 4
+- **Assistant:** Speaking: softly glowing, saying: 'great job!'.

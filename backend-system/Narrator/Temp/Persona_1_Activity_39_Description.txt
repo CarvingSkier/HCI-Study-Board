@@ -1,0 +1,24 @@
+# Persona Features
+- Warm demeanor
+- Comfortable polo shirt
+- Khaki shorts
+- Stylish sneakers
+- Leaning forward while speaking
+- Smiling warmly
+
+# Activity Narration (Overall)
+- Cozy living room
+- Evening with soft TV
+- Calm atmosphere
+- Relaxing after a long
+- Engaging with a documentary
+
+# Activity Narration (Per Panel)
+## Panel 1
+- **Assistant:** Quietly assisting: ** todo: fill by model.
+## Panel 2
+- **Assistant:** Quietly assisting: ** todo: fill by model.
+## Panel 3
+- **Assistant:** Speaking: says, 'great choice! let's dive into nature.'.
+## Panel 4
+- **Assistant:** Quietly assisting: ** todo: fill by model.

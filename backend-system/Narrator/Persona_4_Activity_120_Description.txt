@@ -1,0 +1,5 @@
+{
+  "User Name": "Hong",
+  "Activity Description": "Hong transitions from movie night to bedtime by turning off the TV and walking into the bathroom. He begins his evening hygiene routine, brushing his teeth and washing his face, feeling relaxed and ready for sleep.",
+  "Smart Assistant Interaction": "PlaceHolderA"
+}

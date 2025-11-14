@@ -1,0 +1,28 @@
+# Persona Features
+- Warm demeanor
+- Casual button-up shirt
+- Whistle around neck
+- Open-handed gestures
+- Leaning forward when engaged
+- Family game night setups
+- Friendly smile
+- Comfortable khaki pants
+- Gardening gloves in pocket
+
+# Activity Narration (Overall)
+- Cozy office setting
+- Early afternoon light
+- Focused yet hopeful atmosphere
+- User preparing for presentation
+- Assistant providing supportive presence
+- Progression from anxiety to
+
+# Activity Narration (Per Panel)
+## Panel 1
+- **Assistant:** Quietly assisting: ** todo: fill by model.
+## Panel 2
+- **Assistant:** Quietly assisting: ** todo: fill by model.
+## Panel 3
+- **Assistant:** Speaking: speaks: 'youve got this! just take a deep breath.'.
+## Panel 4
+- **Assistant:** Quietly assisting: ** todo: fill by model.

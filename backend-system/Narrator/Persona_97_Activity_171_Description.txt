@@ -1,0 +1,5 @@
+{
+  "User Name": "Ciara",
+  "Activity Description": "Ciara is walking towards her parked car in a calm morning atmosphere, ready for a grocery run. She adjusts her rearview mirror after getting inside the car, preparing for a quick drive to the store. With a smile, she enjoys listening to a podcast while driving, feeling accomplished as she arrives at the supermarket.",
+  "Smart Assistant Interaction": "PlaceHolderA"
+}

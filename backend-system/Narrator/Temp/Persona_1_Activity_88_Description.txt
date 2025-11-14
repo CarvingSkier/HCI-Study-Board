@@ -1,0 +1,29 @@
+# Persona Features
+- Warm smile
+- Casual button-up shirt
+- Leaning forward
+- Whistle around neck
+- Sturdy sneakers
+- Family photos nearby
+- Engaging gestures
+- Earthy color tones
+- Organized workspace
+
+# Activity Narration (Overall)
+- Cozy living room
+- Late afternoon light
+- Calm and relaxed atmosphere
+- User exploring weekend plans
+- Assistant providing support
+- Progression towards decision
+- Shared moments of joy
+
+# Activity Narration (Per Panel)
+## Panel 1
+- **Assistant:** Quietly assisting: ** todo: fill by model.
+## Panel 2
+- **Assistant:** Quietly assisting: ** todo: fill by model.
+## Panel 3
+- **Assistant:** Speaking: speaks: 'what about dinner at that new italian place?'.
+## Panel 4
+- **Assistant:** Quietly assisting: ** todo: fill by model.

@@ -1,0 +1,25 @@
+# Persona Features
+- Nurturing guide
+- Friendly smile
+- Casual polo shirt
+- Comfortable sneakers
+- Leaning forward
+- Organizing game pieces
+- Warm earth tones
+- Soft lighting
+
+# Activity Narration (Overall)
+- Quiet suburban neighborhood
+- Early morning sunlight
+- Calm and relaxed atmosphere
+- Progression of daily routine
+
+# Activity Narration (Per Panel)
+## Panel 1
+- **Assistant:** Quietly assisting: ** todo: fill by model.
+## Panel 2
+- **Assistant:** Quietly assisting: ** todo: fill by model.
+## Panel 3
+- **Assistant:** Speaking: says, 'all set for a great drive!'.
+## Panel 4
+- **Assistant:** Quietly assisting: ** todo: fill by model.

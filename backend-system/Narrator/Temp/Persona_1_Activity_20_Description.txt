@@ -1,0 +1,31 @@
+# Persona Features
+- Warm demeanor
+- Comfortable sneakers
+- Clipboard in hand
+- Animated gestures
+- Engaging with children
+- Smiling warmly
+- Organized presence
+- Flexible spirit
+- Casual polo shirt
+- Gardening gloves
+
+# Activity Narration (Overall)
+- Cozy kitchen setting
+- Morning sunlight streaming
+- Calm and focused atmosphere
+- Progression of daily routine
+- User preparing to leave
+- Assistant providing gentle reminders
+- Collaborative energy
+- Warm lighting brightening
+
+# Activity Narration (Per Panel)
+## Panel 1
+- **Assistant:** Quietly assisting: ** todo: fill by model.
+## Panel 2
+- **Assistant:** Quietly assisting: ** todo: fill by model.
+## Panel 3
+- **Assistant:** Speaking: don’t forget your keys!
+## Panel 4
+- **Assistant:** Quietly assisting: ** todo: fill by model.

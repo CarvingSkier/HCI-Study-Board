@@ -1,0 +1,29 @@
+# Persona Features
+- Warm presence
+- Casual attire
+- Whistle around neck
+- Leaning forward
+- Enthusiastic gestures
+- Organized workspace
+- Earth tones with color
+- Family-oriented
+- Playful demeanor
+
+# Activity Narration (Overall)
+- Late afternoon setting
+- Calm and focused atmosphere
+- Warm soft lighting
+- Organized desk environment
+- Progression of tasks
+- Collaborative interaction
+- Friendly reminders
+
+# Activity Narration (Per Panel)
+## Panel 1
+- **Assistant:** Quietly assisting: ** todo: fill by model.
+## Panel 2
+- **Assistant:** Quietly assisting: ** todo: fill by model.
+## Panel 3
+- **Assistant:** Speaking: says, 'don't forget to save your documents!'.
+## Panel 4
+- **Assistant:** Quietly assisting: ** todo: fill by model.

@@ -1,0 +1,5 @@
+{
+  "User Name": "Barbara",
+  "Activity Description": "Barbara enters a cozy café to meet her friend, sharing warm hugs and laughter. They sit down together, discussing the menu choices over coffee, enjoying a delightful late morning atmosphere filled with sunlight.",
+  "Smart Assistant Interaction": "PlaceHolderA"
+}

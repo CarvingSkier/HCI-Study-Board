@@ -1,0 +1,36 @@
+{
+  "section": "Panel Design Style",
+  "panel_count": 4,
+
+  "camera_angles": "Alternate between medium, close-up, and over-shoulder shots for natural storytelling.",
+  "emotional_focus": "Quiet confidence, friendly cooperation, subtle humor, and reflective calm.",
+  "collaboration_guidance": "The user and assistant appear as conversational equals; gestures and eye-lines should suggest natural interaction.",
+  "lighting_progression": "Light warms slightly across panels to convey progress or realization.",
+
+  "text_elements": {
+    "scene_description_required": true,
+    "character_narration_required": false,
+    "assistant_presence_required": true,
+    "assistant_mode_per_panel": "speaking_or_waiting",
+    "speech_bubble_rules": "Speech bubbles are the ONLY visible text allowed in the artwork. Dialogue must appear only inside speech bubbles."
+  },
+
+  "interaction_focus": "Each panel must include the assistant hovering in air, either communicating or observing supportively.",
+  "emotional_arc": "Focus → interaction → shared moment → closure.",
+
+  "text_layout_rules": {
+    "speech_bubbles_only": "Do NOT render narration, captions, labels, or scene descriptions as visible text. Only text inside speech bubbles is allowed.",
+    "no_background_text": "Do NOT draw text on walls, furniture, windows, or in the background.",
+    "no_bottom_text": "Do NOT render any text below the panel. Do NOT include subtitles, caption bars, or repeated dialogue under the panel.",
+    "in_panel_only": "All visible text must be inside the speech bubble inside the panel."
+  },
+
+  "negative_cues": [
+    "bottom text that repeats the bubble dialogue",
+    "subtitle-style text under the panel",
+    "floating narration sentences in the background",
+    "scene description written on walls or objects",
+    "labels or words drawn as part of the environment",
+    "any visible text that is not inside a speech bubble"
+  ]
+}

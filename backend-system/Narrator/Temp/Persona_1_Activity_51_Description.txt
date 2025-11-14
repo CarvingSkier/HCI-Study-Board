@@ -1,0 +1,29 @@
+# Persona Features
+- Warm demeanor
+- Casual attire
+- Enthusiastic gestures
+- Grounded posture
+- Family-oriented motifs
+- Approachable smile
+- Engaging eye contact
+- Colorful props
+- Inviting presence
+
+# Activity Narration (Overall)
+- Office break room
+- Mid-morning light
+- Cozy atmosphere
+- User taking a break
+- Interaction with coworker
+- Reflective moment
+- Assistant supporting user
+
+# Activity Narration (Per Panel)
+## Panel 1
+- **Assistant:** Quietly assisting: ** todo: fill by model.
+## Panel 2
+- **Assistant:** Quietly assisting: ** todo: fill by model.
+## Panel 3
+- **Assistant:** Speaking: says, 'enjoy your coffee and the chat!'.
+## Panel 4
+- **Assistant:** Quietly assisting: ** todo: fill by model.

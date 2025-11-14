@@ -1,0 +1,30 @@
+# Persona Features
+- Dedicated family man
+- Warm smile
+- Sporty attire
+- Whistle around neck
+- Engaging gestures
+- Leaning forward
+- Clapping hands
+- Comfortable sneakers
+- Eye-to-eye communication
+- Vibrant energy
+
+# Activity Narration (Overall)
+- Cozy kitchen setting
+- Early evening warmth
+- Inviting atmosphere
+- Cooking progression
+- Collaborative cooking
+- Mindful meal preparation
+- Satisfying closure
+
+# Activity Narration (Per Panel)
+## Panel 1
+- **Assistant:** Quietly assisting: ** todo: fill by model.
+## Panel 2
+- **Assistant:** Quietly assisting: ** todo: fill by model.
+## Panel 3
+- **Assistant:** Speaking: speaks: 'remember to keep stirring for even cooking!'.
+## Panel 4
+- **Assistant:** Quietly assisting: ** todo: fill by model.

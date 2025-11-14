@@ -1,0 +1,28 @@
+# Persona Features
+- Warm smile
+- Comfortable polo shirt
+- Engaging posture
+- Whistle around neck
+- Colorful board games
+- Family photos
+- Leaning forward
+- Cheerful demeanor
+- Stylish sneakers
+
+# Activity Narration (Overall)
+- Cozy kitchen setting
+- Morning sunlight streaming
+- Calm and inviting atmosphere
+- Progression of morning routine
+- User and assistant collaboration
+- Warm lighting enhances mood
+
+# Activity Narration (Per Panel)
+## Panel 1
+- **Assistant:** Quietly assisting: ** todo: fill by model.
+## Panel 2
+- **Assistant:** Quietly assisting: ** todo: fill by model.
+## Panel 3
+- **Assistant:** Speaking: bubbles up: 'would you like a news update?'.
+## Panel 4
+- **Assistant:** Quietly assisting: ** todo: fill by model.

@@ -1,0 +1,23 @@
+# Persona Features
+- Confident smile
+- Casual polo shirt
+- Well-fitted jeans
+- Engaging gestures
+- Vibrant sun hat
+- Family-oriented demeanor
+
+# Activity Narration (Overall)
+- Suburban neighborhood
+- Early morning calm
+- Soft sunlight brightening
+- User preparing for the
+
+# Activity Narration (Per Panel)
+## Panel 1
+- **Assistant:** Quietly assisting: ** todo: fill by model.
+## Panel 2
+- **Assistant:** Quietly assisting: ** todo: fill by model.
+## Panel 3
+- **Assistant:** Speaking: says, 'traffic looks clear this morning!'.
+## Panel 4
+- **Assistant:** Quietly assisting: ** todo: fill by model.

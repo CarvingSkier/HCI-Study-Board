@@ -1,0 +1,28 @@
+# Persona Features
+- Warm demeanor
+- Casual attire
+- Open posture
+- Relaxed smile
+- Engaging gestures
+- Organized energy
+- Family-oriented
+- Cheerful vibe
+- Sports memorabilia
+
+# Activity Narration (Overall)
+- Evening setting
+- Calm atmosphere
+- Routine journey
+- Soft artificial lighting
+- User-assistant collaboration
+- Progression to relaxation
+
+# Activity Narration (Per Panel)
+## Panel 1
+- **Assistant:** Quietly assisting: ** todo: fill by model.
+## Panel 2
+- **Assistant:** Quietly assisting: ** todo: fill by model.
+## Panel 3
+- **Assistant:** Speaking: speaking from the dashboard, 'how about a new episode next time?'.
+## Panel 4
+- **Assistant:** Quietly assisting: ** todo: fill by model.

@@ -1,0 +1,30 @@
+# Persona Features
+- Confident smile
+- Comfortable polo shirt
+- Whistle around neck
+- Leaning forward
+- Engaging gestures
+- Earthy tones
+- Stylish sneakers
+- Family-oriented vibe
+- Casual yet professional
+
+# Activity Narration (Overall)
+- Office desk setting
+- Midday sunlight
+- Calm and cozy atmosphere
+- Lunch break progression
+- User-focused interaction
+- Collaborative moment
+- Clean workspace
+- Reflective mood
+
+# Activity Narration (Per Panel)
+## Panel 1
+- **Assistant:** Quietly assisting: ** todo: fill by model.
+## Panel 2
+- **Assistant:** Quietly assisting: ** todo: fill by model.
+## Panel 3
+- **Assistant:** Quietly assisting: ** todo: fill by model.
+## Panel 4
+- **Assistant:** Speaking: softly glows, saying: ready when you are!
