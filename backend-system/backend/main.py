@@ -7,14 +7,24 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from dotenv import load_dotenv
 
-# 加载 .env
+# ================= 环境变量 & DB 配置 =================
+
 load_dotenv()
 
-PGHOST = os.getenv("PGHOST", "localhost")
-PGPORT = int(os.getenv("PGPORT", "5432"))
-PGUSER = os.getenv("PGUSER", "postgres")
-PGPASSWORD = os.getenv("PGPASSWORD", "password")
-PGDATABASE = os.getenv("PGDATABASE", "hci_study")
+# 优先使用 .env 里的完整 DATABASE_URL
+DATABASE_URL = os.getenv("DATABASE_URL")
+
+if DATABASE_URL:
+    USE_DSN = True
+else:
+    USE_DSN = False
+    # 如果没有 DATABASE_URL，就用拆开的 PG* 变量（并给出合理默认值）
+    PGHOST = os.getenv("PGHOST", "localhost")
+    PGPORT = int(os.getenv("PGPORT", "5432"))
+    PGUSER = os.getenv("PGUSER", "hci_user")          # <== 默认改成 hci_user
+    PGPASSWORD = os.getenv("PGPASSWORD", "hci_pass_2024")
+    PGDATABASE = os.getenv("PGDATABASE", "hci_study")
+
 API_PORT = int(os.getenv("API_PORT", "4000"))
 
 app = FastAPI(title="HCI Study Backend")
@@ -23,6 +33,8 @@ app = FastAPI(title="HCI Study Backend")
 origins = [
     "http://localhost:5173",
     "http://127.0.0.1:5173",
+    "http://localhost:5174",
+    "http://127.0.0.1:5174",
 ]
 
 app.add_middleware(
@@ -33,7 +45,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# ========= Pydantic 模型 =========
+# ================= Pydantic 模型 =================
 
 class UserIn(BaseModel):
     age_range: Optional[str] = None
@@ -60,20 +72,30 @@ class SelectionOut(BaseModel):
     selection: str
 
 
-# ========= PostgreSQL 连接池 =========
+# ================= PostgreSQL 连接池 =================
 
 @app.on_event("startup")
 async def startup():
-    app.state.pool = await asyncpg.create_pool(
-        host=PGHOST,
-        port=PGPORT,
-        user=PGUSER,
-        password=PGPASSWORD,
-        database=PGDATABASE,
-        min_size=1,
-        max_size=5,
-    )
-    print("Connected to PostgreSQL")
+    if USE_DSN:
+        # 用 DATABASE_URL 这种完整 DSN 连接
+        app.state.pool = await asyncpg.create_pool(
+            dsn=DATABASE_URL,
+            min_size=1,
+            max_size=5,
+        )
+        print(f"Connected to PostgreSQL via DSN: {DATABASE_URL}")
+    else:
+        # 用拆开的参数连接
+        app.state.pool = await asyncpg.create_pool(
+            host=PGHOST,
+            port=PGPORT,
+            user=PGUSER,
+            password=PGPASSWORD,
+            database=PGDATABASE,
+            min_size=1,
+            max_size=5,
+        )
+        print(f"Connected to PostgreSQL as {PGUSER}@{PGHOST}:{PGPORT}/{PGDATABASE}")
 
 
 @app.on_event("shutdown")
@@ -87,14 +109,14 @@ async def get_pool() -> asyncpg.pool.Pool:
     return app.state.pool
 
 
-# ========= 基础健康检查 =========
+# ================= 健康检查 =================
 
 @app.get("/api/health")
 async def health_check():
     return {"ok": True}
 
 
-# ========= Users =========
+# ================= Users APIs =================
 
 @app.get("/api/users", response_model=List[UserOut])
 async def list_users():
@@ -218,7 +240,7 @@ async def update_user(user_id: int, payload: UserIn):
     )
 
 
-# ========= Selections =========
+# ================= Selections APIs =================
 
 @app.get("/api/users/{user_id}/selections", response_model=List[SelectionOut])
 async def list_user_selections(user_id: int):
