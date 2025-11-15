@@ -71,7 +71,7 @@ const SectionBox: React.FC<SectionBoxProps> = ({ title, children, emphasized }) 
   );
 };
 
-/** 顶部提示 */
+/** 顶部提示（保留，以后用得上） */
 function flash(text: string) {
   const el = document.createElement("div");
   el.className = "toast";
@@ -133,6 +133,9 @@ export default function App() {
   // ------- Phase 切换 -------
   const [phase, setPhase] = useState<Phase>("I");
 
+  // ------- TXT 输出文件夹句柄 -------
+  const [txtDirHandle, setTxtDirHandle] = useState<FileSystemDirectoryHandle | null>(null);
+
   // ------- User ID & User Info 表单 -------
   const [userId, setUserId] = useState<string>("");
   const [showUserForm, setShowUserForm] = useState(false);
@@ -170,7 +173,7 @@ export default function App() {
   const [imageFilesII, setImageFilesII] = useState<File[]>([]);
   const [narratorFilesII, setNarratorFilesII] = useState<File[]>([]);
 
-  // File System Access API 目录句柄
+  // File System Access API 目录句柄（images / narrator）
   const [imgHandleI, setImgHandleI] = useState<FileSystemDirectoryHandle | null>(null);
   const [narrHandleI, setNarrHandleI] = useState<FileSystemDirectoryHandle | null>(null);
   const [imgHandleII, setImgHandleII] = useState<FileSystemDirectoryHandle | null>(null);
@@ -203,6 +206,50 @@ export default function App() {
   // 拖动中间分隔
   const [splitPct, setSplitPct] = useState<number>(58);
   const draggingRef = useRef(false);
+
+  // ============== 通用：保存 txt 文件 ==============
+  async function saveTextFile(filename: string, contents: string) {
+    if (txtDirHandle) {
+      try {
+        // @ts-ignore
+        const fileHandle = await txtDirHandle.getFileHandle(filename, { create: true });
+        // @ts-ignore
+        const writable = await fileHandle.createWritable();
+        await writable.write(contents);
+        await writable.close();
+        return;
+      } catch (e) {
+        console.error("Failed to save to chosen folder, fallback to download", e);
+      }
+    }
+
+    // fallback: 浏览器下载
+    const blob = new Blob([contents], {
+      type: "text/plain;charset=utf-8"
+    });
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(() => {
+      URL.revokeObjectURL(a.href);
+      document.body.removeChild(a);
+    }, 0);
+  }
+
+  // 选择 TXT 文件夹按钮
+  async function chooseTxtDirFS() {
+    // @ts-ignore
+    if (!window.showDirectoryPicker) {
+      alert("Browser does not support choosing a folder. TXT files will be downloaded instead.");
+      return;
+    }
+    // @ts-ignore
+    const handle = await window.showDirectoryPicker({ id: "txt-output-dir" });
+    setTxtDirHandle(handle);
+    alert("TXT output folder set successfully.");
+  }
 
   // ============== 构建索引（当前 imageFiles + narratorFiles） ==============
   useEffect(() => {
@@ -367,10 +414,10 @@ export default function App() {
     setShowUserForm(true);
   }
 
-  function onSaveUserInfo() {
+  async function onSaveUserInfo() {
     const u = userForm;
     if (!u.id) {
-      flash("Please enter User ID");
+      alert("Please enter User ID");
       return;
     }
     setUserId(u.id);
@@ -390,45 +437,51 @@ export default function App() {
       `Comfort with technology (1–7): ${u.techComfort || "<empty>"}`
     );
 
-    const blob = new Blob([lines.join("\n")], {
-      type: "text/plain;charset=utf-8"
-    });
-    const a = document.createElement("a");
-    a.href = URL.createObjectURL(blob);
-    a.download = `User_${u.id}_Info.txt`;
-    document.body.appendChild(a);
-    a.click();
-    setTimeout(() => {
-      URL.revokeObjectURL(a.href);
-      document.body.removeChild(a);
-    }, 0);
+    await saveTextFile(`User_${u.id}_Info.txt`, lines.join("\n"));
 
-    flash("User info saved");
+    alert("User info saved successfully.");
     setShowUserForm(false);
   }
 
-  // ============== Phase I：A/B 选择记录 + 导出 ==============
-  function recordChoiceForCurrentImage(choice: Choice) {
+  // ============== Phase I：A/B 选择记录 + 写 txt + 弹窗 + 可导出汇总 ==============
+  async function recordChoiceForCurrentImage(choice: Choice) {
     if (!userId) {
-      flash("Please enter User ID first");
+      alert("Please enter User ID first");
       return;
     }
     if (!currentImg) {
-      flash("No image selected");
+      alert("No image selected");
       return;
     }
+
     setVariant(choice);
-    setPhaseIResults(prev => [...prev, { image: currentImg.name, choice }]);
-    flash(`Saved: ${currentImg.name} -> ${choice}`);
+
+    // 本地记录到数组（用于 Export Phase I 汇总）
+    const updated = [...phaseIResults, { image: currentImg.name, choice }];
+    setPhaseIResults(updated);
+
+    const lines: string[] = [];
+    lines.push(`User ID: ${userId}`);
+    lines.push(`Image Name: ${currentImg.name}`);
+    lines.push(`Result: ${choice}`);
+    lines.push(`Saved At: ${new Date().toISOString()}`);
+
+    const safeName = currentImg.name.replace(/[^\w.-]+/g, "_");
+    await saveTextFile(
+      `Selection_User_${userId}_${safeName}_${choice}.txt`,
+      lines.join("\n")
+    );
+
+    alert("Selection saved successfully.");
   }
 
-  function exportPhaseIResults() {
+  async function exportPhaseIResults() {
     if (!userId) {
-      flash("Please enter User ID first");
+      alert("Please enter User ID first");
       return;
     }
     if (!phaseIResults.length) {
-      flash("No selections yet");
+      alert("No selections yet");
       return;
     }
 
@@ -440,33 +493,41 @@ export default function App() {
       lines.push(`${r.image}, ${r.choice}`);
     }
 
-    const blob = new Blob([lines.join("\n")], {
-      type: "text/plain;charset=utf-8"
-    });
-    const a = document.createElement("a");
-    a.href = URL.createObjectURL(blob);
-    a.download = `Selections_User_${userId}.txt`;
-    document.body.appendChild(a);
-    a.click();
-    setTimeout(() => {
-      URL.revokeObjectURL(a.href);
-      document.body.removeChild(a);
-    }, 0);
+    await saveTextFile(
+      `Selections_User_${userId}.txt`,
+      lines.join("\n")
+    );
 
-    flash("Exported Phase I selections");
+    alert("Exported Phase I selections.");
+  }
+
+  // ============== Phase I：Next Image ==============
+  function goNextImage() {
+    if (!currentImg) {
+      alert("No image selected");
+      return;
+    }
+    const idx = filenameOptions.findIndex(r => r.key === currentImg.key);
+    if (idx >= 0 && idx + 1 < filenameOptions.length) {
+      const nextRec = filenameOptions[idx + 1];
+      selectByKey(nextRec.key);
+    } else {
+      alert("Already at last image.");
+    }
   }
 
   // ============== Phase II：保存 Interaction ==============
-  function onSaveInteraction() {
+  async function onSaveInteraction() {
     if (!userId) {
-      flash("Please enter User ID first");
+      alert("Please enter User ID first");
       return;
     }
     if (!currentImg) {
-      flash("No image selected");
+      alert("No image selected");
       return;
     }
 
+    const safeName = currentImg.name.replace(/[^\w.-]+/g, "_");
     const contents = `User ID: ${userId}
 Image Name: ${currentImg.name}
 
@@ -474,27 +535,18 @@ Interaction:
 ${interactionText || "<empty>"}
 `;
 
-    const blob = new Blob([contents], {
-      type: "text/plain;charset=utf-8"
-    });
-    const a = document.createElement("a");
-    a.href = URL.createObjectURL(blob);
-    const safeName = currentImg.name.replace(/[^\w.-]+/g, "_");
-    a.download = `Interaction_User_${userId}_${safeName}.txt`;
-    document.body.appendChild(a);
-    a.click();
-    setTimeout(() => {
-      URL.revokeObjectURL(a.href);
-      document.body.removeChild(a);
-    }, 0);
+    await saveTextFile(
+      `Interaction_User_${userId}_${safeName}.txt`,
+      contents
+    );
 
-    flash("Interaction saved");
+    alert("Interaction saved successfully.");
   }
 
   // ============== Survey 保存 ==============
-  function onSaveSurvey() {
+  async function onSaveSurvey() {
     if (!userId) {
-      flash("Please enter User ID first");
+      alert("Please enter User ID first");
       return;
     }
 
@@ -515,20 +567,12 @@ ${interactionText || "<empty>"}
       `Q5 (What features or behaviors would make a self-improving assistant more useful and trustworthy / Satisfaction): ${surveyQ5}`
     );
 
-    const blob = new Blob([lines.join("\n")], {
-      type: "text/plain;charset=utf-8"
-    });
-    const a = document.createElement("a");
-    a.href = URL.createObjectURL(blob);
-    a.download = `Survey_User_${userId}.txt`;
-    document.body.appendChild(a);
-    a.click();
-    setTimeout(() => {
-      URL.revokeObjectURL(a.href);
-      document.body.removeChild(a);
-    }, 0);
+    await saveTextFile(
+      `Survey_User_${userId}.txt`,
+      lines.join("\n")
+    );
 
-    flash("Survey saved");
+    alert("Survey saved successfully.");
     setShowSurvey(false);
   }
 
@@ -799,6 +843,15 @@ ${interactionText || "<empty>"}
             Phase II
           </PhaseBtn>
 
+          {/* TXT 输出文件夹 */}
+          <button
+            className="btn btn-hollow"
+            style={{ fontSize: 35 }}
+            onClick={chooseTxtDirFS}
+          >
+            Set TXT Folder
+          </button>
+
           <div className="spacer" />
 
           {/* Load 按钮：分别给 I / II */}
@@ -889,7 +942,7 @@ ${interactionText || "<empty>"}
 
       {/* 中部内容：根据是否显示 User Form / Survey 决定内容 */}
       {showUserForm ? (
-        // ========== 用户信息独立页面 ==========
+        // ========== 用户信息独立页面（竖排） ==========
         <div
           style={{
             flex: 1,
@@ -902,7 +955,7 @@ ${interactionText || "<empty>"}
           <div
             style={{
               width: "100%",
-              maxWidth: 960,
+              maxWidth: 900,
               height: "100%",
               maxHeight: "100%"
             }}
@@ -910,14 +963,15 @@ ${interactionText || "<empty>"}
             <SectionBox title={`User Information Record`}>
               <div
                 style={{
-                  display: "grid",
-                  gridTemplateColumns: "1fr 1fr",
-                  gap: 8,
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: 18,
                   fontSize: 35
                 }}
               >
-                <div>
-                  <div style={{ marginBottom: 4 }}>User ID</div>
+                {/* User ID */}
+                <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+                  <div>User ID</div>
                   <input
                     className="input"
                     style={{ width: "100%", padding: "6px 8px", fontSize: 35 }}
@@ -929,8 +983,11 @@ ${interactionText || "<empty>"}
                       }))
                     }
                   />
+                </div>
 
-                  <div style={{ marginTop: 8, marginBottom: 4 }}>Age</div>
+                {/* Age */}
+                <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+                  <div>Age</div>
                   <select
                     className="select dark"
                     style={{ width: "100%", minWidth: 0, fontSize: 35 }}
@@ -946,8 +1003,11 @@ ${interactionText || "<empty>"}
                     <option value="45–54">45–54</option>
                     <option value="55–60">55–60</option>
                   </select>
+                </div>
 
-                  <div style={{ marginTop: 8, marginBottom: 4 }}>Gender</div>
+                {/* Gender */}
+                <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+                  <div>Gender</div>
                   <select
                     className="select dark"
                     style={{ width: "100%", minWidth: 0, fontSize: 35 }}
@@ -966,10 +1026,11 @@ ${interactionText || "<empty>"}
                       Prefer not to answer
                     </option>
                   </select>
+                </div>
 
-                  <div style={{ marginTop: 8, marginBottom: 4 }}>
-                    Education Level
-                  </div>
+                {/* Education */}
+                <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+                  <div>Education Level</div>
                   <select
                     className="select dark"
                     style={{ width: "100%", minWidth: 0, fontSize: 35 }}
@@ -993,10 +1054,9 @@ ${interactionText || "<empty>"}
                   </select>
                 </div>
 
-                <div>
-                  <div style={{ marginBottom: 4 }}>
-                    Occupation / Field of Work or Study
-                  </div>
+                {/* Occupation */}
+                <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+                  <div>Occupation / Field of Work or Study</div>
                   <input
                     className="input"
                     style={{
@@ -1012,10 +1072,11 @@ ${interactionText || "<empty>"}
                       }))
                     }
                   />
+                </div>
 
-                  <div style={{ marginTop: 8, marginBottom: 4 }}>
-                    Experience with Smart Assistants
-                  </div>
+                {/* Experience with Smart Assistants */}
+                <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+                  <div>Experience with Smart Assistants</div>
                   <select
                     className="select dark"
                     style={{ width: "100%", minWidth: 0, fontSize: 35 }}
@@ -1033,8 +1094,11 @@ ${interactionText || "<empty>"}
                     <option value="Regular user">Regular user</option>
                     <option value="Daily user">Daily user</option>
                   </select>
+                </div>
 
-                  <div style={{ marginTop: 8, marginBottom: 4 }}>
+                {/* Comfort with technology */}
+                <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+                  <div>
                     Comfort with technology (1 = Not comfortable, 7 = Very
                     comfortable)
                   </div>
@@ -1042,7 +1106,7 @@ ${interactionText || "<empty>"}
                     style={{
                       display: "flex",
                       alignItems: "center",
-                      gap: 8
+                      gap: 12
                     }}
                   >
                     <input
@@ -1059,7 +1123,7 @@ ${interactionText || "<empty>"}
                     />
                     <div
                       style={{
-                        width: 48,
+                        width: 60,
                         textAlign: "center",
                         fontSize: 35
                       }}
@@ -1072,10 +1136,10 @@ ${interactionText || "<empty>"}
 
               <div
                 style={{
-                  marginTop: 16,
+                  marginTop: 24,
                   display: "flex",
                   justifyContent: "flex-end",
-                  gap: 8
+                  gap: 16
                 }}
               >
                 <button
@@ -1256,7 +1320,20 @@ ${interactionText || "<empty>"}
                     }}
                     onClick={() => recordChoiceForCurrentImage(variant)}
                   >
-                    Confirm Choice
+                    Confirm Selection
+                  </button>
+
+                  <button
+                    className="btn btn-hollow"
+                    style={{
+                      marginLeft: 16,
+                      fontSize: 35,
+                      fontWeight: 500,
+                      padding: "10px 24px"
+                    }}
+                    onClick={goNextImage}
+                  >
+                    Next Image
                   </button>
                 </div>
 
