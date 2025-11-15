@@ -3,14 +3,15 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 /** 与 PySide 完全一致的命名/匹配规则 */
 const IMAGE_RE = /^Persona_(?<pid>\d+)_Activity_(?<aid>\d+)\.(?:jpg|jpeg|png)$/i;
 const NARR_RE  = /^Persona_(?<pid>\d+)_Activity_(?<aid>\d+)_Description\.(?:txt|md)$/i;
-const API_BASE = "http://localhost:4000/api";
 
 type Key = `${number}-${number}`;
 type ImgRec  = { key: Key; pid: number; aid: number; file: File; url: string; name: string };
 type NarrRec = { key: Key; pid: number; aid: number; file: File; name: string };
 
-type UserInfo = {
-  id: number;
+type Phase = "I" | "II";
+
+type UserForm = {
+  id: string;
   age: string;
   gender: string;
   education: string;
@@ -19,1613 +20,9 @@ type UserInfo = {
   techComfort: string; // "1"–"7"
 };
 
-type ApiUserRow = {
-  id: number;
-  age_range: string | null;
-  gender: string | null;
-  education_level: string | null;
-  occupation: string | null;
-  smart_assistant_exp: string | null;
-  tech_comfort: number | null;
-};
-
-type ApiSelectionRow = {
-  user_id: number;
-  image_id: string;
-  selection: "A" | "B";
-};
-
 type Choice = "A" | "B";
-type Phase = "I" | "II";
 
-export default function App() {
-  // 目录输入（隐藏的 <input type="file" webkitdirectory>）
-  const imgDirRef  = useRef<HTMLInputElement>(null);
-  const narrDirRef = useRef<HTMLInputElement>(null);
-
-  // ============== Phase I / II 独立文件列表 ==============
-  const [imageFilesI, setImageFilesI] = useState<File[]>([]);
-  const [imageFilesII, setImageFilesII] = useState<File[]>([]);
-  const [narratorFilesI, setNarratorFilesI] = useState<File[]>([]);
-  const [narratorFilesII, setNarratorFilesII] = useState<File[]>([]);
-
-  // Phase I / II 独立索引映射
-  const [imagesI, setImagesI] = useState<Record<Key, ImgRec>>({});
-  const [imagesII, setImagesII] = useState<Record<Key, ImgRec>>({});
-  const [narrsI, setNarrsI] = useState<Record<Key, NarrRec>>({});
-  const [narrsII, setNarrsII] = useState<Record<Key, NarrRec>>({});
-  const [byPersonaI, setByPersonaI] = useState<Record<number, number[]>>({});
-  const [byPersonaII, setByPersonaII] = useState<Record<number, number[]>>({});
-
-  // 当前 Phase
-  const [phase, setPhase] = useState<Phase>("I");
-
-  // 当前选中的（对当前 Phase 生效）
-  const [selectedKey, setSelectedKey] = useState<Key | null>(null);
-  const [selectedPid, setSelectedPid] = useState<number | null>(null);
-  const [selectedAid, setSelectedAid] = useState<number | null>(null);
-
-  // User 相关：从数据库加载 + 下拉选择
-  const [userInfos, setUserInfos] = useState<Record<number, UserInfo>>({});
-  const [nextUserId, setNextUserId] = useState<number>(1);
-  const [userId, setUserId] = useState<string>("");
-  const [showUserForm, setShowUserForm] = useState<boolean>(false);
-
-  // Storyboard：当前高亮 A/B + 每个 user 对每张图的选择（仅 Phase I 用）
-  const [variant, setVariant] = useState<Choice>("A");
-  const [choices, setChoices] = useState<Record<string, Choice>>({}); // key = `${userId}::${imgName}`
-
-  // Narrator JSON 中解析出来的字段
-  const [userNameFromNarr, setUserNameFromNarr] = useState<string>("");  // "User Name"
-  const [activityDesc, setActivityDesc]       = useState<string>("");    // "Activity Description"
-  const [smartTextA, setSmartTextA]           = useState<string>("");    // "Smart Assistant Interaction"
-
-  // Phase II 中，右下 Interaction 输入框
-  const [interactionText, setInteractionText] = useState<string>("");
-
-  // Survey 弹窗
-  const [showSurvey, setShowSurvey] = useState<boolean>(false);
-  const [surveyQ1, setSurveyQ1] = useState<string>(""); // improved/worsened
-  const [surveyQ2, setSurveyQ2] = useState<string>(""); // adapt preferences
-  const [surveyQ3, setSurveyQ3] = useState<string>(""); // trust
-  const [surveyQ4, setSurveyQ4] = useState<string>(""); // comfort / satisfaction / willingness
-  const [surveyQ5, setSurveyQ5] = useState<string>(""); // overall satisfaction
-
-  // 中间 splitter（可拖动）
-  const [splitPct, setSplitPct] = useState<number>(58);
-  const draggingRef = useRef(false);
-
-  // 当前选中 user 的信息
-  const currentUserIdNum = userId ? Number(userId) : null;
-  const currentUserInfo: UserInfo | undefined =
-    currentUserIdNum != null ? userInfos[currentUserIdNum] : undefined;
-
-  // 当前 Phase 对应的映射（UI / 逻辑统一用这些）
-  const images     = phase === "I" ? imagesI     : imagesII;
-  const narrs      = phase === "I" ? narrsI      : narrsII;
-  const byPersona  = phase === "I" ? byPersonaI  : byPersonaII;
-
-  // ============== 启动时从后端加载已有用户 ==============
-  useEffect(() => {
-    (async () => {
-      try {
-        const resp = await fetch(`${API_BASE}/users`);
-        if (!resp.ok) {
-          console.error("Failed to load users:", resp.status);
-          return;
-        }
-        const rows: ApiUserRow[] = await resp.json();
-        const map: Record<number, UserInfo> = {};
-        let maxId = 0;
-        for (const r of rows) {
-          const id = r.id;
-          if (id > maxId) maxId = id;
-          map[id] = {
-            id,
-            age: r.age_range ?? "",
-            gender: r.gender ?? "",
-            education: r.education_level ?? "",
-            occupation: r.occupation ?? "",
-            smartAssistantExp: r.smart_assistant_exp ?? "",
-            techComfort: (r.tech_comfort ?? 4).toString(),
-          };
-        }
-        setUserInfos(map);
-        setNextUserId(maxId + 1);
-      } catch (e) {
-        console.error("Error loading users:", e);
-      }
-    })();
-  }, []);
-
-  // ============== 公共：根据文件构建索引 ==============
-  function buildIndex(
-    imageFiles: File[],
-    narratorFiles: File[]
-  ): { imgMap: Record<Key, ImgRec>; narrMap: Record<Key, NarrRec>; perOut: Record<number, number[]>; firstRec: ImgRec | null } {
-    const imgMap: Record<Key, ImgRec> = {};
-    const per: Record<number, Set<number>> = {};
-    for (const f of imageFiles) {
-      const name = f.name.trim();
-      const m = name.match(IMAGE_RE); if (!m?.groups) continue;
-      const pid = parseInt(m.groups.pid, 10);
-      const aid = parseInt(m.groups.aid, 10);
-      const key: Key = `${pid}-${aid}`;
-      imgMap[key] = { key, pid, aid, file: f, url: URL.createObjectURL(f), name };
-      (per[pid] ||= new Set()).add(aid);
-    }
-
-    const narrMap: Record<Key, NarrRec> = {};
-    for (const f of narratorFiles) {
-      const name = f.name.trim();
-      const m = name.match(NARR_RE); if (!m?.groups) continue;
-      const pid = parseInt(m.groups.pid, 10);
-      const aid = parseInt(m.groups.aid, 10);
-      const key: Key = `${pid}-${aid}`;
-      narrMap[key] = { key, pid, aid, file: f, name };
-    }
-
-    const perOut: Record<number, number[]> = {};
-    for (const [pidStr, aids] of Object.entries(per)) {
-      perOut[Number(pidStr)] = Array.from(aids).sort((a,b)=>a-b);
-    }
-
-    const sorted = Object.values(imgMap).sort((a,b)=> a.pid-b.pid || a.aid-b.aid);
-    const firstRec = sorted.length ? sorted[0] : null;
-
-    return { imgMap, narrMap, perOut, firstRec };
-  }
-
-  function applyFirstSelection(first: ImgRec | null) {
-    if (first) {
-      setSelectedKey(first.key);
-      setSelectedPid(first.pid);
-      setSelectedAid(first.aid);
-    } else {
-      setSelectedKey(null);
-      setSelectedPid(null);
-      setSelectedAid(null);
-    }
-  }
-
-  // ============== Phase I 索引 ==============
-  useEffect(() => {
-    const { imgMap, narrMap, perOut, firstRec } = buildIndex(imageFilesI, narratorFilesI);
-    setImagesI(imgMap);
-    setNarrsI(narrMap);
-    setByPersonaI(perOut);
-
-    if (phase === "I") {
-      applyFirstSelection(firstRec);
-    }
-
-    return () => {
-      Object.values(imgMap).forEach(r => URL.revokeObjectURL(r.url));
-    };
-  }, [imageFilesI, narratorFilesI, phase]);
-
-  // ============== Phase II 索引 ==============
-  useEffect(() => {
-    const { imgMap, narrMap, perOut, firstRec } = buildIndex(imageFilesII, narratorFilesII);
-    setImagesII(imgMap);
-    setNarrsII(narrMap);
-    setByPersonaII(perOut);
-
-    if (phase === "II") {
-      applyFirstSelection(firstRec);
-    }
-
-    return () => {
-      Object.values(imgMap).forEach(r => URL.revokeObjectURL(r.url));
-    };
-  }, [imageFilesII, narratorFilesII, phase]);
-
-  // ============== 当选中图片 / Phase 变化时，清空 Phase II 文本 ==============
-  useEffect(() => {
-    setInteractionText("");
-  }, [selectedKey, phase]);
-
-  // ============== 当选中图片变更或 Phase 变化时，读取对应 Narrator JSON ==============
-  useEffect(() => {
-    let cancelled = false;
-
-    (async () => {
-      if (!selectedKey) {
-        if (!cancelled) {
-          setUserNameFromNarr("");
-          setActivityDesc("");
-          setSmartTextA("");
-        }
-        return;
-      }
-
-      const rec = narrs[selectedKey];
-      if (!rec) {
-        if (!cancelled) {
-          setUserNameFromNarr("");
-          setActivityDesc("");
-          setSmartTextA("");
-        }
-        return;
-      }
-
-      try {
-        const raw = await rec.file.text();
-        const data = JSON.parse(raw);
-
-        if (cancelled) return;
-
-        const userName = (data["User Name"] ?? "").toString();
-        const activity = (data["Activity Description"] ?? "").toString();
-        const smart    = (data["Smart Assistant Interaction"] ?? "").toString();
-
-        setUserNameFromNarr(userName);
-        setActivityDesc(activity);
-        setSmartTextA(smart);
-      } catch (err) {
-        if (!cancelled) {
-          setUserNameFromNarr("");
-          setActivityDesc("");
-          setSmartTextA("");
-        }
-      }
-    })();
-
-    return () => { cancelled = true; };
-  }, [selectedKey, narrs, phase]);
-
-  // ============== 当前图片 + 当前 user 的已选 A/B 同步到 variant（仅 Phase I 用） ==============
-  useEffect(() => {
-    if (phase !== "I") return;
-    const img = selectedKey ? images[selectedKey] : null;
-    if (!img || !userId) return;
-    const key = `${userId}::${img.name}`;
-    const c = choices[key];
-    if (c === "A" || c === "B") {
-      setVariant(c);
-    } else {
-      setVariant("A");
-    }
-  }, [phase, selectedKey, images, userId, choices]);
-
-  // ============== 下拉选项 ==============
-  const filenameOptions = useMemo(
-    () => Object.values(images).sort((a,b)=> a.pid-b.pid || a.aid-b.aid),
-    [images]
-  );
-  const personaOptions = useMemo(
-    () => Object.keys(byPersona).map(Number).sort((a,b)=>a-b),
-    [byPersona]
-  );
-  const activityOptions = useMemo(
-    () => (selectedPid==null? [] : (byPersona[selectedPid]||[])),
-    [byPersona, selectedPid]
-  );
-  const userIdOptions = useMemo(
-    () => Object.keys(userInfos).map(Number).sort((a,b)=>a-b),
-    [userInfos]
-  );
-
-  // ============== 选择联动（与 PySide 一致） ==============
-  function selectByKey(key: Key | null) {
-    if (!key) return; const rec = images[key]; if (!rec) return;
-    setSelectedKey(key); setSelectedPid(rec.pid); setSelectedAid(rec.aid);
-  }
-  function onFilenameChange(name: string) {
-    const rec = filenameOptions.find(r=>r.name===name); if (rec) selectByKey(rec.key);
-  }
-  function onPersonaChange(pidStr: string) {
-    const pid = Number(pidStr); setSelectedPid(pid);
-    const aids = byPersona[pid] || [];
-    if (aids.length) {
-      const key: Key = `${pid}-${aids[0]}`;
-      if (images[key]) selectByKey(key);
-    }
-  }
-  function onActivityChange(aidStr: string) {
-    if (selectedPid==null) return;
-    const key: Key = `${selectedPid}-${Number(aidStr)}`;
-    if (images[key]) selectByKey(key);
-  }
-
-  // ============== 选择 User：顺便加载该用户的历史选择（Phase I 用） ==============
-  async function onUserSelect(idStr: string) {
-    setUserId(idStr);
-    const uid = Number(idStr);
-    if (!uid) return;
-
-    try {
-      const resp = await fetch(`${API_BASE}/users/${uid}/selections`);
-      if (!resp.ok) {
-        console.error("Failed to load selections:", resp.status);
-        return;
-      }
-      const rows: ApiSelectionRow[] = await resp.json();
-      setChoices(prev => {
-        const copy = { ...prev };
-        const prefix = `${uid}::`;
-        for (const key of Object.keys(copy)) {
-          if (key.startsWith(prefix)) delete copy[key];
-        }
-        for (const row of rows) {
-          copy[`${uid}::${row.image_id}`] = row.selection === "B" ? "B" : "A";
-        }
-        return copy;
-      });
-    } catch (e) {
-      console.error("Error loading selections:", e);
-    }
-  }
-
-  // ============== User 信息管理 ==============
-  async function createNewUser() {
-    try {
-      const resp = await fetch(`${API_BASE}/users`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          age_range: null,
-          gender: null,
-          education_level: null,
-          occupation: null,
-          smart_assistant_exp: null,
-          tech_comfort: 4
-        })
-      });
-      if (!resp.ok) {
-        console.error("Failed to create user:", resp.status);
-        flash("Failed to create user");
-        return;
-      }
-      const row: ApiUserRow = await resp.json();
-      const id = row.id;
-      const info: UserInfo = {
-        id,
-        age: row.age_range ?? "",
-        gender: row.gender ?? "",
-        education: row.education_level ?? "",
-        occupation: row.occupation ?? "",
-        smartAssistantExp: row.smart_assistant_exp ?? "",
-        techComfort: (row.tech_comfort ?? 4).toString(),
-      };
-      setUserInfos(prev => ({ ...prev, [id]: info }));
-      setUserId(String(id));
-      setShowUserForm(true);
-      setNextUserId(Math.max(nextUserId, id + 1));
-      flash(`Created User ID: ${id}`);
-    } catch (e) {
-      console.error("createNewUser error:", e);
-      flash("Failed to create user");
-    }
-  }
-
-  function openCurrentUserForm() {
-    if (!currentUserIdNum) {
-      flash("Please select a User first");
-      return;
-    }
-    setShowUserForm(true);
-  }
-
-  // 只更新本地 state，真正写库在 Save User 时做
-  function updateUserField<K extends keyof Omit<UserInfo, "id">>(
-    field: K,
-    value: UserInfo[K]
-  ) {
-    if (currentUserIdNum == null) {
-      flash("Please create/select a User first");
-      return;
-    }
-
-    setUserInfos(prev => {
-      const existing = prev[currentUserIdNum] || {
-        id: currentUserIdNum,
-        age: "",
-        gender: "",
-        education: "",
-        occupation: "",
-        smartAssistantExp: "",
-        techComfort: "4"
-      };
-      const newInfo: UserInfo = { ...existing, [field]: value };
-      return {
-        ...prev,
-        [currentUserIdNum]: newInfo
-      };
-    });
-  }
-
-  // Save User：写入数据库 + 导出 txt + 弹 toast
-  async function onSaveUserInfo() {
-    if (currentUserIdNum == null) {
-      flash("No User selected");
-      return;
-    }
-    const info = userInfos[currentUserIdNum];
-    if (!info) {
-      flash("No User info to save");
-      return;
-    }
-
-    try {
-      const resp = await fetch(`${API_BASE}/users/${currentUserIdNum}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          age_range: info.age || null,
-          gender: info.gender || null,
-          education_level: info.education || null,
-          occupation: info.occupation || null,
-          smart_assistant_exp: info.smartAssistantExp || null,
-          tech_comfort: Number(info.techComfort) || 4
-        })
-      });
-
-      if (!resp.ok) {
-        console.error("onSaveUserInfo failed:", resp.status);
-        flash("Failed to save user info to DB");
-        return;
-      }
-    } catch (e) {
-      console.error("onSaveUserInfo error:", e);
-      flash("Failed to save user info to DB");
-      return;
-    }
-
-    const lines: string[] = [];
-    lines.push(`User ID: ${info.id}`);
-    lines.push("");
-    lines.push("Section 1. Basic Demographics");
-    lines.push(`Age: ${info.age || "<empty>"}`);
-    lines.push(`Gender: ${info.gender || "<empty>"}`);
-    lines.push(`Education Level: ${info.education || "<empty>"}`);
-    lines.push(`Occupation / Field of Work or Study: ${info.occupation || "<empty>"}`);
-    lines.push(`Experience with Smart Assistants: ${info.smartAssistantExp || "<empty>"}`);
-    lines.push(`Comfort with technology (1–7): ${info.techComfort || "<empty>"}`);
-    const blob = new Blob([lines.join("\n")], { type: "text/plain;charset=utf-8" });
-    const a = document.createElement("a");
-    a.href = URL.createObjectURL(blob);
-    a.download = `User_${info.id}_Info.txt`;
-    document.body.appendChild(a);
-    a.click();
-    setTimeout(() => {
-      URL.revokeObjectURL(a.href);
-      document.body.removeChild(a);
-    }, 0);
-
-    flash("User info saved to DB");
-  }
-
-  // ============== Storyboard 选择记录（Phase I） ==============
-  async function recordChoiceForCurrentImage(choice: Choice) {
-    if (phase !== "I") return;
-
-    const img = selectedKey ? images[selectedKey] : null;
-    if (!img) {
-      flash("No image selected");
-      return;
-    }
-    if (!userId) {
-      flash("Please create/select a User before Storyboard");
-      return;
-    }
-
-    const uidNum = Number(userId);
-    if (!uidNum) {
-      flash("Invalid User ID");
-      return;
-    }
-
-    const key = `${userId}::${img.name}`;
-    setChoices(prev => ({ ...prev, [key]: choice }));
-
-    try {
-      await fetch(`${API_BASE}/selections`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          user_id: uidNum,
-          image_id: img.name,
-          selection: choice
-        })
-      });
-    } catch (e) {
-      console.error("recordChoiceForCurrentImage error:", e);
-    }
-
-    const idx = filenameOptions.findIndex(r => r.key === img.key);
-    if (idx >= 0 && idx + 1 < filenameOptions.length) {
-      const nextRec = filenameOptions[idx + 1];
-      selectByKey(nextRec.key);
-    } else {
-      flash("Already at last image");
-    }
-  }
-
-  // 导出当前 user 的 Choices 为本地 txt（Phase I）
-  function onExportChoices() {
-    if (phase !== "I") {
-      flash("Export only works in Phase I");
-      return;
-    }
-    if (!userId) {
-      flash("Please select a User first");
-      return;
-    }
-    const uid = userId;
-    const entries: [string, Choice][] = [];
-    for (const img of filenameOptions) {
-      const k = `${uid}::${img.name}`;
-      const c = choices[k];
-      if (c === "A" || c === "B") {
-        entries.push([img.name, c]);
-      }
-    }
-    if (!entries.length) {
-      flash("No choices for this User yet");
-      return;
-    }
-    const lines: string[] = [];
-    lines.push(`User ID: ${uid}`);
-    lines.push("Image Name, Choice (A/B)");
-    for (const [name, c] of entries) {
-      lines.push(`${name}, ${c}`);
-    }
-    const blob = new Blob([lines.join("\n")], { type: "text/plain;charset=utf-8" });
-    const a = document.createElement("a");
-    a.href = URL.createObjectURL(blob);
-    a.download = `User_${uid}_Choices.txt`;
-    document.body.appendChild(a);
-    a.click();
-    setTimeout(() => {
-      URL.revokeObjectURL(a.href);
-      document.body.removeChild(a);
-    }, 0);
-  }
-
-  // ============== Phase II：保存 Interaction 为 txt ==============
-  function onSaveInteraction() {
-    if (phase !== "II") return;
-
-    const img = selectedKey ? images[selectedKey] : null;
-    if (!img) {
-      flash("No image selected");
-      return;
-    }
-    if (!userId) {
-      flash("Please create/select a User ID first");
-      return;
-    }
-    if (!/^\d*$/.test(userId)) {
-      flash("User ID must be digits");
-      return;
-    }
-
-    const ts = new Date().toISOString();
-    const contents =
-`User ID: ${userId || "<empty>"}
-Image Name: ${img.name}
-Persona: ${img.pid}
-Activity: ${img.aid}
-
-Interaction:
-${interactionText || "<empty>"}
-
-Saved At: ${ts}
-`;
-    const blob = new Blob([contents], { type: "text/plain;charset=utf-8" });
-    const a = document.createElement("a");
-    a.href = URL.createObjectURL(blob);
-    const safeName = img.name.replace(/[^\w.-]+/g, "_");
-    a.download = `Interaction_${safeName}_${userId || "NA"}.txt`;
-    document.body.appendChild(a);
-    a.click();
-    setTimeout(() => {
-      URL.revokeObjectURL(a.href);
-      document.body.removeChild(a);
-    }, 0);
-
-    flash("Interaction saved");
-  }
-
-  // ============== Survey：打开 / 保存 ==============
-  function openSurvey() {
-    if (!userId) {
-      flash("Please select a User first");
-      return;
-    }
-    setSurveyQ1("");
-    setSurveyQ2("");
-    setSurveyQ3("");
-    setSurveyQ4("");
-    setSurveyQ5("");
-    setShowSurvey(true);
-  }
-
-  function onSaveSurvey() {
-    if (!userId) {
-      flash("No User selected");
-      return;
-    }
-
-    const lines: string[] = [];
-    lines.push(`User ID: ${userId}`);
-    lines.push("");
-    lines.push("Section 4. Post-Study Survey");
-    lines.push("Q1. Over time, did the assistant’s responses seem to:");
-    lines.push(`Answer: ${surveyQ1 || "<empty>"}`);
-    lines.push("");
-    lines.push("Q2. How well did the assistant learn and adapt to your preferences?");
-    lines.push(`Answer: ${surveyQ2 || "<empty>"}`);
-    lines.push("");
-    lines.push("Q3. How much did you trust the assistant’s decisions and actions by the end of the study?");
-    lines.push(`Answer: ${surveyQ3 || "<empty>"}`);
-    lines.push("");
-    lines.push("Q4. How did the assistant’s learning or changes affect your comfort, satisfaction, or willingness to use it again?");
-    lines.push(`Answer: ${surveyQ4 || "<empty>"}`);
-    lines.push("");
-    lines.push("Q5. Overall, how satisfied were you with the self-improving assistant?");
-    lines.push(`Answer: ${surveyQ5 || "<empty>"}`);
-
-    const blob = new Blob([lines.join("\n")], { type: "text/plain;charset=utf-8" });
-    const a = document.createElement("a");
-    a.href = URL.createObjectURL(blob);
-    a.download = `Survey_User_${userId}.txt`;
-    document.body.appendChild(a);
-    a.click();
-    setTimeout(() => {
-      URL.revokeObjectURL(a.href);
-      document.body.removeChild(a);
-    }, 0);
-
-    setShowSurvey(false);
-    flash("Survey saved");
-  }
-
-  // ============== 真正“读盘”的刷新 ==============
-  async function reloadFromHandle(
-    h: FileSystemDirectoryHandle,
-    re: RegExp
-  ): Promise<File[]> {
-    const files: File[] = [];
-    // @ts-ignore
-    for await (const [, entry] of h.entries()) {
-      if (entry.kind === "file") {
-        const f = await (entry as FileSystemFileHandle).getFile();
-        if (re.test(f.name)) files.push(f);
-      }
-    }
-    return files;
-  }
-
-  async function chooseImagesDirFS(target: Phase) {
-    // @ts-ignore
-    if (!window.showDirectoryPicker) { pickImagesDir(); return; }
-    // @ts-ignore
-    const handle = await window.showDirectoryPicker({ id: target === "I" ? "images-dir-I" : "images-dir-II" });
-    const files = await reloadFromHandle(handle, IMAGE_RE);
-    if (target === "I") {
-      setImageFilesI(files);
-      if (phase === "I") setPhase("I");
-    } else {
-      setImageFilesII(files);
-      if (phase === "II") setPhase("II");
-    }
-  }
-
-  async function chooseNarrDirFS(target: Phase) {
-    // @ts-ignore
-    if (!window.showDirectoryPicker) { pickNarrDir(); return; }
-    // @ts-ignore
-    const handle = await window.showDirectoryPicker({ id: target === "I" ? "narr-dir-I" : "narr-dir-II" });
-    const files = await reloadFromHandle(handle, NARR_RE);
-    if (target === "I") {
-      setNarratorFilesI(files);
-      if (phase === "I") setPhase("I");
-    } else {
-      setNarratorFilesII(files);
-      if (phase === "II") setPhase("II");
-    }
-  }
-
-  // ============== 保存 File Name / User ID / Storyboard(A/B) 为本地 txt（Phase I） ==============
-  function onSaveSelection() {
-    if (phase !== "I") {
-      flash("Save Selection only works in Phase I");
-      return;
-    }
-    const img = selectedKey ? images[selectedKey] : null;
-    if (!img) {
-      flash("No file selected");
-      return;
-    }
-    if (!userId) {
-      flash("Please create/select a User ID first");
-      return;
-    }
-    if (!/^\d*$/.test(userId)) {
-      flash("User ID must be digits");
-      return;
-    }
-    const ts = new Date().toISOString();
-    const contents =
-`File Name: ${img.name}
-Persona: ${img.pid}
-Activity: ${img.aid}
-User ID: ${userId || "<empty>"}
-Storyboard (current highlight): ${variant}
-Saved At: ${ts}
-`;
-    const blob = new Blob([contents], { type: "text/plain;charset=utf-8" });
-    const a = document.createElement("a");
-    a.href = URL.createObjectURL(blob);
-    const safeName = img.name.replace(/[^\w.-]+/g, "_");
-    a.download = `Selection_${safeName}_${userId || "NA"}_${variant}.txt`;
-    document.body.appendChild(a);
-    a.click();
-    setTimeout(() => {
-      URL.revokeObjectURL(a.href);
-      document.body.removeChild(a);
-    }, 0);
-  }
-
-  // ============== Splitter 拖动 ==============
-  function onMouseMove(e: MouseEvent) {
-    if (!draggingRef.current) return;
-    const container = document.querySelector(".center-split") as HTMLElement | null;
-    if (!container) return;
-    const rect = container.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const pct = Math.min(80, Math.max(20, (x / rect.width) * 100));
-    setSplitPct(pct);
-  }
-  function onMouseUp() {
-    if (!draggingRef.current) return;
-    draggingRef.current = false;
-    document.body.style.cursor = "default";
-  }
-  useEffect(() => {
-    window.addEventListener("mousemove", onMouseMove);
-    window.addEventListener("mouseup", onMouseUp);
-    return () => {
-      window.removeEventListener("mousemove", onMouseMove);
-      window.removeEventListener("mouseup", onMouseUp);
-    };
-  }, []);
-
-  // ============== 辅助：加载目录按钮（fallback 输入） ==============
-  function pickImagesDir() {
-    if (imgDirRef.current) { imgDirRef.current.value = ""; imgDirRef.current.click(); }
-  }
-  function pickNarrDir() {
-    if (narrDirRef.current) { narrDirRef.current.value = ""; narrDirRef.current.click(); }
-  }
-
-  const currentImg = selectedKey ? images[selectedKey] : null;
-  const statusLeft  = currentImg ? `Image: images/${currentImg.name}` : "Image: <none>";
-  const statusRight = selectedKey && narrs[selectedKey]
-      ? `Narrator: Narrator/${narrs[selectedKey].name}`
-      : "Narrator: <missing>";
-
-  // 大号深色按钮（A/B）
-  const DarkBtn: React.FC<{
-    active?: boolean; onClick: () => void; children: React.ReactNode;
-  }> = ({active, onClick, children}) => (
-    <button
-      onClick={onClick}
-      className="btn"
-      style={{
-        padding:"14px 24px",
-        fontSize:35,
-        fontWeight:800,
-        color:"#e5e7eb",
-        background: active ? "#0b1220" : "#111827",
-        border: active ? "2px solid #60a5fa" : "1px solid #374151",
-        borderRadius:12
-      }}
-      aria-pressed={active}
-    >
-      {children}
-    </button>
-  );
-
-  // 顶部 Phase 切换按钮样式
-  const PhaseBtn: React.FC<{active: boolean; onClick: () => void; children: React.ReactNode}> =
-    ({ active, onClick, children }) => (
-      <button
-        className="btn"
-        onClick={onClick}
-        style={{
-          fontSize: 35,
-          fontWeight: 700,
-          padding: "6px 14px",
-          borderRadius: 12,
-          border: active ? "2px solid #60a5fa" : "1px solid #4b5563",
-          background: active ? "#0b1220" : "#111827",
-          color: active ? "#93c5fd" : "#e5e7eb"
-        }}
-      >
-        {children}
-      </button>
-    );
-
-  // ============== 主渲染 ==============
-  return (
-    <div className="page dark">
-      {/* 顶部工具栏 */}
-      <div
-        className="toolbar card dark"
-        style={{
-          padding: "12px 18px",
-        }}
-      >
-        <div
-          className="toolbar-row"
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: 12,
-          }}
-        >
-          <div className="label" style={{ fontSize: 35 }}>File</div>
-          <select
-            className="select dark"
-            style={{ fontSize: 35 }}
-            value={currentImg?.name || ""}
-            onChange={(e)=>onFilenameChange(e.target.value)}
-          >
-            {filenameOptions.length===0 && <option value="">(no images)</option>}
-            {filenameOptions.map(rec => (
-              <option key={rec.key} value={rec.name}>{rec.name}</option>
-            ))}
-          </select>
-
-          <div className="label" style={{ fontSize: 35 }}>Persona</div>
-          <select
-            className="select dark"
-            style={{ fontSize: 35 }}
-            value={selectedPid!=null? String(selectedPid):""}
-            onChange={(e)=>onPersonaChange(e.target.value)}
-          >
-            {personaOptions.length===0 && <option value="">(no personas)</option>}
-            {personaOptions.map(pid => (
-              <option key={pid} value={String(pid)}>{pid}</option>
-            ))}
-          </select>
-
-          <div className="label" style={{ fontSize: 35 }}>Activity</div>
-          <select
-            className="select dark"
-            style={{ fontSize: 35 }}
-            value={selectedAid!=null? String(selectedAid):""}
-            onChange={(e)=>onActivityChange(e.target.value)}
-          >
-            {activityOptions.length===0 && <option value="">(no activities)</option>}
-            {activityOptions.map(aid => (
-              <option key={aid} value={String(aid)}>{aid}</option>
-            ))}
-          </select>
-
-          {/* User 选择 */}
-          <div className="label" style={{ fontSize: 35 }}>User</div>
-          <select
-            className="select dark"
-            style={{ fontSize: 35, minWidth: 140 }}
-            value={userId}
-            onChange={(e)=>onUserSelect(e.target.value)}
-          >
-            {userIdOptions.length === 0 && <option value="">(no users)</option>}
-            {userIdOptions.map(id => (
-              <option key={id} value={String(id)}>User {id}</option>
-            ))}
-          </select>
-
-          <button
-            className="btn btn-secondary"
-            style={{ fontSize: 35 }}
-            onClick={createNewUser}
-          >
-            New User
-          </button>
-
-          <button
-            className="btn btn-hollow"
-            style={{ fontSize: 35 }}
-            onClick={openCurrentUserForm}
-            disabled={!currentUserInfo}
-          >
-            Edit User
-          </button>
-
-          {/* Survey 按钮 */}
-          <button
-            className="btn btn-primary"
-            style={{ fontSize: 35 }}
-            onClick={openSurvey}
-          >
-            Survey
-          </button>
-
-          {/* 导出 & 保存（Phase I 用） */}
-          <button
-            className="btn btn-primary"
-            style={{ fontSize: 35 }}
-            onClick={onExportChoices}
-            disabled={!userId}
-          >
-            Export Choices
-          </button>
-          <button
-            className="btn btn-hollow"
-            style={{ fontSize: 35 }}
-            onClick={onSaveSelection}
-          >
-            Save Selection
-          </button>
-
-          {/* Phase 切换 */}
-          <PhaseBtn active={phase === "I"} onClick={() => setPhase("I")}>
-            Phase I
-          </PhaseBtn>
-          <PhaseBtn active={phase === "II"} onClick={() => setPhase("II")}>
-            Phase II
-          </PhaseBtn>
-
-          <div className="spacer" />
-
-          {/* 四个独立 Load 按钮 */}
-          <button
-            className="btn btn-hollow"
-            style={{ fontSize: 35 }}
-            onClick={()=>chooseImagesDirFS("I")}
-          >
-            Load images I
-          </button>
-          <button
-            className="btn btn-hollow"
-            style={{ fontSize: 35 }}
-            onClick={()=>chooseNarrDirFS("I")}
-          >
-            Load Narrator I
-          </button>
-          <button
-            className="btn btn-hollow"
-            style={{ fontSize: 35 }}
-            onClick={()=>chooseImagesDirFS("II")}
-          >
-            Load images II
-          </button>
-          <button
-            className="btn btn-hollow"
-            style={{ fontSize: 35 }}
-            onClick={()=>chooseNarrDirFS("II")}
-          >
-            Load Narrator II
-          </button>
-
-          {/* 隐藏 input 作为回退 */}
-          <input
-            ref={imgDirRef}
-            type="file" multiple
-            // @ts-ignore
-            webkitdirectory="true"
-            hidden
-            onChange={(e)=>{
-              const files = e.target.files? Array.from(e.target.files): [];
-              if (phase === "I") setImageFilesI(files); else setImageFilesII(files);
-            }}
-          />
-          <input
-            ref={narrDirRef}
-            type="file" multiple
-            // @ts-ignore
-            webkitdirectory="true"
-            hidden
-            onChange={(e)=>{
-              const files = e.target.files? Array.from(e.target.files): [];
-              if (phase === "I") setNarratorFilesI(files); else setNarratorFilesII(files);
-            }}
-          />
-        </div>
-      </div>
-
-      {/* 中部内容：根据 showUserForm 决定显示“单独一页”用户信息，还是 Phase I / II 主界面 */}
-      {showUserForm && currentUserInfo ? (
-        // ========== 用户信息独立页面 ==========
-        <div
-          style={{
-            flex:1,
-            display:"flex",
-            alignItems:"center",
-            justifyContent:"center",
-            padding:16
-          }}
-        >
-          <div style={{ width:"100%", maxWidth:960, height:"100%", maxHeight:"100%" }}>
-            <SectionBox title={`User Information Record (User ${currentUserInfo.id})`}>
-              <div
-                style={{
-                  display:"grid",
-                  gridTemplateColumns:"1fr 1fr",
-                  gap:8,
-                  fontSize:35
-                }}
-              >
-                <div>
-                  <div style={{ marginBottom:4 }}>User ID: <strong>{currentUserInfo.id}</strong></div>
-
-                  <div style={{ marginBottom:4 }}>Age</div>
-                  <select
-                    className="select dark"
-                    style={{ width:"100%", minWidth:0 }}
-                    value={currentUserInfo.age}
-                    onChange={(e)=>updateUserField("age", e.target.value)}
-                  >
-                    <option value="">-- select --</option>
-                    <option value="18–24">18–24</option>
-                    <option value="25–34">25–34</option>
-                    <option value="35–44">35–44</option>
-                    <option value="45–54">45–54</option>
-                    <option value="55–60">55–60</option>
-                  </select>
-
-                  <div style={{ marginTop:8, marginBottom:4 }}>Gender</div>
-                  <select
-                    className="select dark"
-                    style={{ width:"100%", minWidth:0 }}
-                    value={currentUserInfo.gender}
-                    onChange={(e)=>updateUserField("gender", e.target.value)}
-                  >
-                    <option value="">-- select --</option>
-                    <option value="Female">Female</option>
-                    <option value="Male">Male</option>
-                    <option value="Non-binary / Self-describe">Non-binary / Self-describe</option>
-                    <option value="Prefer not to answer">Prefer not to answer</option>
-                  </select>
-
-                  <div style={{ marginTop:8, marginBottom:4 }}>Education Level</div>
-                  <select
-                    className="select dark"
-                    style={{ width:"100%", minWidth:0 }}
-                    value={currentUserInfo.education}
-                    onChange={(e)=>updateUserField("education", e.target.value)}
-                  >
-                    <option value="">-- select --</option>
-                    <option value="High school diploma or equivalent">High school diploma or equivalent</option>
-                    <option value="Some college">Some college</option>
-                    <option value="Bachelor’s degree">Bachelor’s degree</option>
-                    <option value="Master’s degree">Master’s degree</option>
-                    <option value="Doctoral degree">Doctoral degree</option>
-                    <option value="Other">Other</option>
-                  </select>
-                </div>
-
-                <div>
-                  <div style={{ marginBottom:4 }}>Occupation / Field of Work or Study</div>
-                  <input
-                    className="input"
-                    style={{ width:"100%", padding:"6px 8px", fontSize:35 }}
-                    value={currentUserInfo.occupation}
-                    onChange={(e)=>updateUserField("occupation", e.target.value)}
-                  />
-
-                  <div style={{ marginTop:8, marginBottom:4 }}>Experience with Smart Assistants</div>
-                  <select
-                    className="select dark"
-                    style={{ width:"100%", minWidth:0 }}
-                    value={currentUserInfo.smartAssistantExp}
-                    onChange={(e)=>updateUserField("smartAssistantExp", e.target.value)}
-                  >
-                    <option value="">-- select --</option>
-                    <option value="None">None</option>
-                    <option value="Occasional user">Occasional user</option>
-                    <option value="Regular user">Regular user</option>
-                    <option value="Daily user">Daily user</option>
-                  </select>
-
-                  <div style={{ marginTop:8, marginBottom:4 }}>
-                    Comfort with technology (1 = Not comfortable, 7 = Very comfortable)
-                  </div>
-                  <div style={{ display:"flex", alignItems:"center", gap:8 }}>
-                    <input
-                      type="range"
-                      min={1}
-                      max={7}
-                      value={currentUserInfo.techComfort}
-                      onChange={(e)=>updateUserField("techComfort", e.target.value)}
-                    />
-                    <div style={{ width:24, textAlign:"center" }}>{currentUserInfo.techComfort}</div>
-                  </div>
-                </div>
-              </div>
-
-              <div style={{ marginTop:16, display:"flex", justifyContent:"flex-end", gap:8 }}>
-                <button
-                  className="btn btn-hollow"
-                  style={{ fontSize:35 }}
-                  onClick={()=>setShowUserForm(false)}
-                >
-                  Back to Storyboard
-                </button>
-                <button
-                  className="btn btn-primary"
-                  style={{ fontSize:35 }}
-                  onClick={onSaveUserInfo}
-                >
-                  Save User Info
-                </button>
-              </div>
-            </SectionBox>
-          </div>
-        </div>
-      ) : (
-        // ========== Phase I / Phase II 主界面 ==========
-        <>
-          {/* 中部：可拖动分隔的左右面板 */}
-          <div
-            className="center-split"
-            style={{
-              display:"grid",
-              gridTemplateColumns: `${splitPct}% 6px ${100 - splitPct}%`,
-              height:"calc(100vh - 120px)",
-              minHeight:0
-            }}
-          >
-            {/* 左：单张图片（当前 Phase 的） */}
-            <div
-              className="panel image-panel"
-              style={{
-                position:"relative",
-                width:"100%",
-                height:"100%",
-                border:"1px solid #e2e8f0",
-                borderRadius:12,
-                overflow:"hidden",
-                background:"#0b1220",
-                display:"flex",
-                alignItems:"center",
-                justifyContent:"center",
-                minHeight:0
-              }}
-            >
-              {currentImg ? (
-                <img
-                  src={currentImg.url}
-                  alt={currentImg.name}
-                  style={{
-                    maxWidth:"100%",
-                    maxHeight:"100%",
-                    objectFit:"contain",
-                    display:"block"
-                  }}
-                />
-              ) : (
-                <div className="placeholder">No image</div>
-              )}
-            </div>
-
-            {/* 分隔条 */}
-            <div
-              className="divider"
-              onMouseDown={(e)=>{ e.preventDefault(); draggingRef.current=true; document.body.style.cursor="col-resize"; }}
-              onDoubleClick={()=> setSplitPct(58)}
-              title="Drag to resize"
-              style={{cursor:"col-resize", background:"#94a3b8"}}
-            />
-
-            {/* 右：根据 Phase 不同，显示不同内容 */}
-            {phase === "I" ? (
-              // ---------- Phase I：原 Storyboard 视图 ----------
-              <div
-                className="panel text-panel"
-                style={{
-                  display:"grid",
-                  gridTemplateRows:"5fr auto 3fr 3fr",
-                  gap:10,
-                  minHeight:0
-                }}
-              >
-                {/* Narrator */}
-                <SectionBox title="">
-                  <div
-                    style={{
-                      display:"flex",
-                      flexDirection:"column",
-                      height:"100%",
-                      padding:"4px 8px 8px 8px"
-                    }}
-                  >
-                    <div
-                      style={{
-                        fontWeight:900,
-                        fontSize:35,
-                        marginBottom:10,
-                        lineHeight:1.2
-                      }}
-                    >
-                      Based on the following activity description:
-                    </div>
-
-                    <div
-                      style={{
-                        display:"flex",
-                        flexDirection:"column",
-                        height:"100%"
-                      }}
-                    >
-                      <div style={{fontWeight:400, fontSize:35, marginBottom:6}}>
-                        User Name: {userNameFromNarr || "PlaceHolder"}
-                      </div>
-                      <textarea
-                        className="narr"
-                        value={activityDesc}
-                        onChange={(e)=>setActivityDesc(e.target.value)}
-                        style={{
-                          height:"100%",
-                          width:"100%",
-                          resize:"none",
-                          fontSize:35,
-                          lineHeight:1.5
-                        }}
-                      />
-                    </div>
-                  </div>
-                </SectionBox>
-
-                {/* Storyboard 选择：放在 Narrator 下方 */}
-                <div
-                  className="card"
-                  style={{
-                    padding:10,
-                    display:"flex",
-                    alignItems:"center",
-                    gap:12
-                  }}
-                >
-                  <div style={{fontWeight:900, fontSize:35}}>
-                    Which Smart Assistant interaction method do you prefer?
-                  </div>
-                  <DarkBtn
-                    active={variant==="A"}
-                    onClick={()=>setVariant("A")}
-                  >
-                    A
-                  </DarkBtn>
-                  <DarkBtn
-                    active={variant==="B"}
-                    onClick={()=>setVariant("B")}
-                  >
-                    B
-                  </DarkBtn>
-
-                  <button
-                    className="btn btn-primary"
-                    style={{ marginLeft:16, fontSize:35, fontWeight:500, padding:"10px 24px" }}
-                    onClick={()=>recordChoiceForCurrentImage(variant)}
-                  >
-                    Confirm Choice
-                  </button>
-                </div>
-
-                {/* A：展示 Smart Assistant Interaction 文案 */}
-                <SectionBox title="A" emphasized={variant === "A"}>
-                  <textarea
-                    className="narr"
-                    readOnly
-                    value={smartTextA || "PlaceHolder A"}
-                    style={{
-                      height: "100%",
-                      width: "100%",
-                      resize: "none",
-                      fontSize: 35,
-                      lineHeight: 1.6
-                    }}
-                  />
-                </SectionBox>
-
-                {/* B：目前共用同一段文案 */}
-                <SectionBox title="B" emphasized={variant === "B"}>
-                  <textarea
-                    className="narr"
-                    readOnly
-                    value={smartTextA || "PlaceHolder B"}
-                    style={{
-                      height: "100%",
-                      width: "100%",
-                      resize: "none",
-                      fontSize: 35,
-                      lineHeight: 1.6
-                    }}
-                  />
-                </SectionBox>
-              </div>
-            ) : (
-              // ---------- Phase II：新的 Interaction 视图 ----------
-              <div
-                className="panel text-panel"
-                style={{
-                  display:"grid",
-                  gridTemplateRows:"5fr 5fr",
-                  gap:10,
-                  minHeight:0
-                }}
-              >
-                {/* 上方：Smart Assistant Interaction 描述（不显示 User Name） */}
-                <SectionBox title="">
-                  <div
-                    style={{
-                      display:"flex",
-                      flexDirection:"column",
-                      height:"100%",
-                      padding:"4px 8px 8px 8px"
-                    }}
-                  >
-                    <div
-                      style={{
-                        fontWeight:900,
-                        fontSize:35,
-                        marginBottom:10,
-                        lineHeight:1.2
-                      }}
-                    >
-                      Based on the description of interaction with smart Assistant.
-                    </div>
-
-                    <div
-                      style={{
-                        display:"flex",
-                        flexDirection:"column",
-                        height:"100%"
-                      }}
-                    >
-                      <textarea
-                        className="narr"
-                        readOnly
-                        value={smartTextA}
-                        style={{
-                          height:"100%",
-                          width:"100%",
-                          resize:"none",
-                          fontSize:35,
-                          lineHeight:1.5
-                        }}
-                      />
-                    </div>
-                  </div>
-                </SectionBox>
-
-                {/* 下方：Interaction 输入 + SAVE */}
-                <SectionBox title="Interaction">
-                  <div
-                    style={{
-                      display:"flex",
-                      flexDirection:"column",
-                      height:"100%",
-                      padding:"4px 8px 8px 8px"
-                    }}
-                  >
-                    <textarea
-                      className="narr"
-                      value={interactionText}
-                      onChange={(e)=>setInteractionText(e.target.value)}
-                      placeholder="Type any interaction notes here..."
-                      style={{
-                        height:"100%",
-                        width:"100%",
-                        resize:"none",
-                        fontSize:35,
-                        lineHeight:1.5
-                      }}
-                    />
-                    <div
-                      style={{
-                        marginTop:12,
-                        display:"flex",
-                        justifyContent:"flex-end"
-                      }}
-                    >
-                      <button
-                        className="btn btn-primary"
-                        style={{ fontSize:35, padding:"8px 24px" }}
-                        onClick={onSaveInteraction}
-                      >
-                        SAVE Interaction
-                      </button>
-                    </div>
-                  </div>
-                </SectionBox>
-              </div>
-            )}
-          </div>
-        </>
-      )}
-
-      {/* Survey 弹窗 */}
-      {showSurvey && (
-        <div
-          style={{
-            position:"fixed",
-            inset:0,
-            background:"rgba(15,23,42,0.8)",
-            display:"flex",
-            alignItems:"center",
-            justifyContent:"center",
-            zIndex:1000
-          }}
-        >
-          <div
-            style={{
-              width:"90%",
-              maxWidth:1100,
-              maxHeight:"90%",
-              overflow:"auto",
-              background:"#020617",
-              borderRadius:16,
-              border:"2px solid #4b5563",
-              padding:24
-            }}
-          >
-            <div style={{ fontSize:35, fontWeight:900, marginBottom:16 }}>
-              Section 4. Post-Study Survey
-            </div>
-            <div style={{ fontSize:35, marginBottom:16 }}>
-              Please reflect on your overall experience interacting with the smart assistant.
-            </div>
-
-            {/* Q1 */}
-            <div style={{ fontSize:35, marginBottom:12 }}>
-              1. Over time, did the assistant’s responses seem to:
-            </div>
-            <div style={{ fontSize:35, display:"flex", flexDirection:"column", gap:4, marginBottom:16 }}>
-              {[
-                "Strongly improved",
-                "Somewhat improved",
-                "No change",
-                "Somewhat worsened",
-                "Strongly worsened"
-              ].map(opt => (
-                <label key={opt} style={{ display:"flex", alignItems:"center", gap:8 }}>
-                  <input
-                    type="radio"
-                    name="surveyQ1"
-                    checked={surveyQ1 === opt}
-                    onChange={()=>setSurveyQ1(opt)}
-                  />
-                  <span>{opt}</span>
-                </label>
-              ))}
-            </div>
-
-            {/* Q2 */}
-            <div style={{ fontSize:35, marginBottom:12 }}>
-              2. How well did the assistant learn and adapt to your preferences?
-            </div>
-            <div style={{ fontSize:35, display:"flex", flexDirection:"column", gap:4, marginBottom:16 }}>
-              {[
-                "Very well",
-                "Somewhat well",
-                "Slightly",
-                "Not at all"
-              ].map(opt => (
-                <label key={opt} style={{ display:"flex", alignItems:"center", gap:8 }}>
-                  <input
-                    type="radio"
-                    name="surveyQ2"
-                    checked={surveyQ2 === opt}
-                    onChange={()=>setSurveyQ2(opt)}
-                  />
-                  <span>{opt}</span>
-                </label>
-              ))}
-            </div>
-
-            {/* Q3 */}
-            <div style={{ fontSize:35, marginBottom:12 }}>
-              3. How much did you trust the assistant’s decisions and actions by the end of the study?
-            </div>
-            <div style={{ fontSize:35, display:"flex", flexDirection:"column", gap:4, marginBottom:16 }}>
-              {[
-                "Strongly increased",
-                "Somewhat increased",
-                "No change",
-                "Somewhat decreased",
-                "Strongly decreased"
-              ].map(opt => (
-                <label key={opt} style={{ display:"flex", alignItems:"center", gap:8 }}>
-                  <input
-                    type="radio"
-                    name="surveyQ3"
-                    checked={surveyQ3 === opt}
-                    onChange={()=>setSurveyQ3(opt)}
-                  />
-                  <span>{opt}</span>
-                </label>
-              ))}
-            </div>
-
-            {/* Q4 */}
-            <div style={{ fontSize:35, marginBottom:12 }}>
-              4. How did the assistant’s learning or changes affect your comfort, satisfaction, or willingness to use it again?
-            </div>
-            <div style={{ fontSize:35, display:"flex", flexDirection:"column", gap:4, marginBottom:16 }}>
-              {[
-                "Strongly increased",
-                "Somewhat increased",
-                "No change",
-                "Somewhat decreased",
-                "Strongly decreased"
-              ].map(opt => (
-                <label key={opt} style={{ display:"flex", alignItems:"center", gap:8 }}>
-                  <input
-                    type="radio"
-                    name="surveyQ4"
-                    checked={surveyQ4 === opt}
-                    onChange={()=>setSurveyQ4(opt)}
-                  />
-                  <span>{opt}</span>
-                </label>
-              ))}
-            </div>
-
-            {/* Q5 */}
-            <div style={{ fontSize:35, marginBottom:12 }}>
-              5. Overall, how satisfied were you with the self-improving assistant?
-            </div>
-            <div style={{ fontSize:35, display:"flex", flexDirection:"column", gap:4, marginBottom:24 }}>
-              {[
-                "Very satisfied",
-                "Somewhat satisfied",
-                "Neutral",
-                "Somewhat dissatisfied",
-                "Very dissatisfied"
-              ].map(opt => (
-                <label key={opt} style={{ display:"flex", alignItems:"center", gap:8 }}>
-                  <input
-                    type="radio"
-                    name="surveyQ5"
-                    checked={surveyQ5 === opt}
-                    onChange={()=>setSurveyQ5(opt)}
-                  />
-                  <span>{opt}</span>
-                </label>
-              ))}
-            </div>
-
-            <div style={{ display:"flex", justifyContent:"flex-end", gap:12 }}>
-              <button
-                className="btn btn-hollow"
-                style={{ fontSize:35 }}
-                onClick={()=>setShowSurvey(false)}
-              >
-                Cancel
-              </button>
-              <button
-                className="btn btn-primary"
-                style={{ fontSize:35 }}
-                onClick={onSaveSurvey}
-              >
-                Save Survey
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* 底部状态栏 */}
-      <div className="statusbar">
-        <div className="status-left" title={statusLeft}>{statusLeft}</div>
-        <div className="status-right" title={statusRight}>
-          {statusRight}
-          &nbsp; | &nbsp; User ID: {userId || "<empty>"}
-          &nbsp; | &nbsp; Phase: {phase}
-          &nbsp; | &nbsp; Storyboard (Phase I): {variant}
-        </div>
-      </div>
-    </div>
-  );
-}
-
-/** 小标题盒子 */
+/** 小标题盒子：填满父容器的高度 */
 type SectionBoxProps = {
   title: string;
   children: React.ReactNode;
@@ -1680,9 +77,1503 @@ function flash(text: string) {
   el.className = "toast";
   el.textContent = text;
   document.body.appendChild(el);
-  requestAnimationFrame(()=> el.classList.add("show"));
-  setTimeout(()=>{
+  requestAnimationFrame(() => el.classList.add("show"));
+  setTimeout(() => {
     el.classList.remove("show");
-    setTimeout(()=> document.body.removeChild(el), 250);
+    setTimeout(() => document.body.removeChild(el), 250);
   }, 1400);
+}
+
+const DarkBtn: React.FC<{
+  active?: boolean;
+  onClick: () => void;
+  children: React.ReactNode;
+}> = ({ active, onClick, children }) => (
+  <button
+    onClick={onClick}
+    className="btn"
+    style={{
+      padding: "14px 24px",
+      fontSize: 35,
+      fontWeight: 800,
+      color: "#e5e7eb",
+      background: active ? "#0b1220" : "#111827",
+      border: active ? "2px solid #60a5fa" : "1px solid #374151",
+      borderRadius: 12
+    }}
+    aria-pressed={active}
+  >
+    {children}
+  </button>
+);
+
+const PhaseBtn: React.FC<{
+  active: boolean;
+  onClick: () => void;
+  children: React.ReactNode;
+}> = ({ active, onClick, children }) => (
+  <button
+    className="btn"
+    onClick={onClick}
+    style={{
+      fontSize: 35,
+      fontWeight: 700,
+      padding: "6px 14px",
+      borderRadius: 12,
+      border: active ? "2px solid #60a5fa" : "1px solid #4b5563",
+      background: active ? "#0b1220" : "#111827",
+      color: active ? "#93c5fd" : "#e5e7eb"
+    }}
+  >
+    {children}
+  </button>
+);
+
+export default function App() {
+  // ------- Phase 切换 -------
+  const [phase, setPhase] = useState<Phase>("I");
+
+  // ------- User ID & User Info 表单 -------
+  const [userId, setUserId] = useState<string>("");
+  const [showUserForm, setShowUserForm] = useState(false);
+  const [userForm, setUserForm] = useState<UserForm>({
+    id: "",
+    age: "",
+    gender: "",
+    education: "",
+    occupation: "",
+    smartAssistantExp: "",
+    techComfort: "4"
+  });
+
+  // ------- Survey -------
+  const [showSurvey, setShowSurvey] = useState(false);
+  const [surveyQ1, setSurveyQ1] = useState("");
+  const [surveyQ2, setSurveyQ2] = useState("");
+  const [surveyQ3, setSurveyQ3] = useState("");
+  const [surveyQ4, setSurveyQ4] = useState("");
+  const [surveyQ5, setSurveyQ5] = useState("");
+
+  // ------- 目录输入（隐藏 input，分别给 Phase I/II） -------
+  const imgDirRefI = useRef<HTMLInputElement>(null);
+  const narrDirRefI = useRef<HTMLInputElement>(null);
+  const imgDirRefII = useRef<HTMLInputElement>(null);
+  const narrDirRefII = useRef<HTMLInputElement>(null);
+
+  // 当前显示的文件（随着 phase 变化）
+  const [imageFiles, setImageFiles] = useState<File[]>([]);
+  const [narratorFiles, setNarratorFiles] = useState<File[]>([]);
+
+  // 各 Phase 自己的文件列表
+  const [imageFilesI, setImageFilesI] = useState<File[]>([]);
+  const [narratorFilesI, setNarratorFilesI] = useState<File[]>([]);
+  const [imageFilesII, setImageFilesII] = useState<File[]>([]);
+  const [narratorFilesII, setNarratorFilesII] = useState<File[]>([]);
+
+  // File System Access API 目录句柄
+  const [imgHandleI, setImgHandleI] = useState<FileSystemDirectoryHandle | null>(null);
+  const [narrHandleI, setNarrHandleI] = useState<FileSystemDirectoryHandle | null>(null);
+  const [imgHandleII, setImgHandleII] = useState<FileSystemDirectoryHandle | null>(null);
+  const [narrHandleII, setNarrHandleII] = useState<FileSystemDirectoryHandle | null>(null);
+
+  // 索引与映射（当前 phase 的）
+  const [images, setImages] = useState<Record<Key, ImgRec>>({});
+  const [narrs, setNarrs] = useState<Record<Key, NarrRec>>({});
+  const [byPersona, setByPersona] = useState<Record<number, number[]>>({});
+
+  // 当前选中 image
+  const [selectedKey, setSelectedKey] = useState<Key | null>(null);
+  const [selectedPid, setSelectedPid] = useState<number | null>(null);
+  const [selectedAid, setSelectedAid] = useState<number | null>(null);
+
+  // Narrator JSON 字段
+  const [userNameFromNarr, setUserNameFromNarr] = useState<string>("");
+  const [activityDesc, setActivityDesc] = useState<string>("");
+  const [smartTextA, setSmartTextA] = useState<string>("");
+
+  // Phase I: A/B 选择
+  const [variant, setVariant] = useState<Choice>("A");
+  const [phaseIResults, setPhaseIResults] = useState<
+    { image: string; choice: Choice }[]
+  >([]);
+
+  // Phase II: Interaction 文本
+  const [interactionText, setInteractionText] = useState<string>("");
+
+  // 拖动中间分隔
+  const [splitPct, setSplitPct] = useState<number>(58);
+  const draggingRef = useRef(false);
+
+  // ============== 构建索引（当前 imageFiles + narratorFiles） ==============
+  useEffect(() => {
+    const imgMap: Record<Key, ImgRec> = {};
+    const per: Record<number, Set<number>> = {};
+    for (const f of imageFiles) {
+      const name = f.name.trim();
+      const m = name.match(IMAGE_RE);
+      if (!m?.groups) continue;
+      const pid = parseInt(m.groups.pid, 10);
+      const aid = parseInt(m.groups.aid, 10);
+      const key: Key = `${pid}-${aid}`;
+      imgMap[key] = { key, pid, aid, file: f, url: URL.createObjectURL(f), name };
+      (per[pid] ||= new Set()).add(aid);
+    }
+
+    const narrMap: Record<Key, NarrRec> = {};
+    for (const f of narratorFiles) {
+      const name = f.name.trim();
+      const m = name.match(NARR_RE);
+      if (!m?.groups) continue;
+      const pid = parseInt(m.groups.pid, 10);
+      const aid = parseInt(m.groups.aid, 10);
+      const key: Key = `${pid}-${aid}`;
+      narrMap[key] = { key, pid, aid, file: f, name };
+    }
+
+    const perOut: Record<number, number[]> = {};
+    for (const [pidStr, aids] of Object.entries(per)) {
+      perOut[Number(pidStr)] = Array.from(aids).sort((a, b) => a - b);
+    }
+
+    setImages(imgMap);
+    setNarrs(narrMap);
+    setByPersona(perOut);
+
+    const sorted = Object.values(imgMap).sort(
+      (a, b) => a.pid - b.pid || a.aid - b.aid
+    );
+    if (sorted.length) {
+      const first = sorted[0];
+      setSelectedKey(first.key);
+      setSelectedPid(first.pid);
+      setSelectedAid(first.aid);
+    } else {
+      setSelectedKey(null);
+      setSelectedPid(null);
+      setSelectedAid(null);
+    }
+
+    return () => {
+      Object.values(imgMap).forEach(r => URL.revokeObjectURL(r.url));
+    };
+  }, [imageFiles, narratorFiles]);
+
+  // ============== 当选中图片变更时，读取 Narrator JSON ==============
+  useEffect(() => {
+    let cancelled = false;
+
+    (async () => {
+      if (!selectedKey) {
+        if (!cancelled) {
+          setUserNameFromNarr("");
+          setActivityDesc("");
+          setSmartTextA("");
+        }
+        return;
+      }
+
+      const rec = narrs[selectedKey];
+      if (!rec) {
+        if (!cancelled) {
+          setUserNameFromNarr("");
+          setActivityDesc("");
+          setSmartTextA("");
+        }
+        return;
+      }
+
+      try {
+        const raw = await rec.file.text();
+        const data = JSON.parse(raw);
+
+        if (cancelled) return;
+
+        const userName = (data["User Name"] ?? "").toString();
+        const activity = (data["Activity Description"] ?? "").toString();
+        const smart = (data["Smart Assistant Interaction"] ?? "").toString();
+
+        setUserNameFromNarr(userName);
+        setActivityDesc(activity);
+        setSmartTextA(smart);
+      } catch (err) {
+        if (!cancelled) {
+          setUserNameFromNarr("");
+          setActivityDesc("");
+          setSmartTextA("");
+        }
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [selectedKey, narrs]);
+
+  // ============== Phase 切换时，清空 Interaction 文本 ==============
+  useEffect(() => {
+    setInteractionText("");
+  }, [selectedKey, phase]);
+
+  // ============== 下拉选项 ==============
+  const filenameOptions = useMemo(
+    () => Object.values(images).sort((a, b) => a.pid - b.pid || a.aid - b.aid),
+    [images]
+  );
+  const personaOptions = useMemo(
+    () => Object.keys(byPersona).map(Number).sort((a, b) => a - b),
+    [byPersona]
+  );
+  const activityOptions = useMemo(
+    () => (selectedPid == null ? [] : byPersona[selectedPid] || []),
+    [byPersona, selectedPid]
+  );
+
+  // ============== 选择联动 ==============
+  const currentImg = selectedKey ? images[selectedKey] : null;
+
+  function selectByKey(key: Key | null) {
+    if (!key) return;
+    const rec = images[key];
+    if (!rec) return;
+    setSelectedKey(key);
+    setSelectedPid(rec.pid);
+    setSelectedAid(rec.aid);
+  }
+  function onFilenameChange(name: string) {
+    const rec = filenameOptions.find(r => r.name === name);
+    if (rec) selectByKey(rec.key);
+  }
+  function onPersonaChange(pidStr: string) {
+    const pid = Number(pidStr);
+    setSelectedPid(pid);
+    const aids = byPersona[pid] || [];
+    if (aids.length) {
+      const key: Key = `${pid}-${aids[0]}`;
+      if (images[key]) selectByKey(key);
+    }
+  }
+  function onActivityChange(aidStr: string) {
+    if (selectedPid == null) return;
+    const key: Key = `${selectedPid}-${Number(aidStr)}`;
+    if (images[key]) selectByKey(key);
+  }
+
+  // ============== User Info 表单 ==============
+  function openUserForm() {
+    setUserForm(prev => ({
+      ...prev,
+      id: userId || prev.id
+    }));
+    setShowUserForm(true);
+  }
+
+  function onSaveUserInfo() {
+    const u = userForm;
+    if (!u.id) {
+      flash("Please enter User ID");
+      return;
+    }
+    setUserId(u.id);
+
+    const lines: string[] = [];
+    lines.push(`User ID: ${u.id}`);
+    lines.push("");
+    lines.push("Section 1. Basic Demographics");
+    lines.push(`Age: ${u.age || "<empty>"}`);
+    lines.push(`Gender: ${u.gender || "<empty>"}`);
+    lines.push(`Education Level: ${u.education || "<empty>"}`);
+    lines.push(`Occupation: ${u.occupation || "<empty>"}`);
+    lines.push(
+      `Experience with Smart Assistants: ${u.smartAssistantExp || "<empty>"}`
+    );
+    lines.push(
+      `Comfort with technology (1–7): ${u.techComfort || "<empty>"}`
+    );
+
+    const blob = new Blob([lines.join("\n")], {
+      type: "text/plain;charset=utf-8"
+    });
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = `User_${u.id}_Info.txt`;
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(() => {
+      URL.revokeObjectURL(a.href);
+      document.body.removeChild(a);
+    }, 0);
+
+    flash("User info saved");
+    setShowUserForm(false);
+  }
+
+  // ============== Phase I：A/B 选择记录 + 导出 ==============
+  function recordChoiceForCurrentImage(choice: Choice) {
+    if (!userId) {
+      flash("Please enter User ID first");
+      return;
+    }
+    if (!currentImg) {
+      flash("No image selected");
+      return;
+    }
+    setVariant(choice);
+    setPhaseIResults(prev => [...prev, { image: currentImg.name, choice }]);
+    flash(`Saved: ${currentImg.name} -> ${choice}`);
+  }
+
+  function exportPhaseIResults() {
+    if (!userId) {
+      flash("Please enter User ID first");
+      return;
+    }
+    if (!phaseIResults.length) {
+      flash("No selections yet");
+      return;
+    }
+
+    const lines: string[] = [];
+    lines.push(`User ID: ${userId}`);
+    lines.push("");
+    lines.push("Image Name, Result (A/B)");
+    for (const r of phaseIResults) {
+      lines.push(`${r.image}, ${r.choice}`);
+    }
+
+    const blob = new Blob([lines.join("\n")], {
+      type: "text/plain;charset=utf-8"
+    });
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = `Selections_User_${userId}.txt`;
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(() => {
+      URL.revokeObjectURL(a.href);
+      document.body.removeChild(a);
+    }, 0);
+
+    flash("Exported Phase I selections");
+  }
+
+  // ============== Phase II：保存 Interaction ==============
+  function onSaveInteraction() {
+    if (!userId) {
+      flash("Please enter User ID first");
+      return;
+    }
+    if (!currentImg) {
+      flash("No image selected");
+      return;
+    }
+
+    const contents = `User ID: ${userId}
+Image Name: ${currentImg.name}
+
+Interaction:
+${interactionText || "<empty>"}
+`;
+
+    const blob = new Blob([contents], {
+      type: "text/plain;charset=utf-8"
+    });
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    const safeName = currentImg.name.replace(/[^\w.-]+/g, "_");
+    a.download = `Interaction_User_${userId}_${safeName}.txt`;
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(() => {
+      URL.revokeObjectURL(a.href);
+      document.body.removeChild(a);
+    }, 0);
+
+    flash("Interaction saved");
+  }
+
+  // ============== Survey 保存 ==============
+  function onSaveSurvey() {
+    if (!userId) {
+      flash("Please enter User ID first");
+      return;
+    }
+
+    const lines: string[] = [];
+    lines.push(`User ID: ${userId}`);
+    lines.push("");
+    lines.push(`Q1 (Over time, did the assistant’s responses seem to): ${surveyQ1}`);
+    lines.push(
+      `Q2 (How well did the assistant learn and adapt to your preferences?): ${surveyQ2}`
+    );
+    lines.push(
+      `Q3 (How much did you trust the assistant’s decisions and actions by the end of the study?): ${surveyQ3}`
+    );
+    lines.push(
+      `Q4 (How did the assistant’s learning or changes affect your comfort, satisfaction, or willingness to use it again?): ${surveyQ4}`
+    );
+    lines.push(
+      `Q5 (What features or behaviors would make a self-improving assistant more useful and trustworthy / Satisfaction): ${surveyQ5}`
+    );
+
+    const blob = new Blob([lines.join("\n")], {
+      type: "text/plain;charset=utf-8"
+    });
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = `Survey_User_${userId}.txt`;
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(() => {
+      URL.revokeObjectURL(a.href);
+      document.body.removeChild(a);
+    }, 0);
+
+    flash("Survey saved");
+    setShowSurvey(false);
+  }
+
+  // ============== 真正“读盘”的刷新 ==============
+  async function reloadFromHandle(
+    h: FileSystemDirectoryHandle | null,
+    re: RegExp
+  ): Promise<File[]> {
+    const files: File[] = [];
+    if (!h) return files;
+    // @ts-ignore
+    for await (const [, entry] of h.entries()) {
+      if (entry.kind === "file") {
+        const f = await (entry as FileSystemFileHandle).getFile();
+        if (re.test(f.name)) files.push(f);
+      }
+    }
+    return files;
+  }
+
+  // ============== Phase I / II 的 Load 按钮 ==============
+  function pickImagesDirI() {
+    if (imgDirRefI.current) {
+      imgDirRefI.current.value = "";
+      imgDirRefI.current.click();
+    }
+  }
+  function pickNarrDirI() {
+    if (narrDirRefI.current) {
+      narrDirRefI.current.value = "";
+      narrDirRefI.current.click();
+    }
+  }
+  function pickImagesDirII() {
+    if (imgDirRefII.current) {
+      imgDirRefII.current.value = "";
+      imgDirRefII.current.click();
+    }
+  }
+  function pickNarrDirII() {
+    if (narrDirRefII.current) {
+      narrDirRefII.current.value = "";
+      narrDirRefII.current.click();
+    }
+  }
+
+  async function chooseImagesDirFS_I() {
+    // @ts-ignore
+    if (!window.showDirectoryPicker) {
+      pickImagesDirI();
+      return;
+    }
+    // @ts-ignore
+    const handle = await window.showDirectoryPicker({ id: "images-dir-I" });
+    setImgHandleI(handle);
+    const files = await reloadFromHandle(handle, IMAGE_RE);
+    setImageFilesI(files);
+    if (phase === "I") setImageFiles(files);
+  }
+
+  async function chooseNarrDirFS_I() {
+    // @ts-ignore
+    if (!window.showDirectoryPicker) {
+      pickNarrDirI();
+      return;
+    }
+    // @ts-ignore
+    const handle = await window.showDirectoryPicker({ id: "narr-dir-I" });
+    setNarrHandleI(handle);
+    const files = await reloadFromHandle(handle, NARR_RE);
+    setNarratorFilesI(files);
+    if (phase === "I") setNarratorFiles(files);
+  }
+
+  async function chooseImagesDirFS_II() {
+    // @ts-ignore
+    if (!window.showDirectoryPicker) {
+      pickImagesDirII();
+      return;
+    }
+    // @ts-ignore
+    const handle = await window.showDirectoryPicker({ id: "images-dir-II" });
+    setImgHandleII(handle);
+    const files = await reloadFromHandle(handle, IMAGE_RE);
+    setImageFilesII(files);
+    if (phase === "II") setImageFiles(files);
+  }
+
+  async function chooseNarrDirFS_II() {
+    // @ts-ignore
+    if (!window.showDirectoryPicker) {
+      pickNarrDirII();
+      return;
+    }
+    // @ts-ignore
+    const handle = await window.showDirectoryPicker({ id: "narr-dir-II" });
+    setNarrHandleII(handle);
+    const files = await reloadFromHandle(handle, NARR_RE);
+    setNarratorFilesII(files);
+    if (phase === "II") setNarratorFiles(files);
+  }
+
+  // Phase 切换按钮
+  function goPhaseI() {
+    setPhase("I");
+    setImageFiles(imageFilesI);
+    setNarratorFiles(narratorFilesI);
+  }
+
+  function goPhaseII() {
+    setPhase("II");
+    setImageFiles(imageFilesII);
+    setNarratorFiles(narratorFilesII);
+  }
+
+  // ============== Splitter 拖动 ==============
+  function onMouseMove(e: MouseEvent) {
+    if (!draggingRef.current) return;
+    const container = document.querySelector(
+      ".center-split"
+    ) as HTMLElement | null;
+    if (!container) return;
+    const rect = container.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const pct = Math.min(80, Math.max(20, (x / rect.width) * 100));
+    setSplitPct(pct);
+  }
+  function onMouseUp() {
+    if (!draggingRef.current) return;
+    draggingRef.current = false;
+    document.body.style.cursor = "default";
+  }
+  useEffect(() => {
+    window.addEventListener("mousemove", onMouseMove);
+    window.addEventListener("mouseup", onMouseUp);
+    return () => {
+      window.removeEventListener("mousemove", onMouseMove);
+      window.removeEventListener("mouseup", onMouseUp);
+    };
+  }, []);
+
+  const statusLeft = currentImg
+    ? `Image: images/${currentImg.name}`
+    : "Image: <none>";
+  const statusRight =
+    selectedKey && narrs[selectedKey]
+      ? `Narrator: Narrator/${narrs[selectedKey].name}`
+      : "Narrator: <missing>";
+
+  // ============== 主渲染 ==============
+  return (
+    <div className="page dark">
+      {/* 顶部工具栏 */}
+      <div
+        className="toolbar card dark"
+        style={{
+          padding: "12px 18px"
+        }}
+      >
+        <div
+          className="toolbar-row"
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: 12
+          }}
+        >
+          <div className="label" style={{ fontSize: 35 }}>
+            File
+          </div>
+          <select
+            className="select dark"
+            style={{ fontSize: 35 }}
+            value={currentImg?.name || ""}
+            onChange={e => onFilenameChange(e.target.value)}
+          >
+            {filenameOptions.length === 0 && (
+              <option value="">(no images)</option>
+            )}
+            {filenameOptions.map(rec => (
+              <option key={rec.key} value={rec.name}>
+                {rec.name}
+              </option>
+            ))}
+          </select>
+
+          <div className="label" style={{ fontSize: 35 }}>
+            Persona
+          </div>
+          <select
+            className="select dark"
+            style={{ fontSize: 35 }}
+            value={selectedPid != null ? String(selectedPid) : ""}
+            onChange={e => onPersonaChange(e.target.value)}
+          >
+            {personaOptions.length === 0 && (
+              <option value="">(no personas)</option>
+            )}
+            {personaOptions.map(pid => (
+              <option key={pid} value={String(pid)}>
+                {pid}
+              </option>
+            ))}
+          </select>
+
+          <div className="label" style={{ fontSize: 35 }}>
+            Activity
+          </div>
+          <select
+            className="select dark"
+            style={{ fontSize: 35 }}
+            value={selectedAid != null ? String(selectedAid) : ""}
+            onChange={e => onActivityChange(e.target.value)}
+          >
+            {activityOptions.length === 0 && (
+              <option value="">(no activities)</option>
+            )}
+            {activityOptions.map(aid => (
+              <option key={aid} value={String(aid)}>
+                {aid}
+              </option>
+            ))}
+          </select>
+
+          {/* User ID */}
+          <div className="label" style={{ fontSize: 35 }}>
+            User ID
+          </div>
+          <input
+            className="input"
+            style={{ fontSize: 35, padding: "6px 8px", width: 160 }}
+            value={userId}
+            onChange={e =>
+              setUserId(e.target.value.replace(/[^0-9]/g, ""))
+            }
+          />
+
+          <button
+            className="btn btn-secondary"
+            style={{ fontSize: 35 }}
+            onClick={openUserForm}
+          >
+            New User
+          </button>
+
+          <button
+            className="btn btn-secondary"
+            style={{ fontSize: 35 }}
+            onClick={() => setShowSurvey(true)}
+          >
+            Survey
+          </button>
+
+          {/* Phase I 导出 */}
+          <button
+            className="btn btn-primary"
+            style={{ fontSize: 35 }}
+            onClick={exportPhaseIResults}
+          >
+            Export Phase I
+          </button>
+
+          {/* Phase 切换 */}
+          <PhaseBtn active={phase === "I"} onClick={goPhaseI}>
+            Phase I
+          </PhaseBtn>
+          <PhaseBtn active={phase === "II"} onClick={goPhaseII}>
+            Phase II
+          </PhaseBtn>
+
+          <div className="spacer" />
+
+          {/* Load 按钮：分别给 I / II */}
+          <button
+            className="btn btn-hollow"
+            style={{ fontSize: 35 }}
+            onClick={chooseImagesDirFS_I}
+          >
+            Load Images I
+          </button>
+          <button
+            className="btn btn-hollow"
+            style={{ fontSize: 35 }}
+            onClick={chooseNarrDirFS_I}
+          >
+            Load Narrator I
+          </button>
+          <button
+            className="btn btn-hollow"
+            style={{ fontSize: 35 }}
+            onClick={chooseImagesDirFS_II}
+          >
+            Load Images II
+          </button>
+          <button
+            className="btn btn-hollow"
+            style={{ fontSize: 35 }}
+            onClick={chooseNarrDirFS_II}
+          >
+            Load Narrator II
+          </button>
+
+          {/* 隐藏 input 作为回退 */}
+          <input
+            ref={imgDirRefI}
+            type="file"
+            multiple
+            // @ts-ignore
+            webkitdirectory="true"
+            hidden
+            onChange={e => {
+              const fs = e.target.files ? Array.from(e.target.files) : [];
+              setImageFilesI(fs);
+              if (phase === "I") setImageFiles(fs);
+            }}
+          />
+          <input
+            ref={narrDirRefI}
+            type="file"
+            multiple
+            // @ts-ignore
+            webkitdirectory="true"
+            hidden
+            onChange={e => {
+              const fs = e.target.files ? Array.from(e.target.files) : [];
+              setNarratorFilesI(fs);
+              if (phase === "I") setNarratorFiles(fs);
+            }}
+          />
+          <input
+            ref={imgDirRefII}
+            type="file"
+            multiple
+            // @ts-ignore
+            webkitdirectory="true"
+            hidden
+            onChange={e => {
+              const fs = e.target.files ? Array.from(e.target.files) : [];
+              setImageFilesII(fs);
+              if (phase === "II") setImageFiles(fs);
+            }}
+          />
+          <input
+            ref={narrDirRefII}
+            type="file"
+            multiple
+            // @ts-ignore
+            webkitdirectory="true"
+            hidden
+            onChange={e => {
+              const fs = e.target.files ? Array.from(e.target.files) : [];
+              setNarratorFilesII(fs);
+              if (phase === "II") setNarratorFiles(fs);
+            }}
+          />
+        </div>
+      </div>
+
+      {/* 中部内容：根据是否显示 User Form / Survey 决定内容 */}
+      {showUserForm ? (
+        // ========== 用户信息独立页面 ==========
+        <div
+          style={{
+            flex: 1,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            padding: 16
+          }}
+        >
+          <div
+            style={{
+              width: "100%",
+              maxWidth: 960,
+              height: "100%",
+              maxHeight: "100%"
+            }}
+          >
+            <SectionBox title={`User Information Record`}>
+              <div
+                style={{
+                  display: "grid",
+                  gridTemplateColumns: "1fr 1fr",
+                  gap: 8,
+                  fontSize: 35
+                }}
+              >
+                <div>
+                  <div style={{ marginBottom: 4 }}>User ID</div>
+                  <input
+                    className="input"
+                    style={{ width: "100%", padding: "6px 8px", fontSize: 35 }}
+                    value={userForm.id}
+                    onChange={e =>
+                      setUserForm(f => ({
+                        ...f,
+                        id: e.target.value.replace(/[^0-9]/g, "")
+                      }))
+                    }
+                  />
+
+                  <div style={{ marginTop: 8, marginBottom: 4 }}>Age</div>
+                  <select
+                    className="select dark"
+                    style={{ width: "100%", minWidth: 0, fontSize: 35 }}
+                    value={userForm.age}
+                    onChange={e =>
+                      setUserForm(f => ({ ...f, age: e.target.value }))
+                    }
+                  >
+                    <option value="">-- select --</option>
+                    <option value="18–24">18–24</option>
+                    <option value="25–34">25–34</option>
+                    <option value="35–44">35–44</option>
+                    <option value="45–54">45–54</option>
+                    <option value="55–60">55–60</option>
+                  </select>
+
+                  <div style={{ marginTop: 8, marginBottom: 4 }}>Gender</div>
+                  <select
+                    className="select dark"
+                    style={{ width: "100%", minWidth: 0, fontSize: 35 }}
+                    value={userForm.gender}
+                    onChange={e =>
+                      setUserForm(f => ({ ...f, gender: e.target.value }))
+                    }
+                  >
+                    <option value="">-- select --</option>
+                    <option value="Female">Female</option>
+                    <option value="Male">Male</option>
+                    <option value="Non-binary / Self-describe">
+                      Non-binary / Self-describe
+                    </option>
+                    <option value="Prefer not to answer">
+                      Prefer not to answer
+                    </option>
+                  </select>
+
+                  <div style={{ marginTop: 8, marginBottom: 4 }}>
+                    Education Level
+                  </div>
+                  <select
+                    className="select dark"
+                    style={{ width: "100%", minWidth: 0, fontSize: 35 }}
+                    value={userForm.education}
+                    onChange={e =>
+                      setUserForm(f => ({
+                        ...f,
+                        education: e.target.value
+                      }))
+                    }
+                  >
+                    <option value="">-- select --</option>
+                    <option value="High school diploma or equivalent">
+                      High school diploma or equivalent
+                    </option>
+                    <option value="Some college">Some college</option>
+                    <option value="Bachelor’s degree">Bachelor’s degree</option>
+                    <option value="Master’s degree">Master’s degree</option>
+                    <option value="Doctoral degree">Doctoral degree</option>
+                    <option value="Other">Other</option>
+                  </select>
+                </div>
+
+                <div>
+                  <div style={{ marginBottom: 4 }}>
+                    Occupation / Field of Work or Study
+                  </div>
+                  <input
+                    className="input"
+                    style={{
+                      width: "100%",
+                      padding: "6px 8px",
+                      fontSize: 35
+                    }}
+                    value={userForm.occupation}
+                    onChange={e =>
+                      setUserForm(f => ({
+                        ...f,
+                        occupation: e.target.value
+                      }))
+                    }
+                  />
+
+                  <div style={{ marginTop: 8, marginBottom: 4 }}>
+                    Experience with Smart Assistants
+                  </div>
+                  <select
+                    className="select dark"
+                    style={{ width: "100%", minWidth: 0, fontSize: 35 }}
+                    value={userForm.smartAssistantExp}
+                    onChange={e =>
+                      setUserForm(f => ({
+                        ...f,
+                        smartAssistantExp: e.target.value
+                      }))
+                    }
+                  >
+                    <option value="">-- select --</option>
+                    <option value="None">None</option>
+                    <option value="Occasional user">Occasional user</option>
+                    <option value="Regular user">Regular user</option>
+                    <option value="Daily user">Daily user</option>
+                  </select>
+
+                  <div style={{ marginTop: 8, marginBottom: 4 }}>
+                    Comfort with technology (1 = Not comfortable, 7 = Very
+                    comfortable)
+                  </div>
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 8
+                    }}
+                  >
+                    <input
+                      type="range"
+                      min={1}
+                      max={7}
+                      value={userForm.techComfort}
+                      onChange={e =>
+                        setUserForm(f => ({
+                          ...f,
+                          techComfort: e.target.value
+                        }))
+                      }
+                    />
+                    <div
+                      style={{
+                        width: 48,
+                        textAlign: "center",
+                        fontSize: 35
+                      }}
+                    >
+                      {userForm.techComfort}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div
+                style={{
+                  marginTop: 16,
+                  display: "flex",
+                  justifyContent: "flex-end",
+                  gap: 8
+                }}
+              >
+                <button
+                  className="btn btn-hollow"
+                  style={{ fontSize: 35 }}
+                  onClick={() => setShowUserForm(false)}
+                >
+                  Cancel
+                </button>
+                <button
+                  className="btn btn-primary"
+                  style={{ fontSize: 35 }}
+                  onClick={onSaveUserInfo}
+                >
+                  Save User Info
+                </button>
+              </div>
+            </SectionBox>
+          </div>
+        </div>
+      ) : (
+        <>
+          {/* 中部：可拖动分隔的左右面板 */}
+          <div
+            className="center-split"
+            style={{
+              display: "grid",
+              gridTemplateColumns: `${splitPct}% 6px ${100 - splitPct}%`,
+              height: "calc(100vh - 120px)",
+              minHeight: 0
+            }}
+          >
+            {/* 左：单张图片 */}
+            <div
+              className="panel image-panel"
+              style={{
+                position: "relative",
+                width: "100%",
+                height: "100%",
+                border: "1px solid #e2e8f0",
+                borderRadius: 12,
+                overflow: "hidden",
+                background: "#0b1220",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                minHeight: 0
+              }}
+            >
+              {currentImg ? (
+                <img
+                  src={currentImg.url}
+                  alt={currentImg.name}
+                  style={{
+                    maxWidth: "100%",
+                    maxHeight: "100%",
+                    objectFit: "contain",
+                    display: "block"
+                  }}
+                />
+              ) : (
+                <div className="placeholder">No image</div>
+              )}
+            </div>
+
+            {/* 分隔条 */}
+            <div
+              className="divider"
+              onMouseDown={e => {
+                e.preventDefault();
+                draggingRef.current = true;
+                document.body.style.cursor = "col-resize";
+              }}
+              onDoubleClick={() => setSplitPct(58)}
+              title="Drag to resize"
+              style={{ cursor: "col-resize", background: "#94a3b8" }}
+            />
+
+            {/* 右：Phase I / Phase II 不同内容 */}
+            {phase === "I" ? (
+              // ---------- Phase I：原 Storyboard 视图 ----------
+              <div
+                className="panel text-panel"
+                style={{
+                  display: "grid",
+                  gridTemplateRows: "5fr auto 3fr 3fr",
+                  gap: 10,
+                  minHeight: 0
+                }}
+              >
+                {/* Narrator */}
+                <SectionBox title="">
+                  <div
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      height: "100%",
+                      padding: "4px 8px 8px 8px"
+                    }}
+                  >
+                    <div
+                      style={{
+                        fontWeight: 900,
+                        fontSize: 35,
+                        marginBottom: 10,
+                        lineHeight: 1.2
+                      }}
+                    >
+                      Based on the following activity description:
+                    </div>
+
+                    <div
+                      style={{
+                        display: "flex",
+                        flexDirection: "column",
+                        height: "100%"
+                      }}
+                    >
+                      <div
+                        style={{
+                          fontWeight: 400,
+                          fontSize: 35,
+                          marginBottom: 6
+                        }}
+                      >
+                        User Name: {userNameFromNarr || "PlaceHolder"}
+                      </div>
+                      <textarea
+                        className="narr"
+                        value={activityDesc}
+                        onChange={e => setActivityDesc(e.target.value)}
+                        style={{
+                          height: "100%",
+                          width: "100%",
+                          resize: "none",
+                          fontSize: 35,
+                          lineHeight: 1.5
+                        }}
+                      />
+                    </div>
+                  </div>
+                </SectionBox>
+
+                {/* Storyboard 选择 */}
+                <div
+                  className="card"
+                  style={{
+                    padding: 10,
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 12
+                  }}
+                >
+                  <div style={{ fontWeight: 900, fontSize: 35 }}>
+                    Which Smart Assistant interaction method do you prefer?
+                  </div>
+
+                  <DarkBtn
+                    active={variant === "A"}
+                    onClick={() => setVariant("A")}
+                  >
+                    A
+                  </DarkBtn>
+                  <DarkBtn
+                    active={variant === "B"}
+                    onClick={() => setVariant("B")}
+                  >
+                    B
+                  </DarkBtn>
+
+                  <button
+                    className="btn btn-primary"
+                    style={{
+                      marginLeft: 16,
+                      fontSize: 35,
+                      fontWeight: 500,
+                      padding: "10px 24px"
+                    }}
+                    onClick={() => recordChoiceForCurrentImage(variant)}
+                  >
+                    Confirm Choice
+                  </button>
+                </div>
+
+                {/* A：展示 Smart Assistant Interaction 文案 */}
+                <SectionBox title="A" emphasized={variant === "A"}>
+                  <textarea
+                    className="narr"
+                    readOnly
+                    value={smartTextA || "PlaceHolder A"}
+                    style={{
+                      height: "100%",
+                      width: "100%",
+                      resize: "none",
+                      fontSize: 35,
+                      lineHeight: 1.6
+                    }}
+                  />
+                </SectionBox>
+
+                {/* B：同一文案，PlaceHolder B */}
+                <SectionBox title="B" emphasized={variant === "B"}>
+                  <textarea
+                    className="narr"
+                    readOnly
+                    value={smartTextA || "PlaceHolder B"}
+                    style={{
+                      height: "100%",
+                      width: "100%",
+                      resize: "none",
+                      fontSize: 35,
+                      lineHeight: 1.6
+                    }}
+                  />
+                </SectionBox>
+              </div>
+            ) : (
+              // ---------- Phase II：新的 Interaction 视图 ----------
+              <div
+                className="panel text-panel"
+                style={{
+                  display: "grid",
+                  gridTemplateRows: "5fr 5fr",
+                  gap: 10,
+                  minHeight: 0
+                }}
+              >
+                {/* 上方：根据 Smart Assistant Interaction */}
+                <SectionBox title="">
+                  <div
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      height: "100%",
+                      padding: "4px 8px 8px 8px"
+                    }}
+                  >
+                    <div
+                      style={{
+                        fontWeight: 900,
+                        fontSize: 35,
+                        marginBottom: 10,
+                        lineHeight: 1.2
+                      }}
+                    >
+                      Based on the description of interaction with smart
+                      assistant.
+                    </div>
+
+                    <textarea
+                      className="narr"
+                      readOnly
+                      value={smartTextA}
+                      style={{
+                        height: "100%",
+                        width: "100%",
+                        resize: "none",
+                        fontSize: 35,
+                        lineHeight: 1.5
+                      }}
+                    />
+                  </div>
+                </SectionBox>
+
+                {/* 下方：Interaction 输入 + SAVE */}
+                <SectionBox title="Interaction">
+                  <div
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      height: "100%",
+                      padding: "4px 8px 8px 8px"
+                    }}
+                  >
+                    <textarea
+                      className="narr"
+                      value={interactionText}
+                      onChange={e => setInteractionText(e.target.value)}
+                      placeholder="Type any interaction notes here..."
+                      style={{
+                        height: "100%",
+                        width: "100%",
+                        resize: "none",
+                        fontSize: 35,
+                        lineHeight: 1.5
+                      }}
+                    />
+                    <div
+                      style={{
+                        marginTop: 12,
+                        display: "flex",
+                        justifyContent: "flex-end"
+                      }}
+                    >
+                      <button
+                        className="btn btn-primary"
+                        style={{ fontSize: 35, padding: "8px 24px" }}
+                        onClick={onSaveInteraction}
+                      >
+                        SAVE Interaction
+                      </button>
+                    </div>
+                  </div>
+                </SectionBox>
+              </div>
+            )}
+          </div>
+        </>
+      )}
+
+      {/* Survey 弹窗 */}
+      {showSurvey && (
+        <div
+          style={{
+            position: "fixed",
+            inset: 0,
+            background: "rgba(15,23,42,0.85)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            zIndex: 9999
+          }}
+        >
+          <div
+            style={{
+              background: "#020617",
+              borderRadius: 16,
+              padding: 24,
+              width: "80%",
+              maxWidth: 900,
+              maxHeight: "90vh",
+              overflowY: "auto",
+              color: "#e5e7eb"
+            }}
+          >
+            <div
+              style={{
+                fontSize: 35,
+                fontWeight: 900,
+                marginBottom: 16
+              }}
+            >
+              Section 4. Post-Study Survey
+            </div>
+            <div
+              style={{
+                fontSize: 35,
+                marginBottom: 16
+              }}
+            >
+              Please reflect on your overall experience interacting with the
+              smart assistant.
+            </div>
+
+            {/* Q1 */}
+            <div style={{ marginBottom: 16, fontSize: 35 }}>
+              <div style={{ marginBottom: 8 }}>
+                Over time, did the assistant’s responses seem to:
+              </div>
+              <select
+                className="select dark"
+                style={{ fontSize: 35, width: "100%" }}
+                value={surveyQ1}
+                onChange={e => setSurveyQ1(e.target.value)}
+              >
+                <option value="">-- select --</option>
+                <option value="Strongly improved">Strongly improved</option>
+                <option value="Somewhat improved">Somewhat improved</option>
+                <option value="No change">No change</option>
+                <option value="Somewhat worsened">Somewhat worsened</option>
+                <option value="Strongly worsened">Strongly worsened</option>
+              </select>
+            </div>
+
+            {/* Q2 */}
+            <div style={{ marginBottom: 16, fontSize: 35 }}>
+              <div style={{ marginBottom: 8 }}>
+                How well did the assistant learn and adapt to your preferences?
+              </div>
+              <select
+                className="select dark"
+                style={{ fontSize: 35, width: "100%" }}
+                value={surveyQ2}
+                onChange={e => setSurveyQ2(e.target.value)}
+              >
+                <option value="">-- select --</option>
+                <option value="Very well">Very well</option>
+                <option value="Somewhat well">Somewhat well</option>
+                <option value="Slightly">Slightly</option>
+                <option value="Not at all">Not at all</option>
+              </select>
+            </div>
+
+            {/* Q3 */}
+            <div style={{ marginBottom: 16, fontSize: 35 }}>
+              <div style={{ marginBottom: 8 }}>
+                How much did you trust the assistant’s decisions and actions by
+                the end of the study?
+              </div>
+              <select
+                className="select dark"
+                style={{ fontSize: 35, width: "100%" }}
+                value={surveyQ3}
+                onChange={e => setSurveyQ3(e.target.value)}
+              >
+                <option value="">-- select --</option>
+                <option value="Strongly increased">Strongly increased</option>
+                <option value="Somewhat increased">Somewhat increased</option>
+                <option value="No change">No change</option>
+                <option value="Somewhat decreased">Somewhat decreased</option>
+                <option value="Strongly decreased">Strongly decreased</option>
+              </select>
+            </div>
+
+            {/* Q4 */}
+            <div style={{ marginBottom: 16, fontSize: 35 }}>
+              <div style={{ marginBottom: 8 }}>
+                How did the assistant’s learning or changes affect your comfort,
+                satisfaction, or willingness to use it again?
+              </div>
+              <select
+                className="select dark"
+                style={{ fontSize: 35, width: "100%" }}
+                value={surveyQ4}
+                onChange={e => setSurveyQ4(e.target.value)}
+              >
+                <option value="">-- select --</option>
+                <option value="Strongly increased">Strongly increased</option>
+                <option value="Somewhat increased">Somewhat increased</option>
+                <option value="No change">No change</option>
+                <option value="Somewhat decreased">Somewhat decreased</option>
+                <option value="Strongly decreased">Strongly decreased</option>
+              </select>
+            </div>
+
+            {/* Q5 */}
+            <div style={{ marginBottom: 16, fontSize: 35 }}>
+              <div style={{ marginBottom: 8 }}>
+                What features or behaviors would make a self-improving assistant
+                more useful and trustworthy for you in daily life? (Overall
+                satisfaction)
+              </div>
+              <select
+                className="select dark"
+                style={{ fontSize: 35, width: "100%" }}
+                value={surveyQ5}
+                onChange={e => setSurveyQ5(e.target.value)}
+              >
+                <option value="">-- select --</option>
+                <option value="Very satisfied">Very satisfied</option>
+                <option value="Somewhat satisfied">Somewhat satisfied</option>
+                <option value="Neutral">Neutral</option>
+                <option value="Somewhat dissatisfied">
+                  Somewhat dissatisfied
+                </option>
+                <option value="Very dissatisfied">Very dissatisfied</option>
+              </select>
+            </div>
+
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "flex-end",
+                gap: 12,
+                marginTop: 12
+              }}
+            >
+              <button
+                className="btn btn-hollow"
+                style={{ fontSize: 35 }}
+                onClick={() => setShowSurvey(false)}
+              >
+                Cancel
+              </button>
+              <button
+                className="btn btn-primary"
+                style={{ fontSize: 35 }}
+                onClick={onSaveSurvey}
+              >
+                Save Survey
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* 底部状态栏 */}
+      <div className="statusbar">
+        <div className="status-left" title={statusLeft}>
+          {statusLeft}
+        </div>
+        <div className="status-right" title={statusRight}>
+          {statusRight}
+          &nbsp; | &nbsp; User ID: {userId || "<empty>"}
+          &nbsp; | &nbsp; Phase: {phase}
+          &nbsp; | &nbsp; Storyboard (Phase I): {variant}
+        </div>
+      </div>
+    </div>
+  );
 }
