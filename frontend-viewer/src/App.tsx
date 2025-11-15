@@ -2,24 +2,60 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 
 /** 文件名匹配规则：Persona_17_Activity_145.jpg / Persona_17_Activity_145_Description.txt */
 const IMAGE_RE = /^Persona_(\d+)_Activity_(\d+)\.(?:jpg|jpeg|png)$/i;
-const NARR_RE  = /^Persona_(\d+)_Activity_(\d+)_Description\.(?:txt|md|json)$/i;
+const NARR_RE = /^Persona_(\d+)_Activity_(\d+)_Description\.(?:txt|md|json)$/i;
 
 type Phase = "I" | "II";
 type Key = `${number}-${number}`;
 
-type ImgRec  = { key: Key; pid: number; aid: number; file: File; url: string; name: string };
+type ImgRec = {
+  key: Key;
+  pid: number;
+  aid: number;
+  file: File;
+  url: string;
+  name: string;
+};
 type NarrRec = { key: Key; pid: number; aid: number; file: File; name: string };
 
 type Choice = "A" | "B";
+
+type PreInfo = {
+  userId: string;
+  savedAt: string;
+  demographics: {
+    age: string;
+    gender: string;
+    education: string;
+    occupation: string;
+    smartAssistantExp: string;
+    techComfort: string;
+  };
+};
+
+type PhaseIIInteraction = {
+  persona: number;
+  activity: number;
+  imageName: string;
+  interaction: string;
+};
+
+type SurveyInfo = {
+  overallChange: string;
+  adaptPref: string;
+  trustChange: string;
+  comfortChange: string;
+  satisfaction: string;
+  comments: string;
+};
 
 function makeKey(pid: number, aid: number): Key {
   return `${pid}-${aid}` as Key;
 }
 
-/** 下载 JSON 小工具 */
+/** 下载 JSON（作为没有目录权限时的 fallback） */
 function downloadJson(filename: string, data: any) {
   const blob = new Blob([JSON.stringify(data, null, 2)], {
-    type: "application/json;charset=utf-8"
+    type: "application/json;charset=utf-8",
   });
   const a = document.createElement("a");
   a.href = URL.createObjectURL(blob);
@@ -39,12 +75,12 @@ export default function App() {
 
   // Phase I & Phase II 各自的图像 / narrator 映射
   const [imagesPhaseI, setImagesPhaseI] = useState<Record<Key, ImgRec>>({});
-  const [narrsPhaseI,  setNarrsPhaseI]  = useState<Record<Key, NarrRec>>({});
-  const [byPersonaI,   setByPersonaI]   = useState<Record<number, number[]>>({});
+  const [narrsPhaseI, setNarrsPhaseI] = useState<Record<Key, NarrRec>>({});
+  const [byPersonaI, setByPersonaI] = useState<Record<number, number[]>>({});
 
   const [imagesPhaseII, setImagesPhaseII] = useState<Record<Key, ImgRec>>({});
-  const [narrsPhaseII,  setNarrsPhaseII]  = useState<Record<Key, NarrRec>>({});
-  const [byPersonaII,   setByPersonaII]   = useState<Record<number, number[]>>({});
+  const [narrsPhaseII, setNarrsPhaseII] = useState<Record<Key, NarrRec>>({});
+  const [byPersonaII, setByPersonaII] = useState<Record<number, number[]>>({});
 
   // 当前选中的图片
   const [selectedKey, setSelectedKey] = useState<Key | null>(null);
@@ -53,16 +89,22 @@ export default function App() {
 
   // Narrator 解析出来的字段
   const [userNameFromNarr, setUserNameFromNarr] = useState<string>("");
-  const [activityDesc,     setActivityDesc]     = useState<string>("");
-  const [smartTextA,       setSmartTextA]       = useState<string>("");
+  const [activityDesc, setActivityDesc] = useState<string>("");
+  const [smartTextA, setSmartTextA] = useState<string>("");
 
-  // Phase I：A/B 选择
+  // Phase I：A/B 选择（只存内存）
   const [variant, setVariant] = useState<Choice>("A");
   const [phaseISelections, setPhaseISelections] =
     useState<Record<string, Choice>>({}); // key = imageName
 
-  // Phase II：当前 Interaction 文本 & 累积
+  // Phase II：当前 Interaction 文本 & 累积（只存内存）
   const [interactionText, setInteractionText] = useState<string>("");
+  const [phaseIIInteractions, setPhaseIIInteractions] = useState<
+    Record<string, PhaseIIInteraction>
+  >({});
+
+  // 结果 JSON 的目录句柄（Result Path）
+  const [resultDirHandle, setResultDirHandle] = useState<any | null>(null);
 
   // 中间 splitter
   const [splitPct, setSplitPct] = useState<number>(58);
@@ -72,7 +114,7 @@ export default function App() {
   const [showUserModal, setShowUserModal] = useState(false);
   const [showSurveyModal, setShowSurveyModal] = useState(false);
 
-  // New User 弹窗里的临时表单
+  // New User 弹窗里的表单
   const [userForm, setUserForm] = useState({
     id: "",
     age: "",
@@ -80,22 +122,25 @@ export default function App() {
     education: "",
     occupation: "",
     smartAssistantExp: "",
-    techComfort: "4"
+    techComfort: "4",
   });
 
-  // Survey 表单
-  const [survey, setSurvey] = useState({
+  // 保存好的 Pre 信息（只存内存）
+  const [preInfo, setPreInfo] = useState<PreInfo | null>(null);
+
+  // Survey 表单（也是内存）
+  const [survey, setSurvey] = useState<SurveyInfo>({
     overallChange: "",
     adaptPref: "",
     trustChange: "",
     comfortChange: "",
     satisfaction: "",
-    comments: ""
+    comments: "",
   });
 
   // --------- 根据 phase 取当前的 images / narrs / byPersona ---------
   const images = phase === "I" ? imagesPhaseI : imagesPhaseII;
-  const narrs  = phase === "I" ? narrsPhaseI  : narrsPhaseII;
+  const narrs = phase === "I" ? narrsPhaseI : narrsPhaseII;
   const byPersona = phase === "I" ? byPersonaI : byPersonaII;
 
   const currentImg = selectedKey ? images[selectedKey] : undefined;
@@ -106,7 +151,6 @@ export default function App() {
   function openFolderInput(phase: Phase) {
     const el = folderInputRef.current;
     if (!el) return;
-    // 把 phase 写到 data-phase 里，onChange 时再区分
     (el as any).dataset.phase = phase;
     el.value = "";
     el.click();
@@ -114,7 +158,6 @@ export default function App() {
 
   // --------- 目录加载：Phase I / Phase II 各自一套 ---------
   async function loadPhaseDir(which: Phase) {
-    // 优先使用 File System Access API
     const canPick = (window as any).showDirectoryPicker;
     if (!canPick) {
       openFolderInput(which);
@@ -122,19 +165,18 @@ export default function App() {
     }
 
     try {
-      const handle: FileSystemDirectoryHandle = await (window as any).showDirectoryPicker({
-        id: which === "I" ? "phase-i-dir" : "phase-ii-dir"
+      const handle: any = await (window as any).showDirectoryPicker({
+        id: which === "I" ? "phase-i-dir" : "phase-ii-dir",
       });
 
       const imgMap: Record<Key, ImgRec> = {};
       const narrMap: Record<Key, NarrRec> = {};
       const per: Record<number, Set<number>> = {};
 
-      // 遍历目录
       // @ts-ignore
       for await (const [, entry] of handle.entries()) {
         if (entry.kind !== "file") continue;
-        const file = await (entry as FileSystemFileHandle).getFile();
+        const file = await (entry as any).getFile();
         const name = file.name.trim();
 
         let m = name.match(IMAGE_RE);
@@ -148,7 +190,7 @@ export default function App() {
             aid,
             file,
             url: URL.createObjectURL(file),
-            name
+            name,
           };
           (per[pid] ||= new Set()).add(aid);
           continue;
@@ -159,13 +201,7 @@ export default function App() {
           const pid = parseInt(m[1], 10);
           const aid = parseInt(m[2], 10);
           const key = makeKey(pid, aid);
-          narrMap[key] = {
-            key,
-            pid,
-            aid,
-            file,
-            name
-          };
+          narrMap[key] = { key, pid, aid, file, name };
         }
       }
 
@@ -174,9 +210,7 @@ export default function App() {
         perOut[Number(pidStr)] = Array.from(aids).sort((a, b) => a - b);
       }
 
-      // 写入对应 Phase 的 state
       if (which === "I") {
-        // 回收旧 URL
         Object.values(imagesPhaseI).forEach((r) => URL.revokeObjectURL(r.url));
         setImagesPhaseI(imgMap);
         setNarrsPhaseI(narrMap);
@@ -188,7 +222,6 @@ export default function App() {
         setByPersonaII(perOut);
       }
 
-      // 如果当前 phase 是这个，就选中第一张图
       if (phase === which) {
         const sorted = Object.values(imgMap).sort(
           (a, b) => a.pid - b.pid || a.aid - b.aid
@@ -234,7 +267,7 @@ export default function App() {
           aid,
           file,
           url: URL.createObjectURL(file),
-          name
+          name,
         };
         (per[pid] ||= new Set()).add(aid);
         continue;
@@ -324,7 +357,6 @@ export default function App() {
         try {
           data = JSON.parse(raw);
         } catch {
-          // 如果不是 JSON，就当纯文本，全部塞到 activityDesc
           data = {};
         }
 
@@ -371,9 +403,7 @@ export default function App() {
 
   const activityOptions = useMemo(
     () =>
-      selectedPid == null
-        ? []
-        : (byPersona[selectedPid] || []),
+      selectedPid == null ? [] : byPersona[selectedPid] || [],
     [byPersona, selectedPid]
   );
 
@@ -426,7 +456,7 @@ export default function App() {
     }
   }
 
-  // --------- Phase I：Confirm Selection，保存全部结果为一个 JSON ---------
+  // --------- Phase I：Confirm Selection（只存内存）---------
   function onConfirmSelection() {
     if (!currentImg) {
       alert("No image selected.");
@@ -436,44 +466,18 @@ export default function App() {
       alert("Please enter User ID first.");
       return;
     }
-  
+
     const newSelections = {
       ...phaseISelections,
-      [currentImg.name]: variant
+      [currentImg.name]: variant,
     };
     setPhaseISelections(newSelections);
-  
+
     alert("Selection recorded for this image in Phase I.");
   }
-  function savePhaseISummary() {
-    if (!userId) {
-      alert("Please enter User ID first.");
-      return;
-    }
-  
-    const entries = Object.entries(phaseISelections);
-    if (entries.length === 0) {
-      alert("No selections recorded yet in Phase I.");
-      return;
-    }
-  
-    const data = {
-      userId,
-      savedAt: new Date().toISOString(),
-      selections: entries.map(([imageName, choice]) => ({
-        imageName,
-        choice
-      }))
-    };
-  
-    const safeId = userId.replace(/[^\w.-]+/g, "_");
-    downloadJson(`user${safeId}_phaseI.json`, data);
-    alert("Phase I summary JSON saved.");
-  }
-  
 
-  // --------- Phase II：保存当前 Interaction ---------
-  function onSaveInteraction() {
+  // --------- Phase II：Save and Continue（存内存 + 下一张）---------
+  function onSaveInteractionAndContinue() {
     if (!currentImg) {
       alert("No image selected.");
       return;
@@ -483,25 +487,27 @@ export default function App() {
       return;
     }
 
-    const data = {
-      userId,
-      savedAt: new Date().toISOString(),
+    const record: PhaseIIInteraction = {
       persona: currentImg.pid,
       activity: currentImg.aid,
       imageName: currentImg.name,
-      interaction: interactionText || ""
+      interaction: interactionText || "",
     };
-    const safeId = userId.replace(/[^\w.-]+/g, "_");
-    const fileName = `user${safeId}_Phase2_Persona_${currentImg.pid}_Activity_${currentImg.aid}.json`;
-    downloadJson(fileName, data);
-    alert("Interaction saved for Phase II.");
+
+    setPhaseIIInteractions((prev) => ({
+      ...prev,
+      [currentImg.name]: record,
+    }));
+
+    alert("Interaction recorded for this image in Phase II.");
+    goNextImage();
   }
 
-  // --------- New User 弹窗：保存为 user<id>_pre.json ---------
+  // --------- New User 弹窗：只存内存 ---------
   function openUserModal() {
     setUserForm((prev) => ({
       ...prev,
-      id: userId || prev.id
+      id: userId || prev.id,
     }));
     setShowUserModal(true);
   }
@@ -514,7 +520,7 @@ export default function App() {
     }
     setUserId(id);
 
-    const data = {
+    const info: PreInfo = {
       userId: id,
       savedAt: new Date().toISOString(),
       demographics: {
@@ -523,30 +529,109 @@ export default function App() {
         education: userForm.education,
         occupation: userForm.occupation,
         smartAssistantExp: userForm.smartAssistantExp,
-        techComfort: userForm.techComfort
-      }
+        techComfort: userForm.techComfort,
+      },
     };
-    const safeId = id.replace(/[^\w.-]+/g, "_");
-    downloadJson(`user${safeId}_pre.json`, data);
+    setPreInfo(info);
     setShowUserModal(false);
-    alert("User info saved.");
+    alert("User info saved in memory.");
   }
 
-  // --------- Survey 弹窗：保存为 user<id>_post.json ---------
+  // --------- Survey 弹窗：结果只存 survey state ---------
   function saveSurvey() {
     if (!userId) {
       alert("Please enter User ID first.");
       return;
     }
-    const data = {
-      userId,
-      savedAt: new Date().toISOString(),
-      survey
-    };
-    const safeId = userId.replace(/[^\w.-]+/g, "_");
-    downloadJson(`user${safeId}_post.json`, data);
     setShowSurveyModal(false);
-    alert("Survey saved.");
+    alert("Survey saved in memory.");
+  }
+
+  // --------- 选择 Result Path（结果 JSON 输出目录）---------
+  async function chooseResultPath() {
+    const canPick = (window as any).showDirectoryPicker;
+    if (!canPick) {
+      alert(
+        "Your browser does not support folder selection. The JSON file will be downloaded instead."
+      );
+      return;
+    }
+    try {
+      const handle = await (window as any).showDirectoryPicker({
+        id: "result-dir",
+      });
+      setResultDirHandle(handle);
+      alert("Result path selected.");
+    } catch (e) {
+      console.error("chooseResultPath error:", e);
+    }
+  }
+
+  // --------- Save ALL：合并所有阶段，输出一个 UserID_Reflection.json ---------
+  async function saveAll() {
+    if (!userId) {
+      alert("Please enter User ID first.");
+      return;
+    }
+    const safeId = userId.replace(/[^\w.-]+/g, "_");
+
+    // Phase I：根据 imagesPhaseI + phaseISelections 组合
+    const phaseIArray = Object.values(imagesPhaseI)
+      .sort((a, b) => a.pid - b.pid || a.aid - b.aid)
+      .map((rec) => {
+        const choice = phaseISelections[rec.name];
+        if (!choice) return null;
+        return {
+          persona: rec.pid,
+          activity: rec.aid,
+          imageName: rec.name,
+          choice,
+        };
+      })
+      .filter(Boolean) as {
+      persona: number;
+      activity: number;
+      imageName: string;
+      choice: Choice;
+    }[];
+
+    // Phase II：用已存的 interactions
+    const phaseIIArray = Object.values(phaseIIInteractions).sort(
+      (a, b) => a.persona - b.persona || a.activity - b.activity
+    );
+
+    const result = {
+      userId,
+      generatedAt: new Date().toISOString(),
+      pre: preInfo,
+      phaseI: phaseIArray,
+      phaseII: phaseIIArray,
+      post: survey,
+    };
+
+    const fileName = `${safeId}_Reflection.json`;
+
+    if (resultDirHandle && (window as any).showDirectoryPicker) {
+      try {
+        const fileHandle = await (resultDirHandle as any).getFileHandle(
+          fileName,
+          { create: true }
+        );
+        const writable = await (fileHandle as any).createWritable();
+        await writable.write(JSON.stringify(result, null, 2));
+        await writable.close();
+        alert("Saved ALL to selected result folder.");
+        return;
+      } catch (e) {
+        console.error("saveAll via directory handle failed:", e);
+        alert(
+          "Failed to save to selected folder. The JSON file will be downloaded instead."
+        );
+      }
+    }
+
+    // fallback：直接下载
+    downloadJson(fileName, result);
   }
 
   // --------- Splitter 拖动 ---------
@@ -577,9 +662,7 @@ export default function App() {
     };
   }, []);
 
-  const statusLeft = currentImg
-    ? `Image: ${currentImg.name}`
-    : "Image: <none>";
+  const statusLeft = currentImg ? `Image: ${currentImg.name}` : "Image: <none>";
   const narrRec = selectedKey ? narrs[selectedKey] : undefined;
   const statusRight = narrRec
     ? `Narrator: ${narrRec.name}`
@@ -601,7 +684,7 @@ export default function App() {
         borderRadius: 12,
         border: active ? "2px solid #60a5fa" : "1px solid #4b5563",
         background: active ? "#0b1220" : "#111827",
-        color: active ? "#93c5fd" : "#e5e7eb"
+        color: active ? "#93c5fd" : "#e5e7eb",
       }}
     >
       {children}
@@ -623,7 +706,7 @@ export default function App() {
         color: "#e5e7eb",
         background: active ? "#0b1220" : "#111827",
         border: active ? "2px solid #60a5fa" : "1px solid #374151",
-        borderRadius: 12
+        borderRadius: 12,
       }}
       aria-pressed={active}
     >
@@ -638,7 +721,7 @@ export default function App() {
       <div
         className="toolbar card dark"
         style={{
-          padding: "12px 18px"
+          padding: "12px 18px",
         }}
       >
         <div
@@ -646,7 +729,7 @@ export default function App() {
           style={{
             display: "flex",
             alignItems: "center",
-            gap: 12
+            gap: 12,
           }}
         >
           <div className="label" style={{ fontSize: 35 }}>
@@ -715,7 +798,7 @@ export default function App() {
             style={{
               fontSize: 35,
               padding: "4px 10px",
-              width: 180
+              width: 180,
             }}
             value={userId}
             onChange={(e) => setUserId(e.target.value)}
@@ -736,6 +819,22 @@ export default function App() {
             onClick={() => setShowSurveyModal(true)}
           >
             Survey
+          </button>
+
+          <button
+            className="btn btn-secondary"
+            style={{ fontSize: 35 }}
+            onClick={chooseResultPath}
+          >
+            Result Path
+          </button>
+
+          <button
+            className="btn btn-primary"
+            style={{ fontSize: 35 }}
+            onClick={saveAll}
+          >
+            Save ALL
           </button>
 
           {/* Phase 切换 */}
@@ -784,7 +883,7 @@ export default function App() {
           display: "grid",
           gridTemplateColumns: `${splitPct}% 6px ${100 - splitPct}%`,
           height: "calc(100vh - 120px)",
-          minHeight: 0
+          minHeight: 0,
         }}
       >
         {/* 左边图片 */}
@@ -801,7 +900,7 @@ export default function App() {
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            minHeight: 0
+            minHeight: 0,
           }}
         >
           {currentImg ? (
@@ -812,7 +911,7 @@ export default function App() {
                 maxWidth: "100%",
                 maxHeight: "100%",
                 objectFit: "contain",
-                display: "block"
+                display: "block",
               }}
             />
           ) : (
@@ -844,7 +943,7 @@ export default function App() {
               display: "grid",
               gridTemplateRows: "5fr auto 3fr 3fr",
               gap: 10,
-              minHeight: 0
+              minHeight: 0,
             }}
           >
             {/* Narrator：User Name + Activity Description */}
@@ -854,7 +953,7 @@ export default function App() {
                   display: "flex",
                   flexDirection: "column",
                   height: "100%",
-                  padding: "4px 8px 8px 8px"
+                  padding: "4px 8px 8px 8px",
                 }}
               >
                 <div
@@ -862,7 +961,7 @@ export default function App() {
                     fontWeight: 900,
                     fontSize: 35,
                     marginBottom: 10,
-                    lineHeight: 1.2
+                    lineHeight: 1.2,
                   }}
                 >
                   Based on the following activity description:
@@ -872,14 +971,14 @@ export default function App() {
                   style={{
                     display: "flex",
                     flexDirection: "column",
-                    height: "100%"
+                    height: "100%",
                   }}
                 >
                   <div
                     style={{
                       fontWeight: 400,
                       fontSize: 35,
-                      marginBottom: 6
+                      marginBottom: 6,
                     }}
                   >
                     User Name: {userNameFromNarr || "PlaceHolder"}
@@ -893,7 +992,7 @@ export default function App() {
                       width: "100%",
                       resize: "none",
                       fontSize: 35,
-                      lineHeight: 1.5
+                      lineHeight: 1.5,
                     }}
                   />
                 </div>
@@ -907,7 +1006,7 @@ export default function App() {
                 padding: 10,
                 display: "flex",
                 alignItems: "center",
-                gap: 12
+                gap: 12,
               }}
             >
               <div style={{ fontWeight: 900, fontSize: 35 }}>
@@ -926,7 +1025,7 @@ export default function App() {
                   marginLeft: 16,
                   fontSize: 35,
                   fontWeight: 500,
-                  padding: "10px 24px"
+                  padding: "10px 24px",
                 }}
                 onClick={onConfirmSelection}
               >
@@ -938,26 +1037,13 @@ export default function App() {
                 style={{
                   fontSize: 35,
                   fontWeight: 500,
-                  padding: "10px 24px"
+                  padding: "10px 24px",
                 }}
                 onClick={goNextImage}
               >
                 Next Image
               </button>
-
-              <button
-                className="btn btn-hollow"
-                style={{
-                  fontSize: 35,
-                  fontWeight: 500,
-                  padding: "10px 24px"
-                }}
-                onClick={savePhaseISummary}
-              >
-                Save Phase I Summary
-              </button>
             </div>
-
 
             {/* A / B 文案 */}
             <SectionBox title="A" emphasized={variant === "A"}>
@@ -970,7 +1056,7 @@ export default function App() {
                   width: "100%",
                   resize: "none",
                   fontSize: 35,
-                  lineHeight: 1.6
+                  lineHeight: 1.6,
                 }}
               />
             </SectionBox>
@@ -985,7 +1071,7 @@ export default function App() {
                   width: "100%",
                   resize: "none",
                   fontSize: 35,
-                  lineHeight: 1.6
+                  lineHeight: 1.6,
                 }}
               />
             </SectionBox>
@@ -998,7 +1084,7 @@ export default function App() {
               display: "grid",
               gridTemplateRows: "5fr 5fr",
               gap: 10,
-              minHeight: 0
+              minHeight: 0,
             }}
           >
             {/* 上方：基于 Smart Assistant Interaction */}
@@ -1008,7 +1094,7 @@ export default function App() {
                   display: "flex",
                   flexDirection: "column",
                   height: "100%",
-                  padding: "4px 8px 8px 8px"
+                  padding: "4px 8px 8px 8px",
                 }}
               >
                 <div
@@ -1016,7 +1102,7 @@ export default function App() {
                     fontWeight: 900,
                     fontSize: 35,
                     marginBottom: 10,
-                    lineHeight: 1.2
+                    lineHeight: 1.2,
                   }}
                 >
                   Based on the description of interaction with smart assistant.
@@ -1031,20 +1117,20 @@ export default function App() {
                     width: "100%",
                     resize: "none",
                     fontSize: 35,
-                    lineHeight: 1.5
+                    lineHeight: 1.5,
                   }}
                 />
               </div>
             </SectionBox>
 
-            {/* 下方：Interaction 输入 + 保存 + Next */}
+            {/* 下方：Interaction 输入 + Save and Continue */}
             <SectionBox title="Interaction">
               <div
                 style={{
                   display: "flex",
                   flexDirection: "column",
                   height: "100%",
-                  padding: "4px 8px 8px 8px"
+                  padding: "4px 8px 8px 8px",
                 }}
               >
                 <textarea
@@ -1057,7 +1143,7 @@ export default function App() {
                     width: "100%",
                     resize: "none",
                     fontSize: 35,
-                    lineHeight: 1.5
+                    lineHeight: 1.5,
                   }}
                 />
                 <div
@@ -1065,22 +1151,15 @@ export default function App() {
                     marginTop: 12,
                     display: "flex",
                     justifyContent: "flex-end",
-                    gap: 12
+                    gap: 12,
                   }}
                 >
                   <button
                     className="btn btn-primary"
                     style={{ fontSize: 35, padding: "8px 24px" }}
-                    onClick={onSaveInteraction}
+                    onClick={onSaveInteractionAndContinue}
                   >
-                    SAVE Interaction
-                  </button>
-                  <button
-                    className="btn btn-hollow"
-                    style={{ fontSize: 35, padding: "8px 24px" }}
-                    onClick={goNextImage}
-                  >
-                    Next
+                    Save and Continue
                   </button>
                 </div>
               </div>
@@ -1112,7 +1191,7 @@ export default function App() {
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            zIndex: 50
+            zIndex: 50,
           }}
         >
           <div
@@ -1124,14 +1203,14 @@ export default function App() {
               width: "90%",
               maxHeight: "90%",
               overflow: "auto",
-              border: "1px solid #1f2937"
+              border: "1px solid #1f2937",
             }}
           >
             <h2
               style={{
                 fontSize: 35,
                 marginBottom: 16,
-                fontWeight: 900
+                fontWeight: 900,
               }}
             >
               User Information (Pre-Study)
@@ -1141,7 +1220,7 @@ export default function App() {
               style={{
                 display: "flex",
                 flexDirection: "column",
-                gap: 12
+                gap: 12,
               }}
             >
               <div>
@@ -1191,7 +1270,9 @@ export default function App() {
                   <option value="Non-binary / Self-describe">
                     Non-binary / Self-describe
                   </option>
-                  <option value="Prefer not to answer">Prefer not to answer</option>
+                  <option value="Prefer not to answer">
+                    Prefer not to answer
+                  </option>
                 </select>
               </div>
 
@@ -1204,7 +1285,10 @@ export default function App() {
                   style={{ fontSize: 35, width: "100%" }}
                   value={userForm.education}
                   onChange={(e) =>
-                    setUserForm((f) => ({ ...f, education: e.target.value }))
+                    setUserForm((f) => ({
+                      ...f,
+                      education: e.target.value,
+                    }))
                   }
                 >
                   <option value="">-- select --</option>
@@ -1244,7 +1328,7 @@ export default function App() {
                   onChange={(e) =>
                     setUserForm((f) => ({
                       ...f,
-                      smartAssistantExp: e.target.value
+                      smartAssistantExp: e.target.value,
                     }))
                   }
                 >
@@ -1265,7 +1349,7 @@ export default function App() {
                   style={{
                     display: "flex",
                     alignItems: "center",
-                    gap: 8
+                    gap: 8,
                   }}
                 >
                   <input
@@ -1276,7 +1360,7 @@ export default function App() {
                     onChange={(e) =>
                       setUserForm((f) => ({
                         ...f,
-                        techComfort: e.target.value
+                        techComfort: e.target.value,
                       }))
                     }
                   />
@@ -1292,7 +1376,7 @@ export default function App() {
                 marginTop: 24,
                 display: "flex",
                 justifyContent: "flex-end",
-                gap: 12
+                gap: 12,
               }}
             >
               <button
@@ -1324,7 +1408,7 @@ export default function App() {
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            zIndex: 50
+            zIndex: 50,
           }}
         >
           <div
@@ -1336,25 +1420,27 @@ export default function App() {
               width: "90%",
               maxHeight: "90%",
               overflow: "auto",
-              border: "1px solid #1f2937"
+              border: "1px solid #1f2937",
             }}
           >
             <h2
               style={{
                 fontSize: 35,
                 marginBottom: 16,
-                fontWeight: 900
+                fontWeight: 900,
               }}
             >
               Section 4. Post-Study Survey
             </h2>
 
             <p style={{ fontSize: 35, marginBottom: 16 }}>
-              Please reflect on your overall experience interacting with the smart assistant.
+              Please reflect on your overall experience interacting with the smart
+              assistant.
             </p>
 
-            {/* 为简单起见，每个问题用一个 select + 可选文本 */}
-            <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+            <div
+              style={{ display: "flex", flexDirection: "column", gap: 16 }}
+            >
               <div>
                 <div style={{ fontSize: 35, marginBottom: 4 }}>
                   Over time, did the assistant’s responses seem to:
@@ -1398,8 +1484,8 @@ export default function App() {
 
               <div>
                 <div style={{ fontSize: 35, marginBottom: 4 }}>
-                  How much did you trust the assistant’s decisions and actions
-                  by the end of the study?
+                  How much did you trust the assistant’s decisions and actions by
+                  the end of the study?
                 </div>
                 <select
                   className="select dark"
@@ -1420,15 +1506,18 @@ export default function App() {
 
               <div>
                 <div style={{ fontSize: 35, marginBottom: 4 }}>
-                  How did the assistant’s learning or changes affect your
-                  comfort, satisfaction, or willingness to use it again?
+                  How did the assistant’s learning or changes affect your comfort,
+                  satisfaction, or willingness to use it again?
                 </div>
                 <select
                   className="select dark"
                   style={{ fontSize: 35, width: "100%" }}
                   value={survey.comfortChange}
                   onChange={(e) =>
-                    setSurvey((s) => ({ ...s, comfortChange: e.target.value }))
+                    setSurvey((s) => ({
+                      ...s,
+                      comfortChange: e.target.value,
+                    }))
                   }
                 >
                   <option value="">-- select --</option>
@@ -1449,7 +1538,10 @@ export default function App() {
                   style={{ fontSize: 35, width: "100%" }}
                   value={survey.satisfaction}
                   onChange={(e) =>
-                    setSurvey((s) => ({ ...s, satisfaction: e.target.value }))
+                    setSurvey((s) => ({
+                      ...s,
+                      satisfaction: e.target.value,
+                    }))
                   }
                 >
                   <option value="">-- select --</option>
@@ -1465,8 +1557,8 @@ export default function App() {
 
               <div>
                 <div style={{ fontSize: 35, marginBottom: 4 }}>
-                  What features or behaviors would make a self-improving
-                  assistant more useful and trustworthy for you in daily life?
+                  What features or behaviors would make a self-improving assistant
+                  more useful and trustworthy for you in daily life?
                 </div>
                 <textarea
                   className="narr"
@@ -1474,7 +1566,7 @@ export default function App() {
                     fontSize: 35,
                     width: "100%",
                     minHeight: 150,
-                    resize: "vertical"
+                    resize: "vertical",
                   }}
                   value={survey.comments}
                   onChange={(e) =>
@@ -1489,7 +1581,7 @@ export default function App() {
                 marginTop: 24,
                 display: "flex",
                 justifyContent: "flex-end",
-                gap: 12
+                gap: 12,
               }}
             >
               <button
@@ -1524,7 +1616,7 @@ type SectionBoxProps = {
 const SectionBox: React.FC<SectionBoxProps> = ({
   title,
   children,
-  emphasized
+  emphasized,
 }) => {
   return (
     <div
@@ -1538,7 +1630,7 @@ const SectionBox: React.FC<SectionBoxProps> = ({
         border: emphasized ? "2px solid #60a5fa" : "2px solid #4b5563",
         boxShadow: emphasized ? "0 0 0 1px rgba(37,99,235,0.4)" : "none",
         background: "#020617",
-        overflow: "hidden"
+        overflow: "hidden",
       }}
     >
       {title && (
@@ -1549,7 +1641,7 @@ const SectionBox: React.FC<SectionBoxProps> = ({
             fontSize: 35,
             padding: "6px 10px",
             borderBottom: "1px solid #1f2937",
-            color: emphasized ? "#93c5fd" : "#e5e7eb"
+            color: emphasized ? "#93c5fd" : "#e5e7eb",
           }}
         >
           {title}
