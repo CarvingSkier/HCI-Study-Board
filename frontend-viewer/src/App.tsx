@@ -83,6 +83,14 @@ export default function App() {
   // Phase II 中，右下 Interaction 输入框
   const [interactionText, setInteractionText] = useState<string>("");
 
+  // Survey 弹窗
+  const [showSurvey, setShowSurvey] = useState<boolean>(false);
+  const [surveyQ1, setSurveyQ1] = useState<string>(""); // improved/worsened
+  const [surveyQ2, setSurveyQ2] = useState<string>(""); // adapt preferences
+  const [surveyQ3, setSurveyQ3] = useState<string>(""); // trust
+  const [surveyQ4, setSurveyQ4] = useState<string>(""); // comfort / satisfaction / willingness
+  const [surveyQ5, setSurveyQ5] = useState<string>(""); // overall satisfaction
+
   // 中间 splitter（可拖动）
   const [splitPct, setSplitPct] = useState<number>(58);
   const draggingRef = useRef(false);
@@ -191,7 +199,6 @@ export default function App() {
       applyFirstSelection(firstRec);
     }
 
-    // 清理 I 的 URL
     return () => {
       Object.values(imgMap).forEach(r => URL.revokeObjectURL(r.url));
     };
@@ -208,7 +215,6 @@ export default function App() {
       applyFirstSelection(firstRec);
     }
 
-    // 清理 II 的 URL
     return () => {
       Object.values(imgMap).forEach(r => URL.revokeObjectURL(r.url));
     };
@@ -338,11 +344,9 @@ export default function App() {
       setChoices(prev => {
         const copy = { ...prev };
         const prefix = `${uid}::`;
-        // 清理旧记录
         for (const key of Object.keys(copy)) {
           if (key.startsWith(prefix)) delete copy[key];
         }
-        // 写入新记录
         for (const row of rows) {
           copy[`${uid}::${row.image_id}`] = row.selection === "B" ? "B" : "A";
         }
@@ -443,7 +447,6 @@ export default function App() {
       return;
     }
 
-    // 1) 先写入数据库
     try {
       const resp = await fetch(`${API_BASE}/users/${currentUserIdNum}`, {
         method: "PUT",
@@ -469,7 +472,6 @@ export default function App() {
       return;
     }
 
-    // 2) 再导出一份 txt 备份
     const lines: string[] = [];
     lines.push(`User ID: ${info.id}`);
     lines.push("");
@@ -491,7 +493,6 @@ export default function App() {
       document.body.removeChild(a);
     }, 0);
 
-    // 3) 弹出成功提示
     flash("User info saved to DB");
   }
 
@@ -516,10 +517,8 @@ export default function App() {
     }
 
     const key = `${userId}::${img.name}`;
-    // 本地先更新
     setChoices(prev => ({ ...prev, [key]: choice }));
 
-    // 写入 PostgreSQL（upsert）
     try {
       await fetch(`${API_BASE}/selections`, {
         method: "PUT",
@@ -534,7 +533,6 @@ export default function App() {
       console.error("recordChoiceForCurrentImage error:", e);
     }
 
-    // 记录之后再自动跳到下一张
     const idx = filenameOptions.findIndex(r => r.key === img.key);
     if (idx >= 0 && idx + 1 < filenameOptions.length) {
       const nextRec = filenameOptions[idx + 1];
@@ -544,7 +542,7 @@ export default function App() {
     }
   }
 
-  // 导出当前 user 的 Choices 为本地 txt（额外方便检查，Phase I）
+  // 导出当前 user 的 Choices 为本地 txt（Phase I）
   function onExportChoices() {
     if (phase !== "I") {
       flash("Export only works in Phase I");
@@ -628,6 +626,60 @@ Saved At: ${ts}
     }, 0);
 
     flash("Interaction saved");
+  }
+
+  // ============== Survey：打开 / 保存 ==============
+  function openSurvey() {
+    if (!userId) {
+      flash("Please select a User first");
+      return;
+    }
+    setSurveyQ1("");
+    setSurveyQ2("");
+    setSurveyQ3("");
+    setSurveyQ4("");
+    setSurveyQ5("");
+    setShowSurvey(true);
+  }
+
+  function onSaveSurvey() {
+    if (!userId) {
+      flash("No User selected");
+      return;
+    }
+
+    const lines: string[] = [];
+    lines.push(`User ID: ${userId}`);
+    lines.push("");
+    lines.push("Section 4. Post-Study Survey");
+    lines.push("Q1. Over time, did the assistant’s responses seem to:");
+    lines.push(`Answer: ${surveyQ1 || "<empty>"}`);
+    lines.push("");
+    lines.push("Q2. How well did the assistant learn and adapt to your preferences?");
+    lines.push(`Answer: ${surveyQ2 || "<empty>"}`);
+    lines.push("");
+    lines.push("Q3. How much did you trust the assistant’s decisions and actions by the end of the study?");
+    lines.push(`Answer: ${surveyQ3 || "<empty>"}`);
+    lines.push("");
+    lines.push("Q4. How did the assistant’s learning or changes affect your comfort, satisfaction, or willingness to use it again?");
+    lines.push(`Answer: ${surveyQ4 || "<empty>"}`);
+    lines.push("");
+    lines.push("Q5. Overall, how satisfied were you with the self-improving assistant?");
+    lines.push(`Answer: ${surveyQ5 || "<empty>"}`);
+
+    const blob = new Blob([lines.join("\n")], { type: "text/plain;charset=utf-8" });
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = `Survey_User_${userId}.txt`;
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(() => {
+      URL.revokeObjectURL(a.href);
+      document.body.removeChild(a);
+    }, 0);
+
+    setShowSurvey(false);
+    flash("Survey saved");
   }
 
   // ============== 真正“读盘”的刷新 ==============
@@ -885,6 +937,15 @@ Saved At: ${ts}
             Edit User
           </button>
 
+          {/* Survey 按钮 */}
+          <button
+            className="btn btn-primary"
+            style={{ fontSize: 35 }}
+            onClick={openSurvey}
+          >
+            Survey
+          </button>
+
           {/* 导出 & 保存（Phase I 用） */}
           <button
             className="btn btn-primary"
@@ -942,7 +1003,7 @@ Saved At: ${ts}
             Load Narrator II
           </button>
 
-          {/* 隐藏 input 作为回退（不区分 Phase，只是浏览器不支持 showDirectoryPicker 时用） */}
+          {/* 隐藏 input 作为回退 */}
           <input
             ref={imgDirRef}
             type="file" multiple
@@ -1043,7 +1104,7 @@ Saved At: ${ts}
                   <div style={{ marginBottom:4 }}>Occupation / Field of Work or Study</div>
                   <input
                     className="input"
-                    style={{ width:"100%", padding:"6px 8px" }}
+                    style={{ width:"100%", padding:"6px 8px", fontSize:35 }}
                     value={currentUserInfo.occupation}
                     onChange={(e)=>updateUserField("occupation", e.target.value)}
                   />
@@ -1081,12 +1142,14 @@ Saved At: ${ts}
               <div style={{ marginTop:16, display:"flex", justifyContent:"flex-end", gap:8 }}>
                 <button
                   className="btn btn-hollow"
+                  style={{ fontSize:35 }}
                   onClick={()=>setShowUserForm(false)}
                 >
                   Back to Storyboard
                 </button>
                 <button
                   className="btn btn-primary"
+                  style={{ fontSize:35 }}
                   onClick={onSaveUserInfo}
                 >
                   Save User Info
@@ -1222,7 +1285,6 @@ Saved At: ${ts}
                   <div style={{fontWeight:900, fontSize:35}}>
                     Which Smart Assistant interaction method do you prefer?
                   </div>
-                  {/* A/B 现在只负责高亮选择，不立即记录 */}
                   <DarkBtn
                     active={variant==="A"}
                     onClick={()=>setVariant("A")}
@@ -1236,7 +1298,6 @@ Saved At: ${ts}
                     B
                   </DarkBtn>
 
-                  {/* Confirm Choice 按钮，点击后才真正记录并跳到下一张 */}
                   <button
                     className="btn btn-primary"
                     style={{ marginLeft:16, fontSize:35, fontWeight:500, padding:"10px 24px" }}
@@ -1262,7 +1323,7 @@ Saved At: ${ts}
                   />
                 </SectionBox>
 
-                {/* B：目前共用同一段文案（如果之后有 B 文案可以再拆） */}
+                {/* B：目前共用同一段文案 */}
                 <SectionBox title="B" emphasized={variant === "B"}>
                   <textarea
                     className="narr"
@@ -1379,6 +1440,177 @@ Saved At: ${ts}
         </>
       )}
 
+      {/* Survey 弹窗 */}
+      {showSurvey && (
+        <div
+          style={{
+            position:"fixed",
+            inset:0,
+            background:"rgba(15,23,42,0.8)",
+            display:"flex",
+            alignItems:"center",
+            justifyContent:"center",
+            zIndex:1000
+          }}
+        >
+          <div
+            style={{
+              width:"90%",
+              maxWidth:1100,
+              maxHeight:"90%",
+              overflow:"auto",
+              background:"#020617",
+              borderRadius:16,
+              border:"2px solid #4b5563",
+              padding:24
+            }}
+          >
+            <div style={{ fontSize:35, fontWeight:900, marginBottom:16 }}>
+              Section 4. Post-Study Survey
+            </div>
+            <div style={{ fontSize:35, marginBottom:16 }}>
+              Please reflect on your overall experience interacting with the smart assistant.
+            </div>
+
+            {/* Q1 */}
+            <div style={{ fontSize:35, marginBottom:12 }}>
+              1. Over time, did the assistant’s responses seem to:
+            </div>
+            <div style={{ fontSize:35, display:"flex", flexDirection:"column", gap:4, marginBottom:16 }}>
+              {[
+                "Strongly improved",
+                "Somewhat improved",
+                "No change",
+                "Somewhat worsened",
+                "Strongly worsened"
+              ].map(opt => (
+                <label key={opt} style={{ display:"flex", alignItems:"center", gap:8 }}>
+                  <input
+                    type="radio"
+                    name="surveyQ1"
+                    checked={surveyQ1 === opt}
+                    onChange={()=>setSurveyQ1(opt)}
+                  />
+                  <span>{opt}</span>
+                </label>
+              ))}
+            </div>
+
+            {/* Q2 */}
+            <div style={{ fontSize:35, marginBottom:12 }}>
+              2. How well did the assistant learn and adapt to your preferences?
+            </div>
+            <div style={{ fontSize:35, display:"flex", flexDirection:"column", gap:4, marginBottom:16 }}>
+              {[
+                "Very well",
+                "Somewhat well",
+                "Slightly",
+                "Not at all"
+              ].map(opt => (
+                <label key={opt} style={{ display:"flex", alignItems:"center", gap:8 }}>
+                  <input
+                    type="radio"
+                    name="surveyQ2"
+                    checked={surveyQ2 === opt}
+                    onChange={()=>setSurveyQ2(opt)}
+                  />
+                  <span>{opt}</span>
+                </label>
+              ))}
+            </div>
+
+            {/* Q3 */}
+            <div style={{ fontSize:35, marginBottom:12 }}>
+              3. How much did you trust the assistant’s decisions and actions by the end of the study?
+            </div>
+            <div style={{ fontSize:35, display:"flex", flexDirection:"column", gap:4, marginBottom:16 }}>
+              {[
+                "Strongly increased",
+                "Somewhat increased",
+                "No change",
+                "Somewhat decreased",
+                "Strongly decreased"
+              ].map(opt => (
+                <label key={opt} style={{ display:"flex", alignItems:"center", gap:8 }}>
+                  <input
+                    type="radio"
+                    name="surveyQ3"
+                    checked={surveyQ3 === opt}
+                    onChange={()=>setSurveyQ3(opt)}
+                  />
+                  <span>{opt}</span>
+                </label>
+              ))}
+            </div>
+
+            {/* Q4 */}
+            <div style={{ fontSize:35, marginBottom:12 }}>
+              4. How did the assistant’s learning or changes affect your comfort, satisfaction, or willingness to use it again?
+            </div>
+            <div style={{ fontSize:35, display:"flex", flexDirection:"column", gap:4, marginBottom:16 }}>
+              {[
+                "Strongly increased",
+                "Somewhat increased",
+                "No change",
+                "Somewhat decreased",
+                "Strongly decreased"
+              ].map(opt => (
+                <label key={opt} style={{ display:"flex", alignItems:"center", gap:8 }}>
+                  <input
+                    type="radio"
+                    name="surveyQ4"
+                    checked={surveyQ4 === opt}
+                    onChange={()=>setSurveyQ4(opt)}
+                  />
+                  <span>{opt}</span>
+                </label>
+              ))}
+            </div>
+
+            {/* Q5 */}
+            <div style={{ fontSize:35, marginBottom:12 }}>
+              5. Overall, how satisfied were you with the self-improving assistant?
+            </div>
+            <div style={{ fontSize:35, display:"flex", flexDirection:"column", gap:4, marginBottom:24 }}>
+              {[
+                "Very satisfied",
+                "Somewhat satisfied",
+                "Neutral",
+                "Somewhat dissatisfied",
+                "Very dissatisfied"
+              ].map(opt => (
+                <label key={opt} style={{ display:"flex", alignItems:"center", gap:8 }}>
+                  <input
+                    type="radio"
+                    name="surveyQ5"
+                    checked={surveyQ5 === opt}
+                    onChange={()=>setSurveyQ5(opt)}
+                  />
+                  <span>{opt}</span>
+                </label>
+              ))}
+            </div>
+
+            <div style={{ display:"flex", justifyContent:"flex-end", gap:12 }}>
+              <button
+                className="btn btn-hollow"
+                style={{ fontSize:35 }}
+                onClick={()=>setShowSurvey(false)}
+              >
+                Cancel
+              </button>
+              <button
+                className="btn btn-primary"
+                style={{ fontSize:35 }}
+                onClick={onSaveSurvey}
+              >
+                Save Survey
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* 底部状态栏 */}
       <div className="statusbar">
         <div className="status-left" title={statusLeft}>{statusLeft}</div>
@@ -1393,7 +1625,7 @@ Saved At: ${ts}
   );
 }
 
-/** 小标题盒子：填满父容器的高度，A/B / Phase II 为完整外框 */
+/** 小标题盒子 */
 type SectionBoxProps = {
   title: string;
   children: React.ReactNode;
