@@ -43,36 +43,37 @@ export default function App() {
   const imgDirRef  = useRef<HTMLInputElement>(null);
   const narrDirRef = useRef<HTMLInputElement>(null);
 
-  // 原始文件
-  const [imageFiles, setImageFiles] = useState<File[]>([]);
-  const [narratorFiles, setNarratorFiles] = useState<File[]>([]);
+  // ============== Phase I / II 独立文件列表 ==============
+  const [imageFilesI, setImageFilesI] = useState<File[]>([]);
+  const [imageFilesII, setImageFilesII] = useState<File[]>([]);
+  const [narratorFilesI, setNarratorFilesI] = useState<File[]>([]);
+  const [narratorFilesII, setNarratorFilesII] = useState<File[]>([]);
 
-  // File System Access API 目录句柄（可真正读盘刷新）
-  const [imgHandle, setImgHandle] = useState<FileSystemDirectoryHandle | null>(null);
-  const [narrHandle, setNarrHandle] = useState<FileSystemDirectoryHandle | null>(null);
+  // Phase I / II 独立索引映射
+  const [imagesI, setImagesI] = useState<Record<Key, ImgRec>>({});
+  const [imagesII, setImagesII] = useState<Record<Key, ImgRec>>({});
+  const [narrsI, setNarrsI] = useState<Record<Key, NarrRec>>({});
+  const [narrsII, setNarrsII] = useState<Record<Key, NarrRec>>({});
+  const [byPersonaI, setByPersonaI] = useState<Record<number, number[]>>({});
+  const [byPersonaII, setByPersonaII] = useState<Record<number, number[]>>({});
 
-  // 索引与映射
-  const [images, setImages] = useState<Record<Key, ImgRec>>({});
-  const [narrs,  setNarrs]  = useState<Record<Key, NarrRec>>({});
-  const [byPersona, setByPersona] = useState<Record<number, number[]>>({});
+  // 当前 Phase
+  const [phase, setPhase] = useState<Phase>("I");
 
-  // 选择项（以 File 为唯一真相）
+  // 当前选中的（对当前 Phase 生效）
   const [selectedKey, setSelectedKey] = useState<Key | null>(null);
   const [selectedPid, setSelectedPid] = useState<number | null>(null);
   const [selectedAid, setSelectedAid] = useState<number | null>(null);
 
   // User 相关：从数据库加载 + 下拉选择
   const [userInfos, setUserInfos] = useState<Record<number, UserInfo>>({});
-  const [nextUserId, setNextUserId] = useState<number>(1); // 只作为前端备用，不再决定实际 ID
-  const [userId, setUserId] = useState<string>("");  // 当前选中的 User ID（字符串形式）
-  const [showUserForm, setShowUserForm] = useState<boolean>(false); // 是否显示“单独一页”的 User 信息录入界面
+  const [nextUserId, setNextUserId] = useState<number>(1);
+  const [userId, setUserId] = useState<string>("");
+  const [showUserForm, setShowUserForm] = useState<boolean>(false);
 
   // Storyboard：当前高亮 A/B + 每个 user 对每张图的选择（仅 Phase I 用）
   const [variant, setVariant] = useState<Choice>("A");
   const [choices, setChoices] = useState<Record<string, Choice>>({}); // key = `${userId}::${imgName}`
-
-  // 阶段（Phase I / Phase II）
-  const [phase, setPhase] = useState<Phase>("I");
 
   // Narrator JSON 中解析出来的字段
   const [userNameFromNarr, setUserNameFromNarr] = useState<string>("");  // "User Name"
@@ -90,6 +91,11 @@ export default function App() {
   const currentUserIdNum = userId ? Number(userId) : null;
   const currentUserInfo: UserInfo | undefined =
     currentUserIdNum != null ? userInfos[currentUserIdNum] : undefined;
+
+  // 当前 Phase 对应的映射（UI / 逻辑统一用这些）
+  const images     = phase === "I" ? imagesI     : imagesII;
+  const narrs      = phase === "I" ? narrsI      : narrsII;
+  const byPersona  = phase === "I" ? byPersonaI  : byPersonaII;
 
   // ============== 启动时从后端加载已有用户 ==============
   useEffect(() => {
@@ -124,8 +130,11 @@ export default function App() {
     })();
   }, []);
 
-  // ============== 构建索引（与 PySide 逻辑一致） ==============
-  useEffect(() => {
+  // ============== 公共：根据文件构建索引 ==============
+  function buildIndex(
+    imageFiles: File[],
+    narratorFiles: File[]
+  ): { imgMap: Record<Key, ImgRec>; narrMap: Record<Key, NarrRec>; perOut: Record<number, number[]>; firstRec: ImgRec | null } {
     const imgMap: Record<Key, ImgRec> = {};
     const per: Record<number, Set<number>> = {};
     for (const f of imageFiles) {
@@ -153,27 +162,64 @@ export default function App() {
       perOut[Number(pidStr)] = Array.from(aids).sort((a,b)=>a-b);
     }
 
-    setImages(imgMap);
-    setNarrs(narrMap);
-    setByPersona(perOut);
-
     const sorted = Object.values(imgMap).sort((a,b)=> a.pid-b.pid || a.aid-b.aid);
-    if (sorted.length) {
-      const first = sorted[0];
-      setSelectedKey(first.key); setSelectedPid(first.pid); setSelectedAid(first.aid);
+    const firstRec = sorted.length ? sorted[0] : null;
+
+    return { imgMap, narrMap, perOut, firstRec };
+  }
+
+  function applyFirstSelection(first: ImgRec | null) {
+    if (first) {
+      setSelectedKey(first.key);
+      setSelectedPid(first.pid);
+      setSelectedAid(first.aid);
     } else {
-      setSelectedKey(null); setSelectedPid(null); setSelectedAid(null);
+      setSelectedKey(null);
+      setSelectedPid(null);
+      setSelectedAid(null);
+    }
+  }
+
+  // ============== Phase I 索引 ==============
+  useEffect(() => {
+    const { imgMap, narrMap, perOut, firstRec } = buildIndex(imageFilesI, narratorFilesI);
+    setImagesI(imgMap);
+    setNarrsI(narrMap);
+    setByPersonaI(perOut);
+
+    if (phase === "I") {
+      applyFirstSelection(firstRec);
     }
 
-    return () => { Object.values(imgMap).forEach(r => URL.revokeObjectURL(r.url)); };
-  }, [imageFiles, narratorFiles]);
+    // 清理 I 的 URL
+    return () => {
+      Object.values(imgMap).forEach(r => URL.revokeObjectURL(r.url));
+    };
+  }, [imageFilesI, narratorFilesI, phase]);
 
-  // ============== 当选中图片或 Phase 变化时，清空 Phase II 文本 ==============
+  // ============== Phase II 索引 ==============
+  useEffect(() => {
+    const { imgMap, narrMap, perOut, firstRec } = buildIndex(imageFilesII, narratorFilesII);
+    setImagesII(imgMap);
+    setNarrsII(narrMap);
+    setByPersonaII(perOut);
+
+    if (phase === "II") {
+      applyFirstSelection(firstRec);
+    }
+
+    // 清理 II 的 URL
+    return () => {
+      Object.values(imgMap).forEach(r => URL.revokeObjectURL(r.url));
+    };
+  }, [imageFilesII, narratorFilesII, phase]);
+
+  // ============== 当选中图片 / Phase 变化时，清空 Phase II 文本 ==============
   useEffect(() => {
     setInteractionText("");
   }, [selectedKey, phase]);
 
-  // ============== 当选中图片变更时，读取对应 Narrator JSON ==============
+  // ============== 当选中图片变更或 Phase 变化时，读取对应 Narrator JSON ==============
   useEffect(() => {
     let cancelled = false;
 
@@ -220,10 +266,11 @@ export default function App() {
     })();
 
     return () => { cancelled = true; };
-  }, [selectedKey, narrs]);
+  }, [selectedKey, narrs, phase]);
 
   // ============== 当前图片 + 当前 user 的已选 A/B 同步到 variant（仅 Phase I 用） ==============
   useEffect(() => {
+    if (phase !== "I") return;
     const img = selectedKey ? images[selectedKey] : null;
     if (!img || !userId) return;
     const key = `${userId}::${img.name}`;
@@ -233,7 +280,7 @@ export default function App() {
     } else {
       setVariant("A");
     }
-  }, [selectedKey, images, userId, choices]);
+  }, [phase, selectedKey, images, userId, choices]);
 
   // ============== 下拉选项 ==============
   const filenameOptions = useMemo(
@@ -426,7 +473,7 @@ export default function App() {
     const lines: string[] = [];
     lines.push(`User ID: ${info.id}`);
     lines.push("");
-       lines.push("Section 1. Basic Demographics");
+    lines.push("Section 1. Basic Demographics");
     lines.push(`Age: ${info.age || "<empty>"}`);
     lines.push(`Gender: ${info.gender || "<empty>"}`);
     lines.push(`Education Level: ${info.education || "<empty>"}`);
@@ -450,6 +497,8 @@ export default function App() {
 
   // ============== Storyboard 选择记录（Phase I） ==============
   async function recordChoiceForCurrentImage(choice: Choice) {
+    if (phase !== "I") return;
+
     const img = selectedKey ? images[selectedKey] : null;
     if (!img) {
       flash("No image selected");
@@ -497,6 +546,10 @@ export default function App() {
 
   // 导出当前 user 的 Choices 为本地 txt（额外方便检查，Phase I）
   function onExportChoices() {
+    if (phase !== "I") {
+      flash("Export only works in Phase I");
+      return;
+    }
     if (!userId) {
       flash("Please select a User first");
       return;
@@ -534,6 +587,8 @@ export default function App() {
 
   // ============== Phase II：保存 Interaction 为 txt ==============
   function onSaveInteraction() {
+    if (phase !== "II") return;
+
     const img = selectedKey ? images[selectedKey] : null;
     if (!img) {
       flash("No image selected");
@@ -575,13 +630,11 @@ Saved At: ${ts}
     flash("Interaction saved");
   }
 
-  // ============== 真正“读盘”的刷新（优先使用目录句柄） ==============
+  // ============== 真正“读盘”的刷新 ==============
   async function reloadFromHandle(
-    h: FileSystemDirectoryHandle | null,
-    re: RegExp,
-    setter: (fs: File[]) => void
-  ) {
-    if (!h) return;
+    h: FileSystemDirectoryHandle,
+    re: RegExp
+  ): Promise<File[]> {
     const files: File[] = [];
     // @ts-ignore
     for await (const [, entry] of h.entries()) {
@@ -590,41 +643,45 @@ Saved At: ${ts}
         if (re.test(f.name)) files.push(f);
       }
     }
-    setter(files);
+    return files;
   }
 
-  async function chooseImagesDirFS() {
+  async function chooseImagesDirFS(target: Phase) {
     // @ts-ignore
     if (!window.showDirectoryPicker) { pickImagesDir(); return; }
     // @ts-ignore
-    const handle = await window.showDirectoryPicker({ id: "images-dir" });
-    setImgHandle(handle);
-    await reloadFromHandle(handle, IMAGE_RE, setImageFiles);
-  }
-
-  async function chooseNarrDirFS() {
-    // @ts-ignore
-    if (!window.showDirectoryPicker) { pickNarrDir(); return; }
-    // @ts-ignore
-    const handle = await window.showDirectoryPicker({ id: "narr-dir" });
-    setNarrHandle(handle);
-    await reloadFromHandle(handle, NARR_RE, setNarratorFiles);
-  }
-
-  // ====== 切换到 Phase II：重新加载 Images 和 Narrator 再切换 ======
-  async function goPhaseII() {
-    try {
-      await chooseImagesDirFS();
-      await chooseNarrDirFS();
-      setPhase("II");
-    } catch (e) {
-      console.error("switch to Phase II error:", e);
-      flash("Failed to load Phase II folders");
+    const handle = await window.showDirectoryPicker({ id: target === "I" ? "images-dir-I" : "images-dir-II" });
+    const files = await reloadFromHandle(handle, IMAGE_RE);
+    if (target === "I") {
+      setImageFilesI(files);
+      if (phase === "I") setPhase("I");
+    } else {
+      setImageFilesII(files);
+      if (phase === "II") setPhase("II");
     }
   }
 
-  // ============== 保存 File Name / User ID / Storyboard(A/B) 为本地 txt（保留原有功能，Phase I） ==============
+  async function chooseNarrDirFS(target: Phase) {
+    // @ts-ignore
+    if (!window.showDirectoryPicker) { pickNarrDir(); return; }
+    // @ts-ignore
+    const handle = await window.showDirectoryPicker({ id: target === "I" ? "narr-dir-I" : "narr-dir-II" });
+    const files = await reloadFromHandle(handle, NARR_RE);
+    if (target === "I") {
+      setNarratorFilesI(files);
+      if (phase === "I") setPhase("I");
+    } else {
+      setNarratorFilesII(files);
+      if (phase === "II") setPhase("II");
+    }
+  }
+
+  // ============== 保存 File Name / User ID / Storyboard(A/B) 为本地 txt（Phase I） ==============
   function onSaveSelection() {
+    if (phase !== "I") {
+      flash("Save Selection only works in Phase I");
+      return;
+    }
     const img = selectedKey ? images[selectedKey] : null;
     if (!img) {
       flash("No file selected");
@@ -849,35 +906,53 @@ Saved At: ${ts}
           <PhaseBtn active={phase === "I"} onClick={() => setPhase("I")}>
             Phase I
           </PhaseBtn>
-          <PhaseBtn active={phase === "II"} onClick={goPhaseII}>
+          <PhaseBtn active={phase === "II"} onClick={() => setPhase("II")}>
             Phase II
           </PhaseBtn>
 
           <div className="spacer" />
 
+          {/* 四个独立 Load 按钮 */}
           <button
             className="btn btn-hollow"
             style={{ fontSize: 35 }}
-            onClick={chooseImagesDirFS}
+            onClick={()=>chooseImagesDirFS("I")}
           >
-            Load images/
+            Load images I
           </button>
           <button
             className="btn btn-hollow"
             style={{ fontSize: 35 }}
-            onClick={chooseNarrDirFS}
+            onClick={()=>chooseNarrDirFS("I")}
           >
-            Load Narrator/
+            Load Narrator I
+          </button>
+          <button
+            className="btn btn-hollow"
+            style={{ fontSize: 35 }}
+            onClick={()=>chooseImagesDirFS("II")}
+          >
+            Load images II
+          </button>
+          <button
+            className="btn btn-hollow"
+            style={{ fontSize: 35 }}
+            onClick={()=>chooseNarrDirFS("II")}
+          >
+            Load Narrator II
           </button>
 
-          {/* 隐藏 input 作为回退 */}
+          {/* 隐藏 input 作为回退（不区分 Phase，只是浏览器不支持 showDirectoryPicker 时用） */}
           <input
             ref={imgDirRef}
             type="file" multiple
             // @ts-ignore
             webkitdirectory="true"
             hidden
-            onChange={(e)=>setImageFiles(e.target.files? Array.from(e.target.files): [])}
+            onChange={(e)=>{
+              const files = e.target.files? Array.from(e.target.files): [];
+              if (phase === "I") setImageFilesI(files); else setImageFilesII(files);
+            }}
           />
           <input
             ref={narrDirRef}
@@ -885,7 +960,10 @@ Saved At: ${ts}
             // @ts-ignore
             webkitdirectory="true"
             hidden
-            onChange={(e)=>setNarratorFiles(e.target.files? Array.from(e.target.files): [])}
+            onChange={(e)=>{
+              const files = e.target.files? Array.from(e.target.files): [];
+              if (phase === "I") setNarratorFilesI(files); else setNarratorFilesII(files);
+            }}
           />
         </div>
       </div>
@@ -1030,7 +1108,7 @@ Saved At: ${ts}
               minHeight:0
             }}
           >
-            {/* 左：单张图片 */}
+            {/* 左：单张图片（当前 Phase 的） */}
             <div
               className="panel image-panel"
               style={{
@@ -1211,7 +1289,7 @@ Saved At: ${ts}
                   minHeight:0
                 }}
               >
-                {/* 上方：Smart Assistant Interaction 描述 */}
+                {/* 上方：Smart Assistant Interaction 描述（不显示 User Name） */}
                 <SectionBox title="">
                   <div
                     style={{
