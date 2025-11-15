@@ -742,7 +742,7 @@ export default function App() {
             onChange={(e) => onFilenameChange(e.target.value)}
           >
             {filenameOptions.length === 0 && (
-              <option value="">(no images)</option>
+              <option value="">(N/A)</option>
             )}
             {filenameOptions.map((rec) => (
               <option key={rec.key} value={rec.name}>
@@ -761,7 +761,7 @@ export default function App() {
             onChange={(e) => onPersonaChange(e.target.value)}
           >
             {personaOptions.length === 0 && (
-              <option value="">(no personas)</option>
+              <option value="">(N/A)</option>
             )}
             {personaOptions.map((pid) => (
               <option key={pid} value={String(pid)}>
@@ -780,7 +780,7 @@ export default function App() {
             onChange={(e) => onActivityChange(e.target.value)}
           >
             {activityOptions.length === 0 && (
-              <option value="">(no activities)</option>
+              <option value="">(N/A)</option>
             )}
             {activityOptions.map((aid) => (
               <option key={aid} value={String(aid)}>
@@ -810,7 +810,7 @@ export default function App() {
             style={{ fontSize: 35 }}
             onClick={openUserModal}
           >
-            New / Edit User
+            User Info
           </button>
 
           <button
