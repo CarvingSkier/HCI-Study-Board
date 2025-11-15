@@ -71,19 +71,6 @@ const SectionBox: React.FC<SectionBoxProps> = ({ title, children, emphasized }) 
   );
 };
 
-/** 顶部提示（保留，以后用得上） */
-function flash(text: string) {
-  const el = document.createElement("div");
-  el.className = "toast";
-  el.textContent = text;
-  document.body.appendChild(el);
-  requestAnimationFrame(() => el.classList.add("show"));
-  setTimeout(() => {
-    el.classList.remove("show");
-    setTimeout(() => document.body.removeChild(el), 250);
-  }, 1400);
-}
-
 const DarkBtn: React.FC<{
   active?: boolean;
   onClick: () => void;
@@ -157,11 +144,9 @@ export default function App() {
   const [surveyQ4, setSurveyQ4] = useState("");
   const [surveyQ5, setSurveyQ5] = useState("");
 
-  // ------- 目录输入（隐藏 input，分别给 Phase I/II） -------
-  const imgDirRefI = useRef<HTMLInputElement>(null);
-  const narrDirRefI = useRef<HTMLInputElement>(null);
-  const imgDirRefII = useRef<HTMLInputElement>(null);
-  const narrDirRefII = useRef<HTMLInputElement>(null);
+  // ------- 目录输入（隐藏 input，分别给 Phase I/II，单路径里混合 images+narr） -------
+  const phaseDirRefI = useRef<HTMLInputElement>(null);
+  const phaseDirRefII = useRef<HTMLInputElement>(null);
 
   // 当前显示的文件（随着 phase 变化）
   const [imageFiles, setImageFiles] = useState<File[]>([]);
@@ -173,11 +158,9 @@ export default function App() {
   const [imageFilesII, setImageFilesII] = useState<File[]>([]);
   const [narratorFilesII, setNarratorFilesII] = useState<File[]>([]);
 
-  // File System Access API 目录句柄（images / narrator）
-  const [imgHandleI, setImgHandleI] = useState<FileSystemDirectoryHandle | null>(null);
-  const [narrHandleI, setNarrHandleI] = useState<FileSystemDirectoryHandle | null>(null);
-  const [imgHandleII, setImgHandleII] = useState<FileSystemDirectoryHandle | null>(null);
-  const [narrHandleII, setNarrHandleII] = useState<FileSystemDirectoryHandle | null>(null);
+  // Phase 目录句柄（可选）
+  const [phaseHandleI, setPhaseHandleI] = useState<FileSystemDirectoryHandle | null>(null);
+  const [phaseHandleII, setPhaseHandleII] = useState<FileSystemDirectoryHandle | null>(null);
 
   // 索引与映射（当前 phase 的）
   const [images, setImages] = useState<Record<Key, ImgRec>>({});
@@ -194,7 +177,7 @@ export default function App() {
   const [activityDesc, setActivityDesc] = useState<string>("");
   const [smartTextA, setSmartTextA] = useState<string>("");
 
-  // Phase I: A/B 选择
+  // Phase I: A/B 选择（只保存在内存，统一导出一个 txt）
   const [variant, setVariant] = useState<Choice>("A");
   const [phaseIResults, setPhaseIResults] = useState<
     { image: string; choice: Choice }[]
@@ -207,7 +190,7 @@ export default function App() {
   const [splitPct, setSplitPct] = useState<number>(58);
   const draggingRef = useRef(false);
 
-  // ============== 通用：保存 txt 文件 ==============
+  // ============== 通用：保存 txt 文件（带新命名规则） ==============
   async function saveTextFile(filename: string, contents: string) {
     if (txtDirHandle) {
       try {
@@ -437,14 +420,15 @@ export default function App() {
       `Comfort with technology (1–7): ${u.techComfort || "<empty>"}`
     );
 
-    await saveTextFile(`User_${u.id}_Info.txt`, lines.join("\n"));
+    // 命名规则 1：user301_pre
+    await saveTextFile(`user${u.id}_pre.txt`, lines.join("\n"));
 
     alert("User info saved successfully.");
     setShowUserForm(false);
   }
 
-  // ============== Phase I：A/B 选择记录 + 写 txt + 弹窗 + 可导出汇总 ==============
-  async function recordChoiceForCurrentImage(choice: Choice) {
+  // ============== Phase I：A/B 选择记录（只写内存，不写单独 txt） ==============
+  function recordChoiceForCurrentImage(choice: Choice) {
     if (!userId) {
       alert("Please enter User ID first");
       return;
@@ -456,25 +440,16 @@ export default function App() {
 
     setVariant(choice);
 
-    // 本地记录到数组（用于 Export Phase I 汇总）
-    const updated = [...phaseIResults, { image: currentImg.name, choice }];
-    setPhaseIResults(updated);
+    // 覆盖当前 image 的结果
+    setPhaseIResults(prev => {
+      const filtered = prev.filter(r => r.image !== currentImg.name);
+      return [...filtered, { image: currentImg.name, choice }];
+    });
 
-    const lines: string[] = [];
-    lines.push(`User ID: ${userId}`);
-    lines.push(`Image Name: ${currentImg.name}`);
-    lines.push(`Result: ${choice}`);
-    lines.push(`Saved At: ${new Date().toISOString()}`);
-
-    const safeName = currentImg.name.replace(/[^\w.-]+/g, "_");
-    await saveTextFile(
-      `Selection_User_${userId}_${safeName}_${choice}.txt`,
-      lines.join("\n")
-    );
-
-    alert("Selection saved successfully.");
+    alert("Selection recorded. Use 'Export Phase I' to save txt.");
   }
 
+  // ============== Phase I：导出一个完整 txt ==============
   async function exportPhaseIResults() {
     if (!userId) {
       alert("Please enter User ID first");
@@ -493,8 +468,9 @@ export default function App() {
       lines.push(`${r.image}, ${r.choice}`);
     }
 
+    // 命名规则 2：user301_phaseI
     await saveTextFile(
-      `Selections_User_${userId}.txt`,
+      `user${userId}_phaseI.txt`,
       lines.join("\n")
     );
 
@@ -527,7 +503,11 @@ export default function App() {
       return;
     }
 
-    const safeName = currentImg.name.replace(/[^\w.-]+/g, "_");
+    // 从图片名里拿 Persona_x_Activity_y，不要扩展名
+    const base = currentImg.name.replace(/\.(jpg|jpeg|png)$/i, "");
+    // 命名规则 3：user301_Phase2_Persona_17_Activity_110
+    const filename = `user${userId}_Phase2_${base}.txt`;
+
     const contents = `User ID: ${userId}
 Image Name: ${currentImg.name}
 
@@ -535,10 +515,7 @@ Interaction:
 ${interactionText || "<empty>"}
 `;
 
-    await saveTextFile(
-      `Interaction_User_${userId}_${safeName}.txt`,
-      contents
-    );
+    await saveTextFile(filename, contents);
 
     alert("Interaction saved successfully.");
   }
@@ -567,8 +544,9 @@ ${interactionText || "<empty>"}
       `Q5 (What features or behaviors would make a self-improving assistant more useful and trustworthy / Satisfaction): ${surveyQ5}`
     );
 
+    // 命名规则 4：user301_post
     await saveTextFile(
-      `Survey_User_${userId}.txt`,
+      `user${userId}_post.txt`,
       lines.join("\n")
     );
 
@@ -576,103 +554,106 @@ ${interactionText || "<empty>"}
     setShowSurvey(false);
   }
 
-  // ============== 真正“读盘”的刷新 ==============
-  async function reloadFromHandle(
-    h: FileSystemDirectoryHandle | null,
-    re: RegExp
-  ): Promise<File[]> {
-    const files: File[] = [];
-    if (!h) return files;
+  // ============== Phase I/II：统一路径加载（一个文件夹混合 images + narr） ==============
+  function pickPhaseDirI() {
+    if (phaseDirRefI.current) {
+      phaseDirRefI.current.value = "";
+      phaseDirRefI.current.click();
+    }
+  }
+  function pickPhaseDirII() {
+    if (phaseDirRefII.current) {
+      phaseDirRefII.current.value = "";
+      phaseDirRefII.current.click();
+    }
+  }
+
+  async function choosePhaseDirFS_I() {
     // @ts-ignore
-    for await (const [, entry] of h.entries()) {
+    if (!window.showDirectoryPicker) {
+      pickPhaseDirI();
+      return;
+    }
+    // @ts-ignore
+    const handle = await window.showDirectoryPicker({ id: "phase-I-dir" });
+    setPhaseHandleI(handle);
+
+    const imgs: File[] = [];
+    const narrs: File[] = [];
+    // @ts-ignore
+    for await (const [, entry] of handle.entries()) {
       if (entry.kind === "file") {
         const f = await (entry as FileSystemFileHandle).getFile();
-        if (re.test(f.name)) files.push(f);
+        if (IMAGE_RE.test(f.name)) {
+          imgs.push(f);
+        } else if (NARR_RE.test(f.name)) {
+          narrs.push(f);
+        }
       }
     }
-    return files;
-  }
 
-  // ============== Phase I / II 的 Load 按钮 ==============
-  function pickImagesDirI() {
-    if (imgDirRefI.current) {
-      imgDirRefI.current.value = "";
-      imgDirRefI.current.click();
-    }
-  }
-  function pickNarrDirI() {
-    if (narrDirRefI.current) {
-      narrDirRefI.current.value = "";
-      narrDirRefI.current.click();
-    }
-  }
-  function pickImagesDirII() {
-    if (imgDirRefII.current) {
-      imgDirRefII.current.value = "";
-      imgDirRefII.current.click();
-    }
-  }
-  function pickNarrDirII() {
-    if (narrDirRefII.current) {
-      narrDirRefII.current.value = "";
-      narrDirRefII.current.click();
+    setImageFilesI(imgs);
+    setNarratorFilesI(narrs);
+    if (phase === "I") {
+      setImageFiles(imgs);
+      setNarratorFiles(narrs);
     }
   }
 
-  async function chooseImagesDirFS_I() {
+  async function choosePhaseDirFS_II() {
     // @ts-ignore
     if (!window.showDirectoryPicker) {
-      pickImagesDirI();
+      pickPhaseDirII();
       return;
     }
     // @ts-ignore
-    const handle = await window.showDirectoryPicker({ id: "images-dir-I" });
-    setImgHandleI(handle);
-    const files = await reloadFromHandle(handle, IMAGE_RE);
-    setImageFilesI(files);
-    if (phase === "I") setImageFiles(files);
+    const handle = await window.showDirectoryPicker({ id: "phase-II-dir" });
+    setPhaseHandleII(handle);
+
+    const imgs: File[] = [];
+    const narrs: File[] = [];
+    // @ts-ignore
+    for await (const [, entry] of handle.entries()) {
+      if (entry.kind === "file") {
+        const f = await (entry as FileSystemFileHandle).getFile();
+        if (IMAGE_RE.test(f.name)) {
+          imgs.push(f);
+        } else if (NARR_RE.test(f.name)) {
+          narrs.push(f);
+        }
+      }
+    }
+
+    setImageFilesII(imgs);
+    setNarratorFilesII(narrs);
+    if (phase === "II") {
+      setImageFiles(imgs);
+      setNarratorFiles(narrs);
+    }
   }
 
-  async function chooseNarrDirFS_I() {
-    // @ts-ignore
-    if (!window.showDirectoryPicker) {
-      pickNarrDirI();
-      return;
+  // input 回退：一个文件夹里混合选入
+  function onPhaseDirFilesChangeI(e: React.ChangeEvent<HTMLInputElement>) {
+    const fs = e.target.files ? Array.from(e.target.files) : [];
+    const imgs = fs.filter(f => IMAGE_RE.test(f.name));
+    const narr = fs.filter(f => NARR_RE.test(f.name));
+    setImageFilesI(imgs);
+    setNarratorFilesI(narr);
+    if (phase === "I") {
+      setImageFiles(imgs);
+      setNarratorFiles(narr);
     }
-    // @ts-ignore
-    const handle = await window.showDirectoryPicker({ id: "narr-dir-I" });
-    setNarrHandleI(handle);
-    const files = await reloadFromHandle(handle, NARR_RE);
-    setNarratorFilesI(files);
-    if (phase === "I") setNarratorFiles(files);
   }
-
-  async function chooseImagesDirFS_II() {
-    // @ts-ignore
-    if (!window.showDirectoryPicker) {
-      pickImagesDirII();
-      return;
+  function onPhaseDirFilesChangeII(e: React.ChangeEvent<HTMLInputElement>) {
+    const fs = e.target.files ? Array.from(e.target.files) : [];
+    const imgs = fs.filter(f => IMAGE_RE.test(f.name));
+    const narr = fs.filter(f => NARR_RE.test(f.name));
+    setImageFilesII(imgs);
+    setNarratorFilesII(narr);
+    if (phase === "II") {
+      setImageFiles(imgs);
+      setNarratorFiles(narr);
     }
-    // @ts-ignore
-    const handle = await window.showDirectoryPicker({ id: "images-dir-II" });
-    setImgHandleII(handle);
-    const files = await reloadFromHandle(handle, IMAGE_RE);
-    setImageFilesII(files);
-    if (phase === "II") setImageFiles(files);
-  }
-
-  async function chooseNarrDirFS_II() {
-    // @ts-ignore
-    if (!window.showDirectoryPicker) {
-      pickNarrDirII();
-      return;
-    }
-    // @ts-ignore
-    const handle = await window.showDirectoryPicker({ id: "narr-dir-II" });
-    setNarrHandleII(handle);
-    const files = await reloadFromHandle(handle, NARR_RE);
-    setNarratorFilesII(files);
-    if (phase === "II") setNarratorFiles(files);
   }
 
   // Phase 切换按钮
@@ -854,95 +835,47 @@ ${interactionText || "<empty>"}
 
           <div className="spacer" />
 
-          {/* Load 按钮：分别给 I / II */}
+          {/* Load Phase I / II：一个路径里同时加载 images + narrator */}
           <button
             className="btn btn-hollow"
             style={{ fontSize: 35 }}
-            onClick={chooseImagesDirFS_I}
+            onClick={choosePhaseDirFS_I}
           >
-            Load Images I
+            Load Phase I
           </button>
           <button
             className="btn btn-hollow"
             style={{ fontSize: 35 }}
-            onClick={chooseNarrDirFS_I}
+            onClick={choosePhaseDirFS_II}
           >
-            Load Narrator I
-          </button>
-          <button
-            className="btn btn-hollow"
-            style={{ fontSize: 35 }}
-            onClick={chooseImagesDirFS_II}
-          >
-            Load Images II
-          </button>
-          <button
-            className="btn btn-hollow"
-            style={{ fontSize: 35 }}
-            onClick={chooseNarrDirFS_II}
-          >
-            Load Narrator II
+            Load Phase II
           </button>
 
           {/* 隐藏 input 作为回退 */}
           <input
-            ref={imgDirRefI}
+            ref={phaseDirRefI}
             type="file"
             multiple
             // @ts-ignore
             webkitdirectory="true"
             hidden
-            onChange={e => {
-              const fs = e.target.files ? Array.from(e.target.files) : [];
-              setImageFilesI(fs);
-              if (phase === "I") setImageFiles(fs);
-            }}
+            onChange={onPhaseDirFilesChangeI}
           />
           <input
-            ref={narrDirRefI}
+            ref={phaseDirRefII}
             type="file"
             multiple
             // @ts-ignore
             webkitdirectory="true"
             hidden
-            onChange={e => {
-              const fs = e.target.files ? Array.from(e.target.files) : [];
-              setNarratorFilesI(fs);
-              if (phase === "I") setNarratorFiles(fs);
-            }}
-          />
-          <input
-            ref={imgDirRefII}
-            type="file"
-            multiple
-            // @ts-ignore
-            webkitdirectory="true"
-            hidden
-            onChange={e => {
-              const fs = e.target.files ? Array.from(e.target.files) : [];
-              setImageFilesII(fs);
-              if (phase === "II") setImageFiles(fs);
-            }}
-          />
-          <input
-            ref={narrDirRefII}
-            type="file"
-            multiple
-            // @ts-ignore
-            webkitdirectory="true"
-            hidden
-            onChange={e => {
-              const fs = e.target.files ? Array.from(e.target.files) : [];
-              setNarratorFilesII(fs);
-              if (phase === "II") setNarratorFiles(fs);
-            }}
+            onChange={onPhaseDirFilesChangeII}
           />
         </div>
       </div>
 
       {/* 中部内容：根据是否显示 User Form / Survey 决定内容 */}
       {showUserForm ? (
-        // ========== 用户信息独立页面（竖排） ==========
+        // ========== 用户信息独立页面（竖排，避免挤在一起） ==========
         <div
           style={{
             flex: 1,
@@ -1380,7 +1313,7 @@ ${interactionText || "<empty>"}
                   minHeight: 0
                 }}
               >
-                {/* 上方：根据 Smart Assistant Interaction */}
+                {/* 上方：Smart Assistant Interaction */}
                 <SectionBox title="">
                   <div
                     style={{
@@ -1398,8 +1331,7 @@ ${interactionText || "<empty>"}
                         lineHeight: 1.2
                       }}
                     >
-                      Based on the description of interaction with smart
-                      assistant.
+                      Based on the description of interaction with smart assistant.
                     </div>
 
                     <textarea
