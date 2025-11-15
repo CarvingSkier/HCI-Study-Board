@@ -640,7 +640,7 @@ Saved At: ${ts}
       className="btn"
       style={{
         padding:"14px 24px",
-        fontSize:18,
+        fontSize:35,
         fontWeight:800,
         color:"#e5e7eb",
         background: active ? "#0b1220" : "#111827",
@@ -656,96 +656,145 @@ Saved At: ${ts}
   // ============== 主渲染 ==============
   return (
     <div className="page dark">
-      {/* 顶部工具栏 */}
-      <div className="toolbar card dark">
-        <div className="toolbar-row">
-          <div className="label">File</div>
-          <select
-            className="select dark"
-            value={currentImg?.name || ""}
-            onChange={(e)=>onFilenameChange(e.target.value)}
-          >
-            {filenameOptions.length===0 && <option value="">(no images)</option>}
-            {filenameOptions.map(rec => (
-              <option key={rec.key} value={rec.name}>{rec.name}</option>
-            ))}
-          </select>
+     {/* 顶部工具栏 */}
+<div
+  className="toolbar card dark"
+  style={{
+    padding: "12px 18px",
+  }}
+>
+  <div
+    className="toolbar-row"
+    style={{
+      display: "flex",
+      alignItems: "center",
+      gap: 12,
+    }}
+  >
+    <div className="label" style={{ fontSize: 35 }}>File</div>
+    <select
+      className="select dark"
+      style={{ fontSize: 35 }}
+      value={currentImg?.name || ""}
+      onChange={(e)=>onFilenameChange(e.target.value)}
+    >
+      {filenameOptions.length===0 && <option value="">(no images)</option>}
+      {filenameOptions.map(rec => (
+        <option key={rec.key} value={rec.name}>{rec.name}</option>
+      ))}
+    </select>
 
-          <div className="label">Persona</div>
-          <select
-            className="select dark"
-            value={selectedPid!=null? String(selectedPid):""}
-            onChange={(e)=>onPersonaChange(e.target.value)}
-          >
-            {personaOptions.length===0 && <option value="">(no personas)</option>}
-            {personaOptions.map(pid => (
-              <option key={pid} value={String(pid)}>{pid}</option>
-            ))}
-          </select>
+    <div className="label" style={{ fontSize: 35 }}>Persona</div>
+    <select
+      className="select dark"
+      style={{ fontSize: 35 }}
+      value={selectedPid!=null? String(selectedPid):""}
+      onChange={(e)=>onPersonaChange(e.target.value)}
+    >
+      {personaOptions.length===0 && <option value="">(no personas)</option>}
+      {personaOptions.map(pid => (
+        <option key={pid} value={String(pid)}>{pid}</option>
+      ))}
+    </select>
 
-          <div className="label">Activity</div>
-          <select
-            className="select dark"
-            value={selectedAid!=null? String(selectedAid):""}
-            onChange={(e)=>onActivityChange(e.target.value)}
-          >
-            {activityOptions.length===0 && <option value="">(no activities)</option>}
-            {activityOptions.map(aid => (
-              <option key={aid} value={String(aid)}>{aid}</option>
-            ))}
-          </select>
+    <div className="label" style={{ fontSize: 35 }}>Activity</div>
+    <select
+      className="select dark"
+      style={{ fontSize: 35 }}
+      value={selectedAid!=null? String(selectedAid):""}
+      onChange={(e)=>onActivityChange(e.target.value)}
+    >
+      {activityOptions.length===0 && <option value="">(no activities)</option>}
+      {activityOptions.map(aid => (
+        <option key={aid} value={String(aid)}>{aid}</option>
+      ))}
+    </select>
 
-          {/* User 选择 */}
-          <div className="label">User</div>
-          <select
-            className="select dark"
-            value={userId}
-            onChange={(e)=>onUserSelect(e.target.value)}
-            style={{ minWidth: 140 }}
-          >
-            {userIdOptions.length === 0 && <option value="">(no users)</option>}
-            {userIdOptions.map(id => (
-              <option key={id} value={String(id)}>User {id}</option>
-            ))}
-          </select>
-          <button className="btn btn-secondary" onClick={createNewUser}>
-            New User
-          </button>
-          <button className="btn btn-hollow" onClick={openCurrentUserForm} disabled={!currentUserInfo}>
-            Edit User
-          </button>
+    {/* User 选择 */}
+    <div className="label" style={{ fontSize: 35 }}>User</div>
+    <select
+      className="select dark"
+      style={{ fontSize: 35, minWidth: 140 }}
+      value={userId}
+      onChange={(e)=>onUserSelect(e.target.value)}
+    >
+      {userIdOptions.length === 0 && <option value="">(no users)</option>}
+      {userIdOptions.map(id => (
+        <option key={id} value={String(id)}>User {id}</option>
+      ))}
+    </select>
 
-          {/* 导出 & 保存 */}
-          <button className="btn btn-primary" onClick={onExportChoices} disabled={!userId}>
-            Export Choices
-          </button>
-          <button className="btn btn-hollow" onClick={onSaveSelection}>
-            Save Selection
-          </button>
+    <button
+      className="btn btn-secondary"
+      style={{ fontSize: 35 }}
+      onClick={createNewUser}
+    >
+      New User
+    </button>
 
-          <div className="spacer" />
-          <button className="btn btn-hollow" onClick={chooseImagesDirFS}>Load images/</button>
-          <button className="btn btn-hollow" onClick={chooseNarrDirFS}>Load Narrator/</button>
+    <button
+      className="btn btn-hollow"
+      style={{ fontSize: 35 }}
+      onClick={openCurrentUserForm}
+      disabled={!currentUserInfo}
+    >
+      Edit User
+    </button>
 
-          {/* 隐藏 input 作为回退 */}
-          <input
-            ref={imgDirRef}
-            type="file" multiple
-            // @ts-ignore
-            webkitdirectory="true"
-            hidden
-            onChange={(e)=>setImageFiles(e.target.files? Array.from(e.target.files): [])}
-          />
-          <input
-            ref={narrDirRef}
-            type="file" multiple
-            // @ts-ignore
-            webkitdirectory="true"
-            hidden
-            onChange={(e)=>setNarratorFiles(e.target.files? Array.from(e.target.files): [])}
-          />
-        </div>
-      </div>
+    {/* 导出 & 保存 */}
+    <button
+      className="btn btn-primary"
+      style={{ fontSize: 35 }}
+      onClick={onExportChoices}
+      disabled={!userId}
+    >
+      Export Choices
+    </button>
+    <button
+      className="btn btn-hollow"
+      style={{ fontSize: 35 }}
+      onClick={onSaveSelection}
+    >
+      Save Selection
+    </button>
+
+    <div className="spacer" />
+
+    <button
+      className="btn btn-hollow"
+      style={{ fontSize: 35 }}
+      onClick={chooseImagesDirFS}
+    >
+      Load images/
+    </button>
+    <button
+      className="btn btn-hollow"
+      style={{ fontSize: 35 }}
+      onClick={chooseNarrDirFS}
+    >
+      Load Narrator/
+    </button>
+
+    {/* 隐藏 input 作为回退 */}
+    <input
+      ref={imgDirRef}
+      type="file" multiple
+      // @ts-ignore
+      webkitdirectory="true"
+      hidden
+      onChange={(e)=>setImageFiles(e.target.files? Array.from(e.target.files): [])}
+    />
+    <input
+      ref={narrDirRef}
+      type="file" multiple
+      // @ts-ignore
+      webkitdirectory="true"
+      hidden
+      onChange={(e)=>setNarratorFiles(e.target.files? Array.from(e.target.files): [])}
+    />
+  </div>
+</div>
+
 
       {/* 中部内容：根据 showUserForm 决定显示“单独一页”用户信息，还是 Storyboard 主界面 */}
       {showUserForm && currentUserInfo ? (
@@ -761,7 +810,14 @@ Saved At: ${ts}
         >
           <div style={{ width:"100%", maxWidth:960, height:"100%", maxHeight:"100%" }}>
             <SectionBox title={`User Information Record (User ${currentUserInfo.id})`}>
-              <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:8, fontSize:16 }}>
+              <div
+                style={{
+                  display:"grid",
+                  gridTemplateColumns:"1fr 1fr",
+                  gap:8,
+                  fontSize:35
+                }}
+              >
                 <div>
                   <div style={{ marginBottom:4 }}>User ID: <strong>{currentUserInfo.id}</strong></div>
 
@@ -1009,7 +1065,7 @@ Saved At: ${ts}
                 {/* Confirm Choice 按钮，点击后才真正记录并跳到下一张 */}
                 <button
                   className="btn btn-primary"
-                  style={{ marginLeft:16, fontSize:25, fontWeight:500, padding:"10px 24px" }}
+                  style={{ marginLeft:16, fontSize:35, fontWeight:500, padding:"10px 24px" }}
                   onClick={()=>recordChoiceForCurrentImage(variant)}
                 >
                   Confirm Choice
