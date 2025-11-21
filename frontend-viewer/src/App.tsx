@@ -138,6 +138,24 @@ export default function App() {
     comments: "",
   });
 
+  // --------- Activation Steering 后端 WebSocket 状态 ---------
+  const [llmResponse, setLlmResponse] = useState<string>(""); // Phase II 顶部模型返回文本
+  const [isLoadingLLM, setIsLoadingLLM] = useState<boolean>(false);
+
+  const [wsStatus, setWsStatus] = useState<
+    "disconnected" | "connecting" | "connected"
+  >("disconnected");
+
+  const [sessionState, setSessionState] = useState<
+    "idle" | "hello_sent" | "method_ready" | "waiting_response" | "waiting_feedback"
+  >("idle");
+
+  const [interactionCount, setInteractionCount] = useState<number>(0);
+
+  // WebSocket bridge URL（见 FRONTEND_INTEGRATION_GUIDE）
+  const wsUrl = (import.meta as any).env.VITE_WS_URL || "ws://localhost:8765/ui";
+  const socketRef = useRef<WebSocket | null>(null);
+
   // --------- 根据 phase 取当前的 images / narrs / byPersona ---------
   const images = phase === "I" ? imagesPhaseI : imagesPhaseII;
   const narrs = phase === "I" ? narrsPhaseI : narrsPhaseII;
@@ -476,8 +494,193 @@ export default function App() {
     alert("Selection recorded for this image in Phase I.");
   }
 
-  // --------- Phase II：Save and Continue（存内存 + 下一张）---------
-  function onSaveInteractionAndContinue() {
+  // ================= Activation Steering WebSocket 集成 =================
+
+  function handleWsMessage(event: MessageEvent) {
+    try {
+      const data = JSON.parse(event.data);
+      const type = (data.type || "").toLowerCase();
+
+      if (type === "hello_confirm") {
+        setSessionState("hello_sent");
+      } else if (type === "resume_confirm" || type === "method_confirm") {
+        setSessionState("method_ready");
+        if (typeof data.interaction_count === "number") {
+          setInteractionCount(data.interaction_count);
+        }
+      } else if (type === "response") {
+        setSessionState("waiting_feedback");
+        if (typeof data.interaction_count === "number") {
+          setInteractionCount(data.interaction_count);
+        }
+        const text =
+          typeof data.response === "string"
+            ? data.response
+            : JSON.stringify(data.response, null, 2);
+        setLlmResponse(text);
+        setIsLoadingLLM(false);
+      } else if (type === "error") {
+        const msg = data.message || data.detail || data.code || "Unknown error";
+        alert(`Model error: ${msg}`);
+        setIsLoadingLLM(false);
+      }
+    } catch (e) {
+      console.error("Failed to parse WS message", e);
+      setIsLoadingLLM(false);
+    }
+  }
+
+  function ensureSocketConnected() {
+    if (
+      socketRef.current &&
+      socketRef.current.readyState === WebSocket.OPEN
+    ) {
+      return;
+    }
+
+    const socket = new WebSocket(wsUrl);
+    socketRef.current = socket;
+    setWsStatus("connecting");
+
+    socket.onopen = () => {
+      setWsStatus("connected");
+      console.log("✅ Connected to bridge:", wsUrl);
+      // 如果已经有 userId，自动发送 hello + method
+      if (userId) {
+        sendHello(false);
+        sendMethod("activation_steering");
+      }
+    };
+
+    socket.onmessage = handleWsMessage;
+
+    socket.onerror = (event) => {
+      console.error("⚠️ WebSocket error", event);
+      setWsStatus("disconnected");
+      setIsLoadingLLM(false);
+    };
+
+    socket.onclose = () => {
+      console.log("🔌 WebSocket closed");
+      setWsStatus("disconnected");
+      setSessionState("idle");
+      setIsLoadingLLM(false);
+    };
+  }
+
+  function sendMessage(msg: any): boolean {
+    const socket = socketRef.current;
+    if (!socket || socket.readyState !== WebSocket.OPEN) {
+      alert("Model connection not ready. Please connect and try again.");
+      return false;
+    }
+    try {
+      socket.send(JSON.stringify(msg));
+      return true;
+    } catch (err) {
+      console.error("Error sending WS message:", err);
+      alert("Failed to send message to model.");
+      return false;
+    }
+  }
+
+  function sendHello(isResume: boolean) {
+    if (!userId) {
+      alert("Please enter User ID before starting the model session.");
+      return;
+    }
+    const msg: any = {
+      type: "hello",
+      user_id: userId,
+    };
+    if (isResume) {
+      msg.resume = true;
+    }
+    if (sendMessage(msg)) {
+      setSessionState("hello_sent");
+    }
+  }
+
+  function sendMethod(method: "vanilla" | "activation_steering" | "combined") {
+    sendMessage({
+      type: "method",
+      method,
+    });
+  }
+
+  // 初次挂载时尝试连接 WebSocket
+  useEffect(() => {
+    ensureSocketConnected();
+    return () => {
+      socketRef.current?.close();
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // --------- Phase II：Back to Model（发送反馈给模型）---------
+  async function onBackToModel() {
+    if (!currentImg) {
+      alert("No image selected.");
+      return;
+    }
+    if (!userId) {
+      alert("Please enter User ID first.");
+      return;
+    }
+    if (!interactionText.trim()) {
+      alert("Please enter interaction content first.");
+      return;
+    }
+
+    // 确保 WebSocket 已连接
+    if (wsStatus !== "connected") {
+      ensureSocketConnected();
+      alert("Connecting to model... please click Back to Model again in a moment.");
+      return;
+    }
+
+    // 会话尚未开始时，先发送 hello + method
+    if (sessionState === "idle") {
+      sendHello(false);
+      sendMethod("activation_steering");
+      alert("Starting model session... please click Back to Model again in a moment.");
+      return;
+    }
+
+    setIsLoadingLLM(true);
+
+    // 将 Interaction 文本映射为 workflow 的 feedback payload
+    const feedbackPayload = {
+      choice: "NO" as const, // 用户提供改进意见
+      response: interactionText,
+      satisfaction_survey: "Q1:3 Q2:3 Q3:3 Q4:3 Q5:3", // 如有需要可改为真实问卷
+      mark: "NONE",
+      category_ranking: [
+        "timing_interruption",
+        "communication_style",
+        "autonomy_control",
+        "context_adaptation",
+        "domain_priorities",
+      ],
+    };
+
+    const ok = sendMessage({
+      type: "feedback",
+      payload: feedbackPayload,
+    });
+
+    if (!ok) {
+      setIsLoadingLLM(false);
+      return;
+    }
+
+    setSessionState("method_ready");
+    setIsLoadingLLM(false);
+    alert("Interaction feedback sent to model.");
+  }
+
+  // --------- Phase II：Get New（发送 context，获取模型新响应）---------
+  async function onGetNew() {
     if (!currentImg) {
       alert("No image selected.");
       return;
@@ -487,21 +690,70 @@ export default function App() {
       return;
     }
 
-    const record: PhaseIIInteraction = {
-      persona: currentImg.pid,
-      activity: currentImg.aid,
-      imageName: currentImg.name,
-      interaction: interactionText || "",
-    };
+    if (wsStatus !== "connected") {
+      ensureSocketConnected();
+      alert("Connecting to model... please click Get New again in a moment.");
+      return;
+    }
 
-    setPhaseIIInteractions((prev) => ({
-      ...prev,
-      [currentImg.name]: record,
-    }));
+    if (sessionState === "idle") {
+      sendHello(false);
+      sendMethod("activation_steering");
+      alert("Starting model session... please click Get New again in a moment.");
+      return;
+    }
 
-    alert("Interaction recorded for this image in Phase II.");
-    goNextImage();
+    setIsLoadingLLM(true);
+
+    // 使用 narrator 的 Activity Description 作为 scenario_text
+    const scenarioText =
+      activityDesc && activityDesc.trim().length > 0
+        ? activityDesc
+        : `Persona ${currentImg.pid}, Activity ${currentImg.aid}`;
+
+    const timeframe = "N/A"; // 如有具体时间可以替换
+
+    const ok = sendMessage({
+      type: "context",
+      payload: {
+        scenario_text: scenarioText,
+        timeframe,
+      },
+    });
+
+    if (!ok) {
+      setIsLoadingLLM(false);
+      return;
+    }
+
+    setSessionState("waiting_response");
   }
+
+// --------- Phase II：Save Interaction (Save to local state) ---------
+function onSaveInteraction() {
+  if (!currentImg) {
+    alert("No image selected.");
+    return;
+  }
+  if (!userId) {
+    alert("Please enter User ID first.");
+    return;
+  }
+
+  const record: PhaseIIInteraction = {
+    persona: currentImg.pid,
+    activity: currentImg.aid,
+    imageName: currentImg.name,
+    interaction: interactionText || "",
+  };
+
+  setPhaseIIInteractions((prev) => ({
+    ...prev,
+    [currentImg.name]: record,
+  }));
+
+  alert("Interaction saved for this image in Phase II.");
+}
 
   // --------- New User 弹窗：只存内存 ---------
   function openUserModal() {
@@ -986,13 +1238,14 @@ export default function App() {
                   <textarea
                     className="narr"
                     readOnly
-                    value={activityDesc}
+                    value={llmResponse || smartTextA}
                     style={{
                       height: "100%",
                       width: "100%",
                       resize: "none",
                       fontSize: 35,
                       lineHeight: 1.5,
+                      fontFamily: "monospace", // Better for JSON display
                     }}
                   />
                 </div>
@@ -1111,20 +1364,20 @@ export default function App() {
                 <textarea
                   className="narr"
                   readOnly
-                  value={smartTextA}
+                  value={llmResponse || smartTextA}
                   style={{
                     height: "100%",
                     width: "100%",
                     resize: "none",
                     fontSize: 35,
                     lineHeight: 1.5,
+                    fontFamily: "monospace", // Better for JSON display
                   }}
                 />
               </div>
             </SectionBox>
-
-            {/* 下方：Interaction 输入 + Save and Continue */}
-            <SectionBox title="Interaction">
+ {/* 下方：Interaction 输入 + Three buttons */}
+ <SectionBox title="Interaction">
               <div
                 style={{
                   display: "flex",
@@ -1155,15 +1408,42 @@ export default function App() {
                   }}
                 >
                   <button
+                    className="btn btn-secondary"
+                    style={{ 
+                      fontSize: 35, 
+                      padding: "8px 24px",
+                      opacity: isLoadingLLM ? 0.5 : 1,
+                      cursor: isLoadingLLM ? "not-allowed" : "pointer"
+                    }}
+                    onClick={onBackToModel}
+                    disabled={isLoadingLLM}
+                  >
+                    {isLoadingLLM ? "Loading..." : "Back to Model"}
+                  </button>
+                  <button
+                    className="btn btn-secondary"
+                    style={{ 
+                      fontSize: 35, 
+                      padding: "8px 24px",
+                      opacity: isLoadingLLM ? 0.5 : 1,
+                      cursor: isLoadingLLM ? "not-allowed" : "pointer"
+                    }}
+                    onClick={onGetNew}
+                    disabled={isLoadingLLM}
+                  >
+                    {isLoadingLLM ? "Loading..." : "Get New"}
+                  </button>
+                  <button
                     className="btn btn-primary"
                     style={{ fontSize: 35, padding: "8px 24px" }}
-                    onClick={onSaveInteractionAndContinue}
+                    onClick={onSaveInteraction}
                   >
-                    Save and Continue
+                    Save All
                   </button>
                 </div>
               </div>
             </SectionBox>
+            
           </div>
         )}
       </div>
