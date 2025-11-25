@@ -78,6 +78,7 @@ export default function App() {
   const [userNameFromNarr, setUserNameFromNarr] = useState<string>("");
   const [activityDesc, setActivityDesc] = useState<string>("");
   const [smartTextA, setSmartTextA] = useState<string>("");
+  const [smartTextB, setSmartTextB] = useState<string>("");
 
   // Phase I：A/B 选择（只存内存）
   const [variant, setVariant] = useState<Choice>("A");
@@ -338,6 +339,7 @@ export default function App() {
           setUserNameFromNarr("");
           setActivityDesc("");
           setSmartTextA("");
+          setSmartTextB("");
         }
         return;
       }
@@ -354,17 +356,29 @@ export default function App() {
 
         const userName = (data["User Name"] ?? "").toString();
         const activity = (data["Activity Description"] ?? "").toString();
-        const smart = (data["Smart Assistant Interaction"] ?? "").toString();
+        // 兼容老字段 "Smart Assistant Interaction" 和新字段 A/B
+        const smartA = (
+          data["Smart Assistant Interaction A"] ??
+          data["Smart Assistant Interaction"] ??
+          ""
+        ).toString();
+        const smartB = (
+          data["Smart Assistant Interaction B"] ??
+          data["Smart Assistant Interaction"] ??
+          smartA
+        ).toString();
 
         setUserNameFromNarr(userName);
         setActivityDesc(activity);
-        setSmartTextA(smart);
+        setSmartTextA(smartA);
+        setSmartTextB(smartB);
       } catch (e) {
         console.error("read narrator error:", e);
         if (!cancelled) {
           setUserNameFromNarr("");
           setActivityDesc("");
           setSmartTextA("");
+          setSmartTextB("");
         }
       }
     }
@@ -1248,7 +1262,7 @@ function onSaveInteraction() {
               <textarea
                 className="narr"
                 readOnly
-                value={smartTextA || "PlaceHolder B"}
+                value={smartTextB || "PlaceHolder B"}
                 style={{
                   height: "100%",
                   width: "100%",
