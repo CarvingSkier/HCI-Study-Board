@@ -1168,7 +1168,7 @@ function onSaveInteraction() {
                   <textarea
                     className="narr"
                     readOnly
-                    value={llmResponse || smartTextA}
+                    value={activityDesc}
                     style={{
                       height: "100%",
                       width: "100%",
