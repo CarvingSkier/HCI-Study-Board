@@ -115,6 +115,17 @@ export default function App() {
   const [llmResponse, setLlmResponse] = useState<string>(""); // Phase II 顶部模型返回文本
   const [isLoadingLLM, setIsLoadingLLM] = useState<boolean>(false);
 
+  // Phase II：反馈选择（YES / NO）+ 满意度 + 标记类别
+  const [feedbackChoice, setFeedbackChoice] = useState<"YES" | "NO">("NO");
+  const [satisfaction, setSatisfaction] = useState({
+    q1: 3,
+    q2: 3,
+    q3: 3,
+    q4: 3,
+    q5: 3,
+  });
+  const [markCategories, setMarkCategories] = useState<string[]>([]);
+
   const [wsStatus, setWsStatus] = useState<
     "disconnected" | "connecting" | "connected"
   >("disconnected");
@@ -636,11 +647,14 @@ export default function App() {
     setIsLoadingLLM(true);
 
     // 将 Interaction 文本映射为 workflow 的 feedback payload
+    const marksString =
+      markCategories.length === 0 ? "NONE" : markCategories.join("; ");
+
     const feedbackPayload = {
-      choice: "NO" as const, // 用户提供改进意见
+      choice: feedbackChoice,
       response: interactionText,
-      satisfaction_survey: "Q1:3 Q2:3 Q3:3 Q4:3 Q5:3", // 如有需要可改为真实问卷
-      mark: "NONE",
+      satisfaction_survey: `Q1:${satisfaction.q1} Q2:${satisfaction.q2} Q3:${satisfaction.q3} Q4:${satisfaction.q4} Q5:${satisfaction.q5}`,
+      mark: marksString,
       category_ranking: [
         "timing_interruption",
         "communication_style",
@@ -882,7 +896,7 @@ function onSaveInteraction() {
       className="btn"
       onClick={onClick}
       style={{
-        fontSize: 50,
+        fontSize: 45,
         fontWeight: 700,
         padding: "6px 14px",
         borderRadius: 12,
@@ -905,7 +919,7 @@ function onSaveInteraction() {
       className="btn"
       style={{
         padding: "14px 24px",
-        fontSize: 50,
+        fontSize: 45,
         fontWeight: 800,
         color: "#e5e7eb",
         background: active ? "#0b1220" : "#111827",
@@ -936,12 +950,12 @@ function onSaveInteraction() {
             gap: 12,
           }}
         >
-          <div className="label" style={{ fontSize: 50 }}>
+          <div className="label" style={{ fontSize: 45 }}>
             File
           </div>
           <select
             className="select dark"
-            style={{ fontSize: 50 }}
+            style={{ fontSize: 45 }}
             value={currentImg?.name || ""}
             onChange={(e) => onFilenameChange(e.target.value)}
           >
@@ -955,12 +969,12 @@ function onSaveInteraction() {
             ))}
           </select>
 
-          <div className="label" style={{ fontSize: 50 }}>
+          <div className="label" style={{ fontSize: 45 }}>
             Persona
           </div>
           <select
             className="select dark"
-            style={{ fontSize: 50 }}
+            style={{ fontSize: 45 }}
             value={selectedPid != null ? String(selectedPid) : ""}
             onChange={(e) => onPersonaChange(e.target.value)}
           >
@@ -974,12 +988,12 @@ function onSaveInteraction() {
             ))}
           </select>
 
-          <div className="label" style={{ fontSize: 50 }}>
+          <div className="label" style={{ fontSize: 45 }}>
             Activity
           </div>
           <select
             className="select dark"
-            style={{ fontSize: 50 }}
+            style={{ fontSize: 45 }}
             value={selectedAid != null ? String(selectedAid) : ""}
             onChange={(e) => onActivityChange(e.target.value)}
           >
@@ -994,13 +1008,13 @@ function onSaveInteraction() {
           </select>
 
           {/* User 输入 */}
-          <div className="label" style={{ fontSize: 50 }}>
+          <div className="label" style={{ fontSize: 45 }}>
             User ID
           </div>
           <input
             className="input"
             style={{
-              fontSize: 50,
+              fontSize: 45,
               padding: "4px 10px",
               width: 180,
             }}
@@ -1011,7 +1025,7 @@ function onSaveInteraction() {
 
           <button
             className="btn btn-secondary"
-            style={{ fontSize: 50 }}
+            style={{ fontSize: 45 }}
             onClick={() => setShowSurveyModal(true)}
           >
             Survey
@@ -1019,7 +1033,7 @@ function onSaveInteraction() {
 
           <button
             className="btn btn-secondary"
-            style={{ fontSize: 50 }}
+            style={{ fontSize: 45 }}
             onClick={chooseResultPath}
           >
             Result Path
@@ -1027,7 +1041,7 @@ function onSaveInteraction() {
 
           <button
             className="btn btn-primary"
-            style={{ fontSize: 50 }}
+            style={{ fontSize: 45 }}
             onClick={saveAll}
           >
             Save ALL
@@ -1046,14 +1060,14 @@ function onSaveInteraction() {
           {/* 载入 Phase I / II */}
           <button
             className="btn btn-hollow"
-            style={{ fontSize: 50 }}
+            style={{ fontSize: 45 }}
             onClick={() => loadPhaseDir("I")}
           >
             Load Phase I
           </button>
           <button
             className="btn btn-hollow"
-            style={{ fontSize: 50 }}
+            style={{ fontSize: 45 }}
             onClick={() => loadPhaseDir("II")}
           >
             Load Phase II
@@ -1111,7 +1125,7 @@ function onSaveInteraction() {
               }}
             />
           ) : (
-            <div className="placeholder" style={{ fontSize: 50 }}>
+            <div className="placeholder" style={{ fontSize: 45 }}>
               No image
             </div>
           )}
@@ -1155,7 +1169,7 @@ function onSaveInteraction() {
                 <div
                   style={{
                     fontWeight: 900,
-                    fontSize: 50,
+                    fontSize: 45,
                     marginBottom: 10,
                     lineHeight: 1.2,
                   }}
@@ -1173,7 +1187,7 @@ function onSaveInteraction() {
                   <div
                     style={{
                       fontWeight: 400,
-                      fontSize: 50,
+                      fontSize: 45,
                       marginBottom: 6,
                     }}
                   >
@@ -1187,7 +1201,7 @@ function onSaveInteraction() {
                       height: "100%",
                       width: "100%",
                       resize: "none",
-                      fontSize: 50,
+                      fontSize: 45,
                       lineHeight: 1.5,
                       fontFamily: "monospace", // Better for JSON display
                     }}
@@ -1206,7 +1220,7 @@ function onSaveInteraction() {
                 gap: 12,
               }}
             >
-              <div style={{ fontWeight: 900, fontSize: 50 }}>
+              <div style={{ fontWeight: 900, fontSize: 45 }}>
                 Which Smart Assistant interaction method do you prefer?
               </div>
               <DarkBtn active={variant === "A"} onClick={() => setVariant("A")}>
@@ -1220,7 +1234,7 @@ function onSaveInteraction() {
                 className="btn btn-primary"
                 style={{
                   marginLeft: 16,
-                  fontSize: 50,
+                  fontSize: 45,
                   fontWeight: 500,
                   padding: "10px 24px",
                 }}
@@ -1232,7 +1246,7 @@ function onSaveInteraction() {
               <button
                 className="btn btn-hollow"
                 style={{
-                  fontSize: 50,
+                  fontSize: 45,
                   fontWeight: 500,
                   padding: "10px 24px",
                 }}
@@ -1252,7 +1266,7 @@ function onSaveInteraction() {
                   height: "100%",
                   width: "100%",
                   resize: "none",
-                  fontSize: 50,
+                  fontSize: 45,
                   lineHeight: 1.6,
                 }}
               />
@@ -1267,7 +1281,7 @@ function onSaveInteraction() {
                   height: "100%",
                   width: "100%",
                   resize: "none",
-                  fontSize: 50,
+                  fontSize: 45,
                   lineHeight: 1.6,
                 }}
               />
@@ -1279,7 +1293,7 @@ function onSaveInteraction() {
             className="panel text-panel"
             style={{
               display: "grid",
-              gridTemplateRows: "5fr 5fr",
+              gridTemplateRows: "3fr 7fr",
               gap: 10,
               minHeight: 0,
             }}
@@ -1297,7 +1311,7 @@ function onSaveInteraction() {
                 <div
                   style={{
                     fontWeight: 900,
-                    fontSize: 50,
+                    fontSize: 45,
                     marginBottom: 10,
                     lineHeight: 1.2,
                   }}
@@ -1313,15 +1327,15 @@ function onSaveInteraction() {
                     height: "100%",
                     width: "100%",
                     resize: "none",
-                    fontSize: 50,
+                    fontSize: 45,
                     lineHeight: 1.5,
                     fontFamily: "monospace", // Better for JSON display
                   }}
                 />
               </div>
             </SectionBox>
- {/* 下方：Interaction 输入 + Three buttons */}
- <SectionBox title="Interaction">
+            {/* 下方：Interaction + Choice + 按钮 */}
+            <SectionBox title="Interaction">
               <div
                 style={{
                   display: "flex",
@@ -1336,13 +1350,254 @@ function onSaveInteraction() {
                   onChange={(e) => setInteractionText(e.target.value)}
                   placeholder="Type any interaction notes here..."
                   style={{
-                    height: "100%",
+                    height: "55%",
                     width: "100%",
                     resize: "none",
-                    fontSize: 50,
+                    fontSize: 45,
                     lineHeight: 1.5,
                   }}
                 />
+
+                {/* Satisfaction survey (Q1–Q5) */}
+                <div
+                  style={{
+                    marginTop: 8,
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: 6,
+                    fontSize: 45,
+                  }}
+                >
+                  <div style={{ fontWeight: 700 }}>
+                    SATISFACTION_SURVEY (1–5, this interaction only)
+                  </div>
+
+                  <div>
+                    <div>
+                      Q1 – Relevance & Timing (1 = irrelevant / bad timing, 5 = perfect)
+                    </div>
+                    <select
+                      className="select dark"
+                      style={{
+                        fontSize: 45,
+                        width: "100%",
+                        padding: "10px 16px",
+                        minHeight: 64,
+                      }}
+                      value={satisfaction.q1}
+                      onChange={(e) =>
+                        setSatisfaction((prev) => ({
+                          ...prev,
+                          q1: Number(e.target.value),
+                        }))
+                      }
+                    >
+                      <option value={1}>1</option>
+                      <option value={2}>2</option>
+                      <option value={3}>3</option>
+                      <option value={4}>4</option>
+                      <option value={5}>5</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <div>
+                      Q2 – Intrusiveness (1 = extremely disruptive, 5 = seamless)
+                    </div>
+                    <select
+                      className="select dark"
+                      style={{
+                        fontSize: 45,
+                        width: "100%",
+                        padding: "10px 16px",
+                        minHeight: 64,
+                      }}
+                      value={satisfaction.q2}
+                      onChange={(e) =>
+                        setSatisfaction((prev) => ({
+                          ...prev,
+                          q2: Number(e.target.value),
+                        }))
+                      }
+                    >
+                      <option value={1}>1</option>
+                      <option value={2}>2</option>
+                      <option value={3}>3</option>
+                      <option value={4}>4</option>
+                      <option value={5}>5</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <div>
+                      Q3 – Value (1 = useless / harmful, 5 = extremely helpful)
+                    </div>
+                    <select
+                      className="select dark"
+                      style={{
+                        fontSize: 45,
+                        width: "100%",
+                        padding: "10px 16px",
+                        minHeight: 64,
+                      }}
+                      value={satisfaction.q3}
+                      onChange={(e) =>
+                        setSatisfaction((prev) => ({
+                          ...prev,
+                          q3: Number(e.target.value),
+                        }))
+                      }
+                    >
+                      <option value={1}>1</option>
+                      <option value={2}>2</option>
+                      <option value={3}>3</option>
+                      <option value={4}>4</option>
+                      <option value={5}>5</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <div>
+                      Q4 – Appropriateness (1 = inappropriate, 5 = perfect for context)
+                    </div>
+                    <select
+                      className="select dark"
+                      style={{
+                        fontSize: 45,
+                        width: "100%",
+                        padding: "10px 16px",
+                        minHeight: 64,
+                      }}
+                      value={satisfaction.q4}
+                      onChange={(e) =>
+                        setSatisfaction((prev) => ({
+                          ...prev,
+                          q4: Number(e.target.value),
+                        }))
+                      }
+                    >
+                      <option value={1}>1</option>
+                      <option value={2}>2</option>
+                      <option value={3}>3</option>
+                      <option value={4}>4</option>
+                      <option value={5}>5</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <div>
+                      Q5 – Comfort with Autonomy (1 = too pushy, 5 = respectful)
+                    </div>
+                    <select
+                      className="select dark"
+                      style={{
+                        fontSize: 45,
+                        width: "100%",
+                        padding: "10px 16px",
+                        minHeight: 64,
+                      }}
+                      value={satisfaction.q5}
+                      onChange={(e) =>
+                        setSatisfaction((prev) => ({
+                          ...prev,
+                          q5: Number(e.target.value),
+                        }))
+                      }
+                    >
+                      <option value={1}>1</option>
+                      <option value={2}>2</option>
+                      <option value={3}>3</option>
+                      <option value={4}>4</option>
+                      <option value={5}>5</option>
+                    </select>
+                  </div>
+
+                  {/* Mark categories (multi-select) */}
+                  <div>
+                    <div>Mark – select all categories that apply:</div>
+                    {[
+                      "timing_interruption",
+                      "communication_style",
+                      "autonomy_control",
+                      "context_adaptation",
+                      "domain_priorities",
+                    ].map((cat) => (
+                      <label
+                        key={cat}
+                        style={{
+                          display: "inline-flex",
+                          alignItems: "center",
+                          marginRight: 24,
+                          gap: 8,
+                          fontSize: 45,
+                        }}
+                      >
+                        <input
+                          type="checkbox"
+                          checked={markCategories.includes(cat)}
+                          onChange={(e) => {
+                            setMarkCategories((prev) =>
+                              e.target.checked
+                                ? [...prev, cat]
+                                : prev.filter((c) => c !== cat)
+                            );
+                          }}
+                          style={{
+                            width: 32,
+                            height: 32,
+                            cursor: "pointer",
+                          }}
+                        />
+                        {cat}
+                      </label>
+                    ))}
+                  </div>
+
+                  {/* Choice YES / NO */}
+                  <div
+                    style={{
+                      marginTop: 4,
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 12,
+                    }}
+                  >
+                    <div>Choice:</div>
+                    <button
+                      className="btn"
+                      style={{
+                        fontSize: 45,
+                        padding: "6px 18px",
+                        border:
+                          feedbackChoice === "YES"
+                            ? "2px solid #22c55e"
+                            : "1px solid #374151",
+                        background:
+                          feedbackChoice === "YES" ? "#064e3b" : "#111827",
+                      }}
+                      onClick={() => setFeedbackChoice("YES")}
+                    >
+                      YES
+                    </button>
+                    <button
+                      className="btn"
+                      style={{
+                        fontSize: 45,
+                        padding: "6px 18px",
+                        border:
+                          feedbackChoice === "NO"
+                            ? "2px solid #ef4444"
+                            : "1px solid #374151",
+                        background:
+                          feedbackChoice === "NO" ? "#450a0a" : "#111827",
+                      }}
+                      onClick={() => setFeedbackChoice("NO")}
+                    >
+                      NO
+                    </button>
+                  </div>
+                </div>
+
                 <div
                   style={{
                     marginTop: 12,
@@ -1354,7 +1609,7 @@ function onSaveInteraction() {
                   <button
                     className="btn btn-secondary"
                     style={{ 
-                      fontSize: 50, 
+                      fontSize: 45, 
                       padding: "8px 24px",
                       opacity: isLoadingLLM ? 0.5 : 1,
                       cursor: isLoadingLLM ? "not-allowed" : "pointer"
@@ -1367,7 +1622,7 @@ function onSaveInteraction() {
                   <button
                     className="btn btn-secondary"
                     style={{ 
-                      fontSize: 50, 
+                      fontSize: 45, 
                       padding: "8px 24px",
                       opacity: isLoadingLLM ? 0.5 : 1,
                       cursor: isLoadingLLM ? "not-allowed" : "pointer"
@@ -1379,7 +1634,7 @@ function onSaveInteraction() {
                   </button>
                   <button
                     className="btn btn-primary"
-                    style={{ fontSize: 50, padding: "8px 24px" }}
+                    style={{ fontSize: 45, padding: "8px 24px" }}
                     onClick={onSaveInteraction}
                   >
                     Save All
@@ -1432,7 +1687,7 @@ function onSaveInteraction() {
           >
             <h2
               style={{
-                fontSize: 50,
+                fontSize: 45,
                 marginBottom: 16,
                 fontWeight: 900,
               }}
@@ -1440,7 +1695,7 @@ function onSaveInteraction() {
               Section 4. Post-Study Survey
             </h2>
 
-            <p style={{ fontSize: 50, marginBottom: 16 }}>
+            <p style={{ fontSize: 45, marginBottom: 16 }}>
               Please reflect on your overall experience interacting with the smart
               assistant.
             </p>
@@ -1449,12 +1704,12 @@ function onSaveInteraction() {
               style={{ display: "flex", flexDirection: "column", gap: 16 }}
             >
               <div>
-                <div style={{ fontSize: 50, marginBottom: 4 }}>
+                <div style={{ fontSize: 45, marginBottom: 4 }}>
                   Over time, did the assistant’s responses seem to:
                 </div>
                 <select
                   className="select dark"
-                  style={{ fontSize: 50, width: "100%" }}
+                  style={{ fontSize: 45, width: "100%" }}
                   value={survey.overallChange}
                   onChange={(e) =>
                     setSurvey((s) => ({ ...s, overallChange: e.target.value }))
@@ -1470,12 +1725,12 @@ function onSaveInteraction() {
               </div>
 
               <div>
-                <div style={{ fontSize: 50, marginBottom: 4 }}>
+                <div style={{ fontSize: 45, marginBottom: 4 }}>
                   How well did the assistant learn and adapt to your preferences?
                 </div>
                 <select
                   className="select dark"
-                  style={{ fontSize: 50, width: "100%" }}
+                  style={{ fontSize: 45, width: "100%" }}
                   value={survey.adaptPref}
                   onChange={(e) =>
                     setSurvey((s) => ({ ...s, adaptPref: e.target.value }))
@@ -1490,13 +1745,13 @@ function onSaveInteraction() {
               </div>
 
               <div>
-                <div style={{ fontSize: 50, marginBottom: 4 }}>
+                <div style={{ fontSize: 45, marginBottom: 4 }}>
                   How much did you trust the assistant’s decisions and actions by
                   the end of the study?
                 </div>
                 <select
                   className="select dark"
-                  style={{ fontSize: 50, width: "100%" }}
+                  style={{ fontSize: 45, width: "100%" }}
                   value={survey.trustChange}
                   onChange={(e) =>
                     setSurvey((s) => ({ ...s, trustChange: e.target.value }))
@@ -1512,13 +1767,13 @@ function onSaveInteraction() {
               </div>
 
               <div>
-                <div style={{ fontSize: 50, marginBottom: 4 }}>
+                <div style={{ fontSize: 45, marginBottom: 4 }}>
                   How did the assistant’s learning or changes affect your comfort,
                   satisfaction, or willingness to use it again?
                 </div>
                 <select
                   className="select dark"
-                  style={{ fontSize: 50, width: "100%" }}
+                  style={{ fontSize: 45, width: "100%" }}
                   value={survey.comfortChange}
                   onChange={(e) =>
                     setSurvey((s) => ({
@@ -1537,12 +1792,12 @@ function onSaveInteraction() {
               </div>
 
               <div>
-                <div style={{ fontSize: 50, marginBottom: 4 }}>
+                <div style={{ fontSize: 45, marginBottom: 4 }}>
                   Overall satisfaction with the assistant:
                 </div>
                 <select
                   className="select dark"
-                  style={{ fontSize: 50, width: "100%" }}
+                  style={{ fontSize: 45, width: "100%" }}
                   value={survey.satisfaction}
                   onChange={(e) =>
                     setSurvey((s) => ({
@@ -1563,14 +1818,14 @@ function onSaveInteraction() {
               </div>
 
               <div>
-                <div style={{ fontSize: 50, marginBottom: 4 }}>
+                <div style={{ fontSize: 45, marginBottom: 4 }}>
                   What features or behaviors would make a self-improving assistant
                   more useful and trustworthy for you in daily life?
                 </div>
                 <textarea
                   className="narr"
                   style={{
-                    fontSize: 50,
+                    fontSize: 45,
                     width: "100%",
                     minHeight: 150,
                     resize: "vertical",
@@ -1593,14 +1848,14 @@ function onSaveInteraction() {
             >
               <button
                 className="btn btn-hollow"
-                style={{ fontSize: 50, padding: "8px 24px" }}
+                style={{ fontSize: 45, padding: "8px 24px" }}
                 onClick={() => setShowSurveyModal(false)}
               >
                 Cancel
               </button>
               <button
                 className="btn btn-primary"
-                style={{ fontSize: 50, padding: "8px 24px" }}
+                style={{ fontSize: 45, padding: "8px 24px" }}
                 onClick={saveSurvey}
               >
                 Save Survey
@@ -1645,7 +1900,7 @@ const SectionBox: React.FC<SectionBoxProps> = ({
           className="card-header"
           style={{
             fontWeight: 900,
-            fontSize: 50,
+            fontSize: 45,
             padding: "6px 10px",
             borderBottom: "1px solid #1f2937",
             color: emphasized ? "#93c5fd" : "#e5e7eb",
