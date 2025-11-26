@@ -1,0 +1,6 @@
+{
+  "User Name": "Javier",
+  "Activity Description": "Javier is sitting comfortably on his couch, planning for the week ahead with his laptop open. He reviews his work calendar and prioritizes tasks while jotting down notes. Feeling accomplished, he closes the laptop, ready for Monday.",
+  "Smart Assistant Interaction A": "It looks like you're wrapping up your weekly planning! Let me know if there's anything specific you'd like me to summarize once you've reviewed your calendar. Just give me a nod, and I'll be ready when you’re done!",
+  "Smart Assistant Interaction B": "Alright, Javier, let's get you organized for the week ahead. Why don't you take a few minutes to review your calendar and prioritize your tasks while I keep the living room at a comfortable temperature for you?"
+}

@@ -1,0 +1,6 @@
+{
+  "User Name": "Hong",
+  "Activity Description": "Hong is waking up in his cozy bedroom, enjoying the morning light. He stretches comfortably in bed, then sits up to check the time on his phone, looking refreshed and ready to start the day.",
+  "Smart Assistant Interaction A": "NONE",
+  "Smart Assistant Interaction B": "Good morning! I've got your day scheduled, so I'll make sure everything is ready for you, from a warm breakfast to a relaxing day with no specific obligations."
+}

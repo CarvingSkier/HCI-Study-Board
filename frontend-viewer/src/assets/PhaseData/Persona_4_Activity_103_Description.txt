@@ -1,0 +1,6 @@
+{
+  "User Name": "Hong",
+  "Activity Description": "Hong is at his cozy office desk, preparing for a presentation on his laptop. He practices his speech out loud, gesturing animatedly while ensuring he stays within the time limit. After a moment of connection with his assistant, he takes a deep breath, feeling ready and confident to present.",
+  "Smart Assistant Interaction A": "NONE",
+  "Smart Assistant Interaction B": "Hey there, Hong! You've got about 30 minutes to go before your afternoon client presentation. Why don't I help you relax and get focused with some soothing tunes from the local artist, and I can also prep your office with a refreshing blend of essential oils to boost your mood?"
+}

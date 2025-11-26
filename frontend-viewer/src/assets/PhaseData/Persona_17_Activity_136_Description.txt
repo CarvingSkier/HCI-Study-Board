@@ -1,0 +1,6 @@
+{
+  "User Name": "Marybeth",
+  "Activity Description": "Marybeth enters her cozy home with a satisfied smile, kicking off her shoes and stretching her toes in relief. She then changes into comfortable clothes in her bedroom, feeling ready for the weekend ahead.",
+  "Smart Assistant Interaction A": "Hello there! Welcome home! Hope you're feeling refreshed after a productive week. How about some music or maybe a little bit of relaxation? Let me know if there's anything you'd like to do to unwind.",
+  "Smart Assistant Interaction B": "Sounds like you're unwinding after a long day of work! Would you like me to dim the lights and play some calming music in your bedroom to enhance your relaxation experience?"
+}

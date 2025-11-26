@@ -1,0 +1,6 @@
+{
+  "User Name": "Thanh",
+  "Activity Description": "Thanh is winding down for the night in her cozy living room, turning off the TV and preparing for bed. She brushes her teeth and applies skincare products in the bathroom, enjoying her evening routine. Finally, she walks into her bedroom, ready for a peaceful night's sleep.",
+  "Smart Assistant Interaction A": "Hey! All set now. Need a quick reminder about your schedule for tomorrow?",
+  "Smart Assistant Interaction B": "NONE"
+}

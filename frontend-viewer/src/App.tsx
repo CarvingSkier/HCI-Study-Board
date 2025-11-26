@@ -4,6 +4,17 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 const IMAGE_RE = /^Persona_(\d+)_Activity_(\d+)\.(?:jpg|jpeg|png)$/i;
 const NARR_RE = /^Persona_(\d+)_Activity_(\d+)_Description\.(?:txt|md|json)$/i;
 
+// Import all PhaseData assets at build time
+// Pattern: relative to this file location (src/App.tsx) 
+// Files are in src/assets/PhaseData/
+// Note: glob is evaluated at build time, so files must exist when bundling
+const phaseDataImages = import.meta.glob('./assets/PhaseData/*.jpg', { eager: false });
+const phaseDataTexts = import.meta.glob('./assets/PhaseData/*.txt', { eager: false });
+
+// Debug: log immediately to see if glob worked at module load
+console.log('[Module Load] phaseDataImages keys:', Object.keys(phaseDataImages));
+console.log('[Module Load] phaseDataTexts keys:', Object.keys(phaseDataTexts));
+
 type Phase = "I" | "II";
 type Key = `${number}-${number}`;
 
@@ -58,21 +69,44 @@ function downloadJson(filename: string, data: any) {
 export default function App() {
   // --------- 基本 state ---------
   const [phase, setPhase] = useState<Phase>("I");
+  const phaseRef = useRef<Phase>(phase);
   const [userId, setUserId] = useState<string>("");
+
+  // Keep ref in sync with state
+  useEffect(() => {
+    phaseRef.current = phase;
+  }, [phase]);
 
   // Phase I & Phase II 各自的图像 / narrator 映射
   const [imagesPhaseI, setImagesPhaseI] = useState<Record<Key, ImgRec>>({});
+  const imagesPhaseIRef = useRef<Record<Key, ImgRec>>({});
   const [narrsPhaseI, setNarrsPhaseI] = useState<Record<Key, NarrRec>>({});
   const [byPersonaI, setByPersonaI] = useState<Record<number, number[]>>({});
 
   const [imagesPhaseII, setImagesPhaseII] = useState<Record<Key, ImgRec>>({});
+  const imagesPhaseIIRef = useRef<Record<Key, ImgRec>>({});
   const [narrsPhaseII, setNarrsPhaseII] = useState<Record<Key, NarrRec>>({});
   const [byPersonaII, setByPersonaII] = useState<Record<number, number[]>>({});
+  
+  // Keep refs in sync with state
+  useEffect(() => {
+    imagesPhaseIRef.current = imagesPhaseI;
+  }, [imagesPhaseI]);
+  
+  useEffect(() => {
+    imagesPhaseIIRef.current = imagesPhaseII;
+  }, [imagesPhaseII]);
 
   // 当前选中的图片
   const [selectedKey, setSelectedKey] = useState<Key | null>(null);
+  const selectedKeyRef = useRef<Key | null>(null);
   const [selectedPid, setSelectedPid] = useState<number | null>(null);
   const [selectedAid, setSelectedAid] = useState<number | null>(null);
+  
+  // Keep ref in sync with state
+  useEffect(() => {
+    selectedKeyRef.current = selectedKey;
+  }, [selectedKey]);
 
   // Narrator 解析出来的字段
   const [userNameFromNarr, setUserNameFromNarr] = useState<string>("");
@@ -118,13 +152,23 @@ export default function App() {
   // Phase II：反馈选择（YES / NO）+ 满意度 + 标记类别
   const [feedbackChoice, setFeedbackChoice] = useState<"YES" | "NO">("NO");
   const [satisfaction, setSatisfaction] = useState({
-    q1: 3,
-    q2: 3,
-    q3: 3,
-    q4: 3,
-    q5: 3,
+    q1: 0,
+    q2: 0,
+    q3: 0,
+    q4: 0,
+    q5: 0,
   });
-  const [markCategories, setMarkCategories] = useState<string[]>([]);
+  // Mark categories: changed from array to object with category name as key and comment as value
+  const [markComments, setMarkComments] = useState<Record<string, string>>({});
+  // Category ranking: array ordered by user click order
+  const [categoryRanking, setCategoryRanking] = useState<string[]>([]);
+  // Expand/collapse states
+  const [expandedSatisfaction, setExpandedSatisfaction] = useState(false);
+  const [expandedMark, setExpandedMark] = useState(false);
+  // Phase II start modal and method selection
+  const [showPhaseIIModal, setShowPhaseIIModal] = useState(false);
+  const [selectedMethod, setSelectedMethod] = useState<"vanilla" | "activation_steering" | "combined" | null>(null);
+  const [phaseIIStarted, setPhaseIIStarted] = useState(false);
 
   const [wsStatus, setWsStatus] = useState<
     "disconnected" | "connecting" | "connected"
@@ -137,8 +181,9 @@ export default function App() {
   const [interactionCount, setInteractionCount] = useState<number>(0);
 
   // WebSocket bridge URL（见 FRONTEND_INTEGRATION_GUIDE）
-  const wsUrl = (import.meta as any).env.VITE_WS_URL || "ws://localhost:8765/ui";
+  const wsUrl = (import.meta as any).env.VITE_WS_URL || "ws://137.184.192.144:8765/ui";
   const socketRef = useRef<WebSocket | null>(null);
+  const autoSendTimeoutRef = useRef<number | null>(null);
 
   // --------- 根据 phase 取当前的 images / narrs / byPersona ---------
   const images = phase === "I" ? imagesPhaseI : imagesPhaseII;
@@ -156,6 +201,141 @@ export default function App() {
     (el as any).dataset.phase = phase;
     el.value = "";
     el.click();
+  }
+
+  // --------- 从 assets 自动加载 Phase I / Phase II ---------
+  async function loadPhaseFromAssets(which: Phase) {
+    try {
+      console.log(`Loading Phase ${which} from assets...`);
+      console.log('Image modules:', Object.keys(phaseDataImages));
+      console.log('Text modules:', Object.keys(phaseDataTexts));
+      console.log('Image modules count:', Object.keys(phaseDataImages).length);
+      console.log('Text modules count:', Object.keys(phaseDataTexts).length);
+      if (Object.keys(phaseDataImages).length === 0) {
+        console.warn('No image files found! Check glob pattern.');
+      }
+      
+      const imgMap: Record<Key, ImgRec> = {};
+      const narrMap: Record<Key, NarrRec> = {};
+      const per: Record<number, Set<number>> = {};
+
+      // Process image files
+      for (const [path, moduleLoader] of Object.entries(phaseDataImages)) {
+        // Extract filename from path
+        const pathParts = path.split('/');
+        const name = pathParts[pathParts.length - 1];
+
+        // Match images
+        const m = name.match(IMAGE_RE);
+        if (m) {
+          const pid = parseInt(m[1], 10);
+          const aid = parseInt(m[2], 10);
+          const key = makeKey(pid, aid);
+          
+          // Load the module and get the URL
+          const module = await moduleLoader() as { default: string };
+          const imageUrl = module.default;
+          
+          // Fetch and convert to File object
+          const response = await fetch(imageUrl);
+          const blob = await response.blob();
+          const file = new File([blob], name, { type: blob.type });
+          
+          imgMap[key] = {
+            key,
+            pid,
+            aid,
+            file,
+            url: imageUrl,
+            name,
+          };
+          (per[pid] ||= new Set()).add(aid);
+        }
+      }
+
+      // Process text files (only for Phase I)
+      if (which === "I") {
+        for (const [path, textLoader] of Object.entries(phaseDataTexts)) {
+          // Extract filename from path
+          const pathParts = path.split('/');
+          const name = pathParts[pathParts.length - 1];
+
+          // Match description files
+          const m = name.match(NARR_RE);
+          if (m) {
+            const pid = parseInt(m[1], 10);
+            const aid = parseInt(m[2], 10);
+            const key = makeKey(pid, aid);
+            
+            // Load the module and get the URL, then fetch
+            const module = await textLoader() as { default: string };
+            const textUrl = module.default;
+            
+            // Fetch and convert to File object
+            const response = await fetch(textUrl);
+            const blob = await response.blob();
+            const file = new File([blob], name, { type: 'text/plain' });
+            
+            narrMap[key] = { key, pid, aid, file, name };
+          }
+        }
+      }
+
+      const perOut: Record<number, number[]> = {};
+      for (const [pidStr, aids] of Object.entries(per)) {
+        perOut[Number(pidStr)] = Array.from(aids).sort((a, b) => a - b);
+      }
+
+      if (which === "I") {
+        setImagesPhaseI((prev) => {
+          // Revoke old blob URLs before setting new ones
+          Object.values(prev).forEach((r) => {
+            if (r.url.startsWith('blob:')) {
+              URL.revokeObjectURL(r.url);
+            }
+          });
+          return imgMap;
+        });
+        setNarrsPhaseI(narrMap);
+        setByPersonaI(perOut);
+      } else {
+        setImagesPhaseII((prev) => {
+          // Revoke old blob URLs before setting new ones
+          Object.values(prev).forEach((r) => {
+            if (r.url.startsWith('blob:')) {
+              URL.revokeObjectURL(r.url);
+            }
+          });
+          return imgMap;
+        });
+        setNarrsPhaseII(narrMap);
+        setByPersonaII(perOut);
+      }
+
+      // Only set selected key if this phase matches the current phase
+      // Use a ref to get the latest phase value to avoid stale closures
+      if (phaseRef.current === which) {
+        const sorted = Object.values(imgMap).sort(
+          (a, b) => a.pid - b.pid || a.aid - b.aid
+        );
+        if (sorted.length) {
+          const first = sorted[0];
+          setSelectedKey(first.key);
+          setSelectedPid(first.pid);
+          setSelectedAid(first.aid);
+        } else {
+          setSelectedKey(null);
+          setSelectedPid(null);
+          setSelectedAid(null);
+        }
+      }
+      
+      console.log(`Phase ${which} loaded: ${Object.keys(imgMap).length} images, ${Object.keys(narrMap).length} narrators`);
+    } catch (e) {
+      console.error("loadPhaseFromAssets error:", e);
+      console.error("Error details:", e);
+      alert("Failed to load Phase " + which + " from assets. Check console for details.");
+    }
   }
 
   // --------- 目录加载：Phase I / Phase II 各自一套 ---------
@@ -318,6 +498,12 @@ export default function App() {
     }
   }
 
+  // --------- 自动加载 Phase I 和 Phase II 数据 ---------
+  useEffect(() => {
+    loadPhaseFromAssets("I");
+    loadPhaseFromAssets("II");
+  }, []); // Run once on mount
+
   // --------- 切换 phase 时，确保选中的 key 来自该 phase ---------
   useEffect(() => {
     const imgs = phase === "I" ? imagesPhaseI : imagesPhaseII;
@@ -400,10 +586,51 @@ export default function App() {
     };
   }, [selectedKey, phase, narrsPhaseI, narrsPhaseII]);
 
-  // --------- 每次切换图片 / phase 时清空 Phase II 输入框 ---------
+  // Track if we're starting Phase II to prevent clearing timeout
+  const startingPhaseIIRef = useRef(false);
+  
+  // --------- 每次切换图片时清空 Phase II 输入框 ---------
   useEffect(() => {
+    // Only clear timeout when selectedKey changes (user manually switches images)
+    // Not when phase changes (that's handled separately)
+    if (autoSendTimeoutRef.current && !startingPhaseIIRef.current) {
+      clearTimeout(autoSendTimeoutRef.current);
+      autoSendTimeoutRef.current = null;
+    }
+    
     setInteractionText("");
-  }, [selectedKey, phase]);
+    setMarkComments({});
+    setCategoryRanking([]);
+    setFeedbackChoice("NO");
+    setSatisfaction({ q1: 0, q2: 0, q3: 0, q4: 0, q5: 0 });
+    setExpandedSatisfaction(false);
+    setExpandedMark(false);
+  }, [selectedKey]);
+  
+  // Separate effect for phase changes that doesn't clear timeout
+  useEffect(() => {
+    if (phase === "I") {
+      setInteractionText("");
+      setMarkComments({});
+      setCategoryRanking([]);
+      setFeedbackChoice("NO");
+      setSatisfaction({ q1: 0, q2: 0, q3: 0, q4: 0, q5: 0 });
+      setExpandedSatisfaction(false);
+      setExpandedMark(false);
+    }
+  }, [phase]);
+
+  // Handle ESC key to close Phase II modal
+  useEffect(() => {
+    const handleEsc = (e: KeyboardEvent) => {
+      if (e.key === "Escape" && showPhaseIIModal) {
+        setShowPhaseIIModal(false);
+        setSelectedMethod(null);
+      }
+    };
+    window.addEventListener("keydown", handleEsc);
+    return () => window.removeEventListener("keydown", handleEsc);
+  }, [showPhaseIIModal]);
 
   // --------- persona / activity / file 下拉 ---------
   const filenameOptions = useMemo(
@@ -505,6 +732,7 @@ export default function App() {
         if (typeof data.interaction_count === "number") {
           setInteractionCount(data.interaction_count);
         }
+        // Note: Context is now sent immediately after method, not waiting for confirmation
       } else if (type === "response") {
         setSessionState("waiting_feedback");
         if (typeof data.interaction_count === "number") {
@@ -572,7 +800,9 @@ export default function App() {
       return false;
     }
     try {
-      socket.send(JSON.stringify(msg));
+      const messageStr = JSON.stringify(msg);
+      console.log("📤 Sending message to backend:", msg);
+      socket.send(messageStr);
       return true;
     } catch (err) {
       console.error("Error sending WS message:", err);
@@ -647,21 +877,28 @@ export default function App() {
     setIsLoadingLLM(true);
 
     // 将 Interaction 文本映射为 workflow 的 feedback payload
-    const marksString =
-      markCategories.length === 0 ? "NONE" : markCategories.join("; ");
+    // Format mark comments as "category: comment; category2: comment2" or "NONE"
+    const markEntries = Object.entries(markComments).filter(([_, comment]) => comment.trim() !== "");
+    const marksString = markEntries.length === 0 
+      ? "NONE" 
+      : markEntries.map(([cat, comment]) => `${cat}: ${comment.trim()}`).join("; ");
 
+    // Format satisfaction survey - use actual values (0 if not selected)
     const feedbackPayload = {
       choice: feedbackChoice,
       response: interactionText,
-      satisfaction_survey: `Q1:${satisfaction.q1} Q2:${satisfaction.q2} Q3:${satisfaction.q3} Q4:${satisfaction.q4} Q5:${satisfaction.q5}`,
+      satisfaction_survey: `Q1:${satisfaction.q1 || 0} Q2:${satisfaction.q2 || 0} Q3:${satisfaction.q3 || 0} Q4:${satisfaction.q4 || 0} Q5:${satisfaction.q5 || 0}`,
       mark: marksString,
-      category_ranking: [
-        "timing_interruption",
-        "communication_style",
-        "autonomy_control",
-        "context_adaptation",
-        "domain_priorities",
-      ],
+      category_ranking:
+        categoryRanking.length > 0
+          ? categoryRanking
+          : [
+              "timing_interruption",
+              "communication_style",
+              "autonomy_control",
+              "context_adaptation",
+              "domain_priorities",
+            ], // Fallback to default if no ranking selected
     };
 
     const ok = sendMessage({
@@ -677,6 +914,116 @@ export default function App() {
     setSessionState("method_ready");
     setIsLoadingLLM(false);
     alert("Interaction feedback sent to model.");
+  }
+
+  // Auto-send context function - uses refs to avoid stale closure issues
+  function autoSendContext() {
+    // Get current image using refs to ensure we have the latest values
+    const currentKey = selectedKeyRef.current;
+    const currentPhase = phaseRef.current;
+    const currentImages = currentPhase === "I" ? imagesPhaseIRef.current : imagesPhaseIIRef.current;
+    const currentImage = currentKey ? currentImages[currentKey] : undefined;
+    
+    if (!currentImage) {
+      console.warn("⚠️ No image selected, cannot send context. Key:", currentKey, "Phase:", currentPhase);
+      return;
+    }
+    
+    // Always use fallback format: Persona {pid}, Activity {aid}
+    const scenarioText = `Persona ${currentImage.pid}, Activity ${currentImage.aid}`;
+    const timeframe = "N/A";
+
+    console.log(`📤 Preparing to send context for: ${scenarioText} (key: ${currentKey}, phase: ${currentPhase})`);
+
+    setIsLoadingLLM(true);
+    const ok = sendMessage({
+      type: "context",
+      payload: {
+        scenario_text: scenarioText,
+        timeframe,
+      },
+    });
+
+    if (!ok) {
+      setIsLoadingLLM(false);
+      return;
+    }
+
+    setSessionState("waiting_response");
+  }
+
+  // Continue/Next button - sends feedback then automatically sends next context
+  function onContinueNext() {
+    // Get current image from state to avoid stale closure issues
+    const currentImage = selectedKey ? images[selectedKey] : undefined;
+    if (!currentImage) {
+      alert("No image selected.");
+      return;
+    }
+    if (!userId) {
+      alert("Please enter User ID first.");
+      return;
+    }
+    if (!interactionText.trim()) {
+      alert("Please enter interaction content first.");
+      return;
+    }
+    if (wsStatus !== "connected") {
+      alert("WebSocket not connected. Cannot continue.");
+      return;
+    }
+
+    setIsLoadingLLM(true);
+
+    // Format mark comments
+    const markEntries = Object.entries(markComments).filter(([_, comment]) => comment.trim() !== "");
+    const marksString = markEntries.length === 0 
+      ? "NONE" 
+      : markEntries.map(([cat, comment]) => `${cat}: ${comment.trim()}`).join("; ");
+
+    // Format satisfaction survey
+    const feedbackPayload = {
+      choice: feedbackChoice,
+      response: interactionText,
+      satisfaction_survey: `Q1:${satisfaction.q1 || 0} Q2:${satisfaction.q2 || 0} Q3:${satisfaction.q3 || 0} Q4:${satisfaction.q4 || 0} Q5:${satisfaction.q5 || 0}`,
+      mark: marksString,
+      category_ranking:
+        categoryRanking.length > 0
+          ? categoryRanking
+          : [
+              "timing_interruption",
+              "communication_style",
+              "autonomy_control",
+              "context_adaptation",
+              "domain_priorities",
+            ],
+    };
+
+    // Send feedback
+    const feedbackOk = sendMessage({
+      type: "feedback",
+      payload: feedbackPayload,
+    });
+
+    if (!feedbackOk) {
+      setIsLoadingLLM(false);
+      return;
+    }
+
+    // Clear current feedback inputs
+    setInteractionText("");
+    setMarkComments({});
+    setCategoryRanking([]);
+    setFeedbackChoice("NO");
+    setSatisfaction({ q1: 0, q2: 0, q3: 0, q4: 0, q5: 0 });
+
+    // Move to next image automatically
+    goNextImage();
+
+    // Wait a moment then auto-send next context (will use the new image after goNextImage)
+    setTimeout(() => {
+      autoSendContext();
+    }, 500);
   }
 
   // --------- Phase II：Get New（发送 context，获取模型新响应）---------
@@ -705,13 +1052,9 @@ export default function App() {
 
     setIsLoadingLLM(true);
 
-    // 使用 narrator 的 Activity Description 作为 scenario_text
-    const scenarioText =
-      activityDesc && activityDesc.trim().length > 0
-        ? activityDesc
-        : `Persona ${currentImg.pid}, Activity ${currentImg.aid}`;
-
-    const timeframe = "N/A"; // 如有具体时间可以替换
+    // Always use fallback format: Persona {pid}, Activity {aid}
+    const scenarioText = `Persona ${currentImg.pid}, Activity ${currentImg.aid}`;
+    const timeframe = "N/A";
 
     const ok = sendMessage({
       type: "context",
@@ -1051,27 +1394,20 @@ function onSaveInteraction() {
           <PhaseBtn active={phase === "I"} onClick={() => setPhase("I")}>
             Phase I
           </PhaseBtn>
-          <PhaseBtn active={phase === "II"} onClick={() => setPhase("II")}>
+          <PhaseBtn
+            active={phase === "II"}
+            onClick={() => {
+              if (!phaseIIStarted) {
+                setShowPhaseIIModal(true);
+              } else {
+                setPhase("II");
+              }
+            }}
+          >
             Phase II
           </PhaseBtn>
 
           <div className="spacer" />
-
-          {/* 载入 Phase I / II */}
-          <button
-            className="btn btn-hollow"
-            style={{ fontSize: 45 }}
-            onClick={() => loadPhaseDir("I")}
-          >
-            Load Phase I
-          </button>
-          <button
-            className="btn btn-hollow"
-            style={{ fontSize: 45 }}
-            onClick={() => loadPhaseDir("II")}
-          >
-            Load Phase II
-          </button>
 
           {/* 隐藏 input 作为目录选择 fallback */}
           <input
@@ -1334,312 +1670,497 @@ function onSaveInteraction() {
                 />
               </div>
             </SectionBox>
-            {/* 下方：Interaction + Choice + 按钮 */}
-            <SectionBox title="Interaction">
+            {/* 下方：Choice + Interaction + Mark + Satisfaction Survey + 按钮 */}
+            <SectionBox title="">
               <div
                 style={{
                   display: "flex",
                   flexDirection: "column",
                   height: "100%",
                   padding: "4px 8px 8px 8px",
+                  gap: 12,
+                  overflowY: "auto",
                 }}
               >
-                <textarea
-                  className="narr"
-                  value={interactionText}
-                  onChange={(e) => setInteractionText(e.target.value)}
-                  placeholder="Type any interaction notes here..."
-                  style={{
-                    height: "55%",
-                    width: "100%",
-                    resize: "none",
-                    fontSize: 45,
-                    lineHeight: 1.5,
-                  }}
-                />
-
-                {/* Satisfaction survey (Q1–Q5) */}
+                {/* 1. Choice - Always visible, first */}
                 <div
                   style={{
-                    marginTop: 8,
                     display: "flex",
-                    flexDirection: "column",
-                    gap: 6,
+                    alignItems: "center",
+                    gap: 12,
                     fontSize: 45,
+                    flexShrink: 0,
                   }}
                 >
-                  <div style={{ fontWeight: 700 }}>
-                    SATISFACTION_SURVEY (1–5, this interaction only)
-                  </div>
+                  <div style={{ fontWeight: 700 }}>Choice:</div>
+                  <button
+                    className="btn"
+                    style={{
+                      fontSize: 45,
+                      padding: "6px 18px",
+                      border:
+                        feedbackChoice === "YES"
+                          ? "2px solid #22c55e"
+                          : "1px solid #374151",
+                      background:
+                        feedbackChoice === "YES" ? "#064e3b" : "#111827",
+                    }}
+                    onClick={() => setFeedbackChoice("YES")}
+                  >
+                    YES
+                  </button>
+                  <button
+                    className="btn"
+                    style={{
+                      fontSize: 45,
+                      padding: "6px 18px",
+                      border:
+                        feedbackChoice === "NO"
+                          ? "2px solid #ef4444"
+                          : "1px solid #374151",
+                      background:
+                        feedbackChoice === "NO" ? "#450a0a" : "#111827",
+                    }}
+                    onClick={() => setFeedbackChoice("NO")}
+                  >
+                    NO
+                  </button>
+                </div>
 
-                  <div>
-                    <div>
-                      Q1 – Relevance & Timing (1 = irrelevant / bad timing, 5 = perfect)
+                {/* 2. Interaction - Always visible, second */}
+                <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+                  <div style={{ fontWeight: 700, fontSize: 45, marginBottom: 8 }}>
+                    Interaction
+                  </div>
+                  <textarea
+                    className="narr"
+                    value={interactionText}
+                    onChange={(e) => setInteractionText(e.target.value)}
+                    placeholder="Type any interaction notes here..."
+                    style={{
+                      width: "100%",
+                      minHeight: 120,
+                      resize: "vertical",
+                      fontSize: 45,
+                      lineHeight: 1.5,
+                    }}
+                  />
+                  
+                  {/* Category Ranking */}
+                  <div style={{ marginTop: 4 }}>
+                    <div style={{ fontWeight: 700, fontSize: 40, marginBottom: 8 }}>
+                      Category Ranking (click order):
                     </div>
-                    <select
-                      className="select dark"
+                    <div
                       style={{
-                        fontSize: 45,
-                        width: "100%",
-                        padding: "10px 16px",
-                        minHeight: 64,
+                        display: "flex",
+                        flexDirection: "column",
+                        gap: 8,
+                        fontSize: 40,
+                        marginBottom: 8,
                       }}
-                      value={satisfaction.q1}
-                      onChange={(e) =>
-                        setSatisfaction((prev) => ({
-                          ...prev,
-                          q1: Number(e.target.value),
-                        }))
-                      }
                     >
-                      <option value={1}>1</option>
-                      <option value={2}>2</option>
-                      <option value={3}>3</option>
-                      <option value={4}>4</option>
-                      <option value={5}>5</option>
-                    </select>
-                  </div>
-
-                  <div>
-                    <div>
-                      Q2 – Intrusiveness (1 = extremely disruptive, 5 = seamless)
+                      {[
+                        "timing_interruption",
+                        "communication_style",
+                        "autonomy_control",
+                        "context_adaptation",
+                        "domain_priorities",
+                      ].map((cat) => (
+                        <label
+                          key={cat}
+                          style={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: 12,
+                            cursor: "pointer",
+                            padding: "4px 0",
+                          }}
+                        >
+                          <input
+                            type="checkbox"
+                            checked={categoryRanking.includes(cat)}
+                            onChange={(e) => {
+                              if (e.target.checked) {
+                                // Add to ranking in click order
+                                setCategoryRanking((prev) => [...prev, cat]);
+                              } else {
+                                // Remove from ranking
+                                setCategoryRanking((prev) =>
+                                  prev.filter((c) => c !== cat)
+                                );
+                              }
+                            }}
+                            style={{
+                              width: 28,
+                              height: 28,
+                              cursor: "pointer",
+                              flexShrink: 0,
+                            }}
+                          />
+                          <span style={{ flex: 1 }}>{cat}</span>
+                          {categoryRanking.includes(cat) && (
+                            <span
+                              style={{
+                                fontSize: 35,
+                                color: "#60a5fa",
+                                flexShrink: 0,
+                                marginLeft: 8,
+                              }}
+                            >
+                              #{categoryRanking.indexOf(cat) + 1}
+                            </span>
+                          )}
+                        </label>
+                      ))}
                     </div>
-                    <select
-                      className="select dark"
-                      style={{
-                        fontSize: 45,
-                        width: "100%",
-                        padding: "10px 16px",
-                        minHeight: 64,
-                      }}
-                      value={satisfaction.q2}
-                      onChange={(e) =>
-                        setSatisfaction((prev) => ({
-                          ...prev,
-                          q2: Number(e.target.value),
-                        }))
-                      }
-                    >
-                      <option value={1}>1</option>
-                      <option value={2}>2</option>
-                      <option value={3}>3</option>
-                      <option value={4}>4</option>
-                      <option value={5}>5</option>
-                    </select>
-                  </div>
-
-                  <div>
-                    <div>
-                      Q3 – Value (1 = useless / harmful, 5 = extremely helpful)
-                    </div>
-                    <select
-                      className="select dark"
-                      style={{
-                        fontSize: 45,
-                        width: "100%",
-                        padding: "10px 16px",
-                        minHeight: 64,
-                      }}
-                      value={satisfaction.q3}
-                      onChange={(e) =>
-                        setSatisfaction((prev) => ({
-                          ...prev,
-                          q3: Number(e.target.value),
-                        }))
-                      }
-                    >
-                      <option value={1}>1</option>
-                      <option value={2}>2</option>
-                      <option value={3}>3</option>
-                      <option value={4}>4</option>
-                      <option value={5}>5</option>
-                    </select>
-                  </div>
-
-                  <div>
-                    <div>
-                      Q4 – Appropriateness (1 = inappropriate, 5 = perfect for context)
-                    </div>
-                    <select
-                      className="select dark"
-                      style={{
-                        fontSize: 45,
-                        width: "100%",
-                        padding: "10px 16px",
-                        minHeight: 64,
-                      }}
-                      value={satisfaction.q4}
-                      onChange={(e) =>
-                        setSatisfaction((prev) => ({
-                          ...prev,
-                          q4: Number(e.target.value),
-                        }))
-                      }
-                    >
-                      <option value={1}>1</option>
-                      <option value={2}>2</option>
-                      <option value={3}>3</option>
-                      <option value={4}>4</option>
-                      <option value={5}>5</option>
-                    </select>
-                  </div>
-
-                  <div>
-                    <div>
-                      Q5 – Comfort with Autonomy (1 = too pushy, 5 = respectful)
-                    </div>
-                    <select
-                      className="select dark"
-                      style={{
-                        fontSize: 45,
-                        width: "100%",
-                        padding: "10px 16px",
-                        minHeight: 64,
-                      }}
-                      value={satisfaction.q5}
-                      onChange={(e) =>
-                        setSatisfaction((prev) => ({
-                          ...prev,
-                          q5: Number(e.target.value),
-                        }))
-                      }
-                    >
-                      <option value={1}>1</option>
-                      <option value={2}>2</option>
-                      <option value={3}>3</option>
-                      <option value={4}>4</option>
-                      <option value={5}>5</option>
-                    </select>
-                  </div>
-
-                  {/* Mark categories (multi-select) */}
-                  <div>
-                    <div>Mark – select all categories that apply:</div>
-                    {[
-                      "timing_interruption",
-                      "communication_style",
-                      "autonomy_control",
-                      "context_adaptation",
-                      "domain_priorities",
-                    ].map((cat) => (
-                      <label
-                        key={cat}
+                    {categoryRanking.length > 0 && (
+                      <div
                         style={{
-                          display: "inline-flex",
-                          alignItems: "center",
-                          marginRight: 24,
-                          gap: 8,
-                          fontSize: 45,
+                          marginTop: 8,
+                          padding: 8,
+                          backgroundColor: "#1e293b",
+                          borderRadius: 4,
+                          fontSize: 38,
+                          color: "#cbd5e1",
                         }}
                       >
-                        <input
-                          type="checkbox"
-                          checked={markCategories.includes(cat)}
-                          onChange={(e) => {
-                            setMarkCategories((prev) =>
-                              e.target.checked
-                                ? [...prev, cat]
-                                : prev.filter((c) => c !== cat)
-                            );
-                          }}
-                          style={{
-                            width: 32,
-                            height: 32,
-                            cursor: "pointer",
-                          }}
-                        />
-                        {cat}
-                      </label>
-                    ))}
-                  </div>
-
-                  {/* Choice YES / NO */}
-                  <div
-                    style={{
-                      marginTop: 4,
-                      display: "flex",
-                      alignItems: "center",
-                      gap: 12,
-                    }}
-                  >
-                    <div>Choice:</div>
-                    <button
-                      className="btn"
-                      style={{
-                        fontSize: 45,
-                        padding: "6px 18px",
-                        border:
-                          feedbackChoice === "YES"
-                            ? "2px solid #22c55e"
-                            : "1px solid #374151",
-                        background:
-                          feedbackChoice === "YES" ? "#064e3b" : "#111827",
-                      }}
-                      onClick={() => setFeedbackChoice("YES")}
-                    >
-                      YES
-                    </button>
-                    <button
-                      className="btn"
-                      style={{
-                        fontSize: 45,
-                        padding: "6px 18px",
-                        border:
-                          feedbackChoice === "NO"
-                            ? "2px solid #ef4444"
-                            : "1px solid #374151",
-                        background:
-                          feedbackChoice === "NO" ? "#450a0a" : "#111827",
-                      }}
-                      onClick={() => setFeedbackChoice("NO")}
-                    >
-                      NO
-                    </button>
+                        <strong>Current Ranking:</strong>{" "}
+                        {categoryRanking
+                          .map((cat, idx) => `${idx + 1}. ${cat}`)
+                          .join(", ")}
+                      </div>
+                    )}
                   </div>
                 </div>
 
+                {/* 3. Mark - With expand/collapse toggle, third */}
                 <div
                   style={{
-                    marginTop: 12,
-                    display: "flex",
-                    justifyContent: "flex-end",
-                    gap: 12,
+                    border: "1px solid #374151",
+                    borderRadius: 4,
+                    padding: "8px",
+                    flexShrink: 0,
                   }}
                 >
-                  <button
-                    className="btn btn-secondary"
-                    style={{ 
-                      fontSize: 45, 
-                      padding: "8px 24px",
-                      opacity: isLoadingLLM ? 0.5 : 1,
-                      cursor: isLoadingLLM ? "not-allowed" : "pointer"
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "space-between",
+                      cursor: "pointer",
+                      fontSize: 45,
+                      fontWeight: 700,
                     }}
-                    onClick={onBackToModel}
-                    disabled={isLoadingLLM}
+                    onClick={() => setExpandedMark(!expandedMark)}
                   >
-                    {isLoadingLLM ? "Loading..." : "Back to Model"}
-                  </button>
-                  <button
-                    className="btn btn-secondary"
-                    style={{ 
-                      fontSize: 45, 
-                      padding: "8px 24px",
-                      opacity: isLoadingLLM ? 0.5 : 1,
-                      cursor: isLoadingLLM ? "not-allowed" : "pointer"
-                    }}
-                    onClick={onGetNew}
-                    disabled={isLoadingLLM}
-                  >
-                    {isLoadingLLM ? "Loading..." : "Get New"}
-                  </button>
-                  <button
-                    className="btn btn-primary"
-                    style={{ fontSize: 45, padding: "8px 24px" }}
-                    onClick={onSaveInteraction}
-                  >
-                    Save All
-                  </button>
+                    <span>Mark</span>
+                    <span>{expandedMark ? "▼" : "▶"}</span>
+                  </div>
+                  {expandedMark && (
+                    <div
+                      style={{
+                        marginTop: 12,
+                        display: "flex",
+                        flexDirection: "column",
+                        gap: 12,
+                        fontSize: 45,
+                      }}
+                    >
+                      {[
+                        "timing_interruption",
+                        "communication_style",
+                        "autonomy_control",
+                        "context_adaptation",
+                        "domain_priorities",
+                      ].map((cat) => (
+                        <div key={cat}>
+                          <div style={{ marginBottom: 4, fontSize: 40 }}>
+                            {cat}:
+                          </div>
+                          <input
+                            type="text"
+                            className="input"
+                            value={markComments[cat] || ""}
+                            onChange={(e) =>
+                              setMarkComments((prev) => ({
+                                ...prev,
+                                [cat]: e.target.value,
+                              }))
+                            }
+                            placeholder={`Enter comments for ${cat}...`}
+                            style={{
+                              width: "100%",
+                              fontSize: 45,
+                              padding: "8px 12px",
+                              backgroundColor: "#111827",
+                              color: "#ffffff",
+                              border: "1px solid #374151",
+                            }}
+                          />
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
+
+                {/* 4. Satisfaction Survey - With expand/collapse toggle, last */}
+                <div
+                  style={{
+                    border: "1px solid #374151",
+                    borderRadius: 4,
+                    padding: "8px",
+                    flexShrink: 0,
+                  }}
+                >
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "space-between",
+                      cursor: "pointer",
+                      fontSize: 45,
+                      fontWeight: 700,
+                    }}
+                    onClick={() => setExpandedSatisfaction(!expandedSatisfaction)}
+                  >
+                    <span>Satisfaction Survey</span>
+                    <span>{expandedSatisfaction ? "▼" : "▶"}</span>
+                  </div>
+                  {expandedSatisfaction && (
+                    <div
+                      style={{
+                        marginTop: 12,
+                        display: "flex",
+                        flexDirection: "column",
+                        gap: 12,
+                        fontSize: 45,
+                      }}
+                    >
+                      <div>
+                        <div style={{ marginBottom: 4 }}>
+                          Q1 – Relevance & Timing (1 = irrelevant / bad timing, 5 = perfect)
+                        </div>
+                        <select
+                          className="select dark"
+                          style={{
+                            fontSize: 45,
+                            width: "100%",
+                            padding: "10px 16px",
+                            minHeight: 64,
+                          }}
+                          value={satisfaction.q1 || ""}
+                          onChange={(e) =>
+                            setSatisfaction((prev) => ({
+                              ...prev,
+                              q1: Number(e.target.value) || 0,
+                            }))
+                          }
+                        >
+                          <option value="">Select...</option>
+                          <option value={1}>1</option>
+                          <option value={2}>2</option>
+                          <option value={3}>3</option>
+                          <option value={4}>4</option>
+                          <option value={5}>5</option>
+                        </select>
+                      </div>
+
+                      <div>
+                        <div style={{ marginBottom: 4 }}>
+                          Q2 – Intrusiveness (1 = extremely disruptive, 5 = seamless)
+                        </div>
+                        <select
+                          className="select dark"
+                          style={{
+                            fontSize: 45,
+                            width: "100%",
+                            padding: "10px 16px",
+                            minHeight: 64,
+                          }}
+                          value={satisfaction.q2 || ""}
+                          onChange={(e) =>
+                            setSatisfaction((prev) => ({
+                              ...prev,
+                              q2: Number(e.target.value) || 0,
+                            }))
+                          }
+                        >
+                          <option value="">Select...</option>
+                          <option value={1}>1</option>
+                          <option value={2}>2</option>
+                          <option value={3}>3</option>
+                          <option value={4}>4</option>
+                          <option value={5}>5</option>
+                        </select>
+                      </div>
+
+                      <div>
+                        <div style={{ marginBottom: 4 }}>
+                          Q3 – Value (1 = useless / harmful, 5 = extremely helpful)
+                        </div>
+                        <select
+                          className="select dark"
+                          style={{
+                            fontSize: 45,
+                            width: "100%",
+                            padding: "10px 16px",
+                            minHeight: 64,
+                          }}
+                          value={satisfaction.q3 || ""}
+                          onChange={(e) =>
+                            setSatisfaction((prev) => ({
+                              ...prev,
+                              q3: Number(e.target.value) || 0,
+                            }))
+                          }
+                        >
+                          <option value="">Select...</option>
+                          <option value={1}>1</option>
+                          <option value={2}>2</option>
+                          <option value={3}>3</option>
+                          <option value={4}>4</option>
+                          <option value={5}>5</option>
+                        </select>
+                      </div>
+
+                      <div>
+                        <div style={{ marginBottom: 4 }}>
+                          Q4 – Appropriateness (1 = inappropriate, 5 = perfect for context)
+                        </div>
+                        <select
+                          className="select dark"
+                          style={{
+                            fontSize: 45,
+                            width: "100%",
+                            padding: "10px 16px",
+                            minHeight: 64,
+                          }}
+                          value={satisfaction.q4 || ""}
+                          onChange={(e) =>
+                            setSatisfaction((prev) => ({
+                              ...prev,
+                              q4: Number(e.target.value) || 0,
+                            }))
+                          }
+                        >
+                          <option value="">Select...</option>
+                          <option value={1}>1</option>
+                          <option value={2}>2</option>
+                          <option value={3}>3</option>
+                          <option value={4}>4</option>
+                          <option value={5}>5</option>
+                        </select>
+                      </div>
+
+                      <div>
+                        <div style={{ marginBottom: 4 }}>
+                          Q5 – Comfort with Autonomy (1 = too pushy, 5 = respectful)
+                        </div>
+                        <select
+                          className="select dark"
+                          style={{
+                            fontSize: 45,
+                            width: "100%",
+                            padding: "10px 16px",
+                            minHeight: 64,
+                          }}
+                          value={satisfaction.q5 || ""}
+                          onChange={(e) =>
+                            setSatisfaction((prev) => ({
+                              ...prev,
+                              q5: Number(e.target.value) || 0,
+                            }))
+                          }
+                        >
+                          <option value="">Select...</option>
+                          <option value={1}>1</option>
+                          <option value={2}>2</option>
+                          <option value={3}>3</option>
+                          <option value={4}>4</option>
+                          <option value={5}>5</option>
+                        </select>
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {/* Action Buttons */}
+                {phaseIIStarted ? (
+                  /* New workflow: Only Continue/Next button */
+                  <div
+                    style={{
+                      marginTop: 20,
+                      paddingTop: 12,
+                      borderTop: "1px solid #374151",
+                      display: "flex",
+                      justifyContent: "flex-end",
+                      gap: 12,
+                      flexShrink: 0,
+                    }}
+                  >
+                    <button
+                      className="btn btn-primary"
+                      style={{ 
+                        fontSize: 45, 
+                        padding: "8px 24px",
+                        opacity: isLoadingLLM ? 0.5 : 1,
+                        cursor: isLoadingLLM ? "not-allowed" : "pointer"
+                      }}
+                      onClick={onContinueNext}
+                      disabled={isLoadingLLM}
+                    >
+                      {isLoadingLLM ? "Loading..." : "Continue / Next"}
+                    </button>
+                  </div>
+                ) : (
+                  /* Old workflow: Keep three buttons if Phase II not started yet */
+                  <div
+                    style={{
+                      marginTop: 20,
+                      paddingTop: 12,
+                      borderTop: "1px solid #374151",
+                      display: "flex",
+                      justifyContent: "flex-end",
+                      gap: 12,
+                      flexShrink: 0,
+                    }}
+                  >
+                    <button
+                      className="btn btn-secondary"
+                      style={{ 
+                        fontSize: 45, 
+                        padding: "8px 24px",
+                        opacity: isLoadingLLM ? 0.5 : 1,
+                        cursor: isLoadingLLM ? "not-allowed" : "pointer"
+                      }}
+                      onClick={onBackToModel}
+                      disabled={isLoadingLLM}
+                    >
+                      {isLoadingLLM ? "Loading..." : "Back to Model"}
+                    </button>
+                    <button
+                      className="btn btn-secondary"
+                      style={{ 
+                        fontSize: 45, 
+                        padding: "8px 24px",
+                        opacity: isLoadingLLM ? 0.5 : 1,
+                        cursor: isLoadingLLM ? "not-allowed" : "pointer"
+                      }}
+                      onClick={onGetNew}
+                      disabled={isLoadingLLM}
+                    >
+                      {isLoadingLLM ? "Loading..." : "Get New"}
+                    </button>
+                    <button
+                      className="btn btn-primary"
+                      style={{ fontSize: 45, padding: "8px 24px" }}
+                      onClick={onSaveInteraction}
+                    >
+                      Save All
+                    </button>
+                  </div>
+                )}
               </div>
             </SectionBox>
             
@@ -1864,6 +2385,260 @@ function onSaveInteraction() {
           </div>
         </div>
       )}
+
+      {/* Phase II Start Modal */}
+      {showPhaseIIModal && (
+        <div
+          style={{
+            position: "fixed",
+            inset: 0,
+            background: "rgba(15,23,42,0.8)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            zIndex: 50,
+          }}
+          onClick={(e) => {
+            // Close modal when clicking the overlay (outside the modal content)
+            if (e.target === e.currentTarget) {
+              setShowPhaseIIModal(false);
+              setSelectedMethod(null);
+            }
+          }}
+        >
+          <div
+            style={{
+              background: "#020617",
+              borderRadius: 16,
+              padding: 24,
+              maxWidth: 900,
+              width: "90%",
+              maxHeight: "90%",
+              overflow: "auto",
+              border: "1px solid #1f2937",
+            }}
+            onClick={(e) => {
+              // Prevent modal from closing when clicking inside the modal content
+              e.stopPropagation();
+            }}
+          >
+            <h2
+              style={{
+                fontSize: 45,
+                marginBottom: 16,
+                fontWeight: 900,
+              }}
+            >
+              Start Phase II
+            </h2>
+
+            {/* WebSocket Status */}
+            <div style={{ marginBottom: 24, fontSize: 40 }}>
+              <div style={{ marginBottom: 12 }}>
+                <strong>WebSocket Status: </strong>
+                <span
+                  style={{
+                    color:
+                      wsStatus === "connected"
+                        ? "#10b981"
+                        : wsStatus === "connecting"
+                        ? "#f59e0b"
+                        : "#ef4444",
+                  }}
+                >
+                  {wsStatus === "connected"
+                    ? "✅ Connected"
+                    : wsStatus === "connecting"
+                    ? "🔄 Connecting..."
+                    : "❌ Disconnected"}
+                </span>
+              </div>
+            </div>
+
+            {/* Method Selection - Only show if connected */}
+            {wsStatus === "connected" && (
+              <>
+                <div style={{ marginBottom: 16, fontSize: 40 }}>
+                  <strong>Select Interaction Method:</strong>
+                </div>
+                <div
+                  style={{
+                    display: "flex",
+                    gap: 12,
+                    marginBottom: 24,
+                    flexWrap: "wrap",
+                  }}
+                >
+                  <button
+                    className="btn"
+                    style={{
+                      fontSize: 45,
+                      padding: "12px 24px",
+                      border:
+                        selectedMethod === "vanilla"
+                          ? "2px solid #2563eb"
+                          : "1px solid #374151",
+                      background:
+                        selectedMethod === "vanilla" ? "#1e3a8a" : "#111827",
+                    }}
+                    onClick={() => setSelectedMethod("vanilla")}
+                  >
+                    V 
+                  </button>
+                  <button
+                    className="btn"
+                    style={{
+                      fontSize: 45,
+                      padding: "12px 24px",
+                      border:
+                        selectedMethod === "activation_steering"
+                          ? "2px solid #2563eb"
+                          : "1px solid #374151",
+                      background:
+                        selectedMethod === "activation_steering"
+                          ? "#1e3a8a"
+                          : "#111827",
+                    }}
+                    onClick={() => setSelectedMethod("activation_steering")}
+                  >
+                    A 
+                  </button>
+                  <button
+                    className="btn"
+                    style={{
+                      fontSize: 45,
+                      padding: "12px 24px",
+                      border:
+                        selectedMethod === "combined"
+                          ? "2px solid #2563eb"
+                          : "1px solid #374151",
+                      background:
+                        selectedMethod === "combined" ? "#1e3a8a" : "#111827",
+                    }}
+                    onClick={() => setSelectedMethod("combined")}
+                  >
+                    C 
+                  </button>
+                </div>
+
+                {/* Warning */}
+                <div
+                  style={{
+                    marginBottom: 24,
+                    padding: 16,
+                    backgroundColor: "#450a0a",
+                    borderRadius: 8,
+                    border: "1px solid #7f1d1d",
+                    fontSize: 38,
+                    color: "#fca5a5",
+                  }}
+                >
+                  ⚠️ <strong>Warning:</strong> After clicking "Start Phase II" and
+                  continuing to the next context, you will not be able to return to
+                  previous interactions.
+                </div>
+
+                {/* Start Button - Only enabled when method selected */}
+                <div style={{ display: "flex", gap: 12, justifyContent: "flex-end" }}>
+                  <button
+                    className="btn btn-hollow"
+                    style={{ fontSize: 45, padding: "12px 24px" }}
+                    onClick={() => {
+                      setShowPhaseIIModal(false);
+                      setSelectedMethod(null);
+                    }}
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    className="btn btn-primary"
+                    style={{
+                      fontSize: 45,
+                      padding: "12px 24px",
+                      opacity: selectedMethod ? 1 : 0.5,
+                      cursor: selectedMethod ? "pointer" : "not-allowed",
+                    }}
+                    onClick={async () => {
+                      if (!selectedMethod || wsStatus !== "connected") return;
+                      if (!userId) {
+                        alert("Please enter User ID first.");
+                        return;
+                      }
+                      if (!currentImg) {
+                        alert("Please select an image first.");
+                        return;
+                      }
+                      
+                      // Capture current image info at this moment to avoid stale closure
+                      const imageToSend = currentImg;
+                      if (!imageToSend) {
+                        alert("No image selected.");
+                        return;
+                      }
+                      
+                      // Set flag to prevent timeout from being cleared
+                      startingPhaseIIRef.current = true;
+                      
+                      setShowPhaseIIModal(false);
+                      setPhase("II");
+                      setPhaseIIStarted(true);
+                      
+                      // Send hello + method, then immediately send context
+                      sendHello(false);
+                      sendMethod(selectedMethod);
+                      
+                      // Cancel any pending auto-send
+                      if (autoSendTimeoutRef.current) {
+                        clearTimeout(autoSendTimeoutRef.current);
+                      }
+                      
+                      // Send context immediately after method using captured image
+                      autoSendTimeoutRef.current = window.setTimeout(() => {
+                        const scenarioText = `Persona ${imageToSend.pid}, Activity ${imageToSend.aid}`;
+                        console.log(`📤 Sending initial context for: ${scenarioText} (captured at Start click)`);
+                        setIsLoadingLLM(true);
+                        const ok = sendMessage({
+                          type: "context",
+                          payload: {
+                            scenario_text: scenarioText,
+                            timeframe: "N/A",
+                          },
+                        });
+                        if (ok) {
+                          setSessionState("waiting_response");
+                        } else {
+                          setIsLoadingLLM(false);
+                        }
+                        autoSendTimeoutRef.current = null;
+                        startingPhaseIIRef.current = false; // Reset flag after timeout executes
+                      }, 800);
+                    }}
+                    disabled={!selectedMethod || wsStatus !== "connected"}
+                  >
+                    Start Phase II
+                  </button>
+                </div>
+              </>
+            )}
+
+            {/* Show message if not connected */}
+            {wsStatus !== "connected" && (
+              <div
+                style={{
+                  padding: 16,
+                  backgroundColor: "#450a0a",
+                  borderRadius: 8,
+                  fontSize: 40,
+                  color: "#fca5a5",
+                }}
+              >
+                Cannot start Phase II. WebSocket connection is not available. Please
+                check your connection and try again.
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
@@ -1921,3 +2696,4 @@ const SectionBox: React.FC<SectionBoxProps> = ({
     </div>
   );
 };
+

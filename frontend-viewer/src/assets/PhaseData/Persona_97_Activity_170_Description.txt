@@ -1,0 +1,6 @@
+{
+  "User Name": "Ciara",
+  "Activity Description": "Ciara is in her cozy kitchen during the morning, assessing the contents of her fridge to determine what essentials she needs to buy. She then writes a shopping list, feeling accomplished as she prepares for her grocery run.",
+  "Smart Assistant Interaction A": "NONE",
+  "Smart Assistant Interaction B": "Sounds like it's time to start planning your grocery shopping trip! What ingredients are you running low on, and would you like me to suggest some recipes to incorporate those items into this week's meals?"
+}

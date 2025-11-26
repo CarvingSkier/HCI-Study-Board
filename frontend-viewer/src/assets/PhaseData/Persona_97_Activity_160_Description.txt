@@ -1,0 +1,6 @@
+{
+  "User Name": "Ciara",
+  "Activity Description": "Ciara is in her cozy kitchen during the early evening, rinsing off dishes after dinner. She loads the dishwasher carefully, washes pots and pans by hand, and finally wipes down the countertops, feeling satisfied with her clean kitchen.",
+  "Smart Assistant Interaction A": "Hey Ciara, nice job keeping the kitchen spotless! Now that you’re all done, would you like some music or a recipe idea for your next meal? Or maybe just a little downtime after dinner? Whatever you need, let me know!",
+  "Smart Assistant Interaction B": "Sounds like you've got dinner wrapped up! Would you like me to send a reminder for any cleaning schedule or maintenance tasks for tomorrow, or is there anything else I can help you with tonight?"
+}

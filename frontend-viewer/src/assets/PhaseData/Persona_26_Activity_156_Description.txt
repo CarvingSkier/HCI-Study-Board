@@ -1,0 +1,6 @@
+{
+  "User Name": "Barbara",
+  "Activity Description": "Barbara is in her cozy laundry room, bending down to lift a basket filled with clothes. She sorts the laundry by colors at the counter and prepares to load the washing machine with detergent. After starting the wash cycle, she relaxes on the couch with a book, enjoying a moment of calm.",
+  "Smart Assistant Interaction A": "Hi Barbara! It sounds like you're wrapping up your day with some laundry. Just a heads-up, the wash cycle will run for about 45 minutes. Feel free to grab a snack or catch up on something else if you'd like. Let me know if there's anything else I can assist you with.",
+  "Smart Assistant Interaction B": "Alright, got the laundry sorted, Barbara! Now, I'll make sure that first load is washed and dried to perfection. Would you like to start washing the next batch or grab a snack while you're waiting?"
+}

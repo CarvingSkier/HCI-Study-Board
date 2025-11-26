@@ -1,0 +1,6 @@
+{
+  "User Name": "Ciara",
+  "Activity Description": "Ciara is enjoying her weekend as she walks towards her car in a parking structure, feeling relieved. After sitting in the car and putting on her seatbelt, she prepares to drive while adjusting the music, excited to unwind. Finally, she parks at home, content as she gathers her things, ready to relax.",
+  "Smart Assistant Interaction A": "NONE",
+  "Smart Assistant Interaction B": "Hey, Ciara, it's good to see you're almost home! I've been keeping an eye on the traffic, and it looks like you've got a smooth drive ahead of you."
+}

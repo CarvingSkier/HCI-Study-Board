@@ -1,0 +1,6 @@
+{
+  "User Name": "Hong",
+  "Activity Description": "Hong is lounging on the couch in his cozy living room, scrolling through a pizza delivery app on his phone. He thoughtfully selects toppings, smiles at the order confirmation, and relaxes while turning on the TV, eagerly anticipating his pizza.",
+  "Smart Assistant Interaction A": "NONE",
+  "Smart Assistant Interaction B": "I'd be happy to set a timer for 40 minutes, so you can keep track of that pizza delivery. I'll also turn on some relaxing music in the background to make the wait more enjoyable."
+}

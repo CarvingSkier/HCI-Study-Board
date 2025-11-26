@@ -1,0 +1,6 @@
+{
+  "User Name": "Thanh",
+  "Activity Description": "Thanh walks down a sunny downtown street toward her parked car, feeling happy after her outing. She sits inside the car, adjusting the rearview mirror, and prepares to drive home, smiling as she starts the engine. Finally, she parks at home, stepping out of the car with a relaxed demeanor.",
+  "Smart Assistant Interaction A": "Hey Thanh! Now you're home, it sounds like your day was a great mix of fun and relaxation. How would you like to use your weekend? If you'd like some ideas, I'm here to suggest things that fit your interests.",
+  "Smart Assistant Interaction B": "Welcome home! I heard you had a great time with your friend. Would you like me to start preparing your favorite recipe for dinner, or would you rather take a break and catch up on something else?"
+}

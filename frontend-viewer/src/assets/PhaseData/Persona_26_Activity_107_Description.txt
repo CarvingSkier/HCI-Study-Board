@@ -1,0 +1,6 @@
+{
+  "User Name": "Barbara",
+  "Activity Description": "Barbara sits at her office desk, feeling accomplished as she opens her laptop after a meeting. She types a new email, concentrating on summarizing key points clearly, and pauses to reflect on her wording before finally sending it with a smile.",
+  "Smart Assistant Interaction A": "Hi! It sounds like you just wrapped up your follow-up emails. If there’s anything else you’d like help with, let me know. Enjoy the rest of your afternoon!",
+  "Smart Assistant Interaction B": "Alright, Barbara, I've got your follow-up email draft ready to go! Can I review it before you send it off to your clients?"
+}

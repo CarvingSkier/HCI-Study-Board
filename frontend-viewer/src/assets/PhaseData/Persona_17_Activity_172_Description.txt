@@ -1,0 +1,6 @@
+{
+  "User Name": "Marybeth",
+  "Activity Description": "Marybeth is grocery shopping in a supermarket aisle, pushing a cart as she enters. She carefully selects fresh vegetables in the produce section, checking prices and feeling satisfied with her choices as she approaches the checkout.",
+  "Smart Assistant Interaction A": "RANKING: 1. timing_and_interruption\nStep 1: You just got back from shopping!\nCommunication and interaction style: Hey, you did great! Your grocery trip looks smooth. Would you like a quick rundown of what you picked up?",
+  "Smart Assistant Interaction B": "How's your shopping going so far? Need any recommendations or assistance with anything?"
+}

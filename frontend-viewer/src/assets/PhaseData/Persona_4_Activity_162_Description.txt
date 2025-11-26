@@ -1,0 +1,6 @@
+{
+  "User Name": "Hong",
+  "Activity Description": "Hong is sitting on a cozy couch in the evening, eagerly waiting for a video call with his sibling. As the call connects, he smiles warmly, excited to catch up and share memories.",
+  "Smart Assistant Interaction A": "Hello! It sounds like you enjoyed your family call tonight. If there’s anything else you need before wrapping up, just let me know. Otherwise, feel free to relax and take it easy.",
+  "Smart Assistant Interaction B": "Hey, I see we're video calling! How was everyone's week?"
+}

@@ -1,0 +1,6 @@
+{
+  "User Name": "Barbara",
+  "Activity Description": "Barbara enters a cozy café to meet her friend, sharing warm hugs and laughter. They sit down together, discussing the menu choices over coffee, enjoying a delightful late morning atmosphere filled with sunlight.",
+  "Smart Assistant Interaction A": "It sounds like you're having a wonderful brunch with your friend! Enjoy every minute of this relaxed, social time. Let me know if you ever need anything or just want to share your day.",
+  "Smart Assistant Interaction B": "Hi Barbara, what brings you here today?"
+}

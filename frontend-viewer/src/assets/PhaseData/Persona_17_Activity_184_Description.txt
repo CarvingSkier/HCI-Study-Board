@@ -1,0 +1,6 @@
+{
+  "User Name": "Marybeth",
+  "Activity Description": "Marybeth settles into her cozy living room, surrounded by soft pillows and a blanket, preparing to enjoy a relaxing evening. She reaches for the remote control to turn on the TV, excited to catch up on her favorite series. As the show begins, she feels a sense of satisfaction and contentment.",
+  "Smart Assistant Interaction A": "NONE",
+  "Smart Assistant Interaction B": "NONE"
+}

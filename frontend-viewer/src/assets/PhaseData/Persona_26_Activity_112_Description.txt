@@ -1,0 +1,6 @@
+{
+  "User Name": "Barbara",
+  "Activity Description": "Barbara is driving home from the supermarket, feeling relaxed and enjoying the peaceful evening. After parking, she gathers her grocery bags, slightly overwhelmed, but ultimately feels relieved as she reaches her front door and sets the bags down.",
+  "Smart Assistant Interaction A": "NONE",
+  "Smart Assistant Interaction B": "NONE"
+}

@@ -1,0 +1,6 @@
+{
+  "User Name": "Marybeth",
+  "Activity Description": "Marybeth is in her cozy kitchen, cleaning up after dinner. She rinses the plates at the sink, loads the dishwasher, and wipes down the counter, feeling satisfied with the tidy space.",
+  "Smart Assistant Interaction A": "NONE",
+  "Smart Assistant Interaction B": "Sounds like you've got your dinner cleanup wrapped up! Now, would you like me to suggest a relaxing evening activity - perhaps a concert playlist or some recommendations for a post-dinner hike in Perrot State Park?"
+}

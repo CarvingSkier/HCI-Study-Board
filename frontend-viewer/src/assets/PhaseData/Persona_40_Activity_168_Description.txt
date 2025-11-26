@@ -1,0 +1,6 @@
+{
+  "User Name": "Javier",
+  "Activity Description": "Javier is starting his Sunday morning routine in a cozy kitchen. He prepares coffee and cereal while enjoying the warm sunlight streaming in, creating a peaceful atmosphere.",
+  "Smart Assistant Interaction A": "NONE",
+  "Smart Assistant Interaction B": "8:16:00 am\n\"Good morning! I see you're starting your day with a bowl of cereal and a cup of coffee. Would you like me to brew a fresh pot of coffee or keep the current one going?\""
+}

@@ -1,0 +1,6 @@
+{
+  "User Name": "Thanh",
+  "Activity Description": "Thanh is getting ready for a walk in her cozy living room, putting on her sneakers with determination. She steps outside, enjoying the fresh air and smiling at the lively neighborhood as she walks down the street.",
+  "Smart Assistant Interaction A": "Hello! It sounds like you're enjoying your afternoon stroll and feeling rejuvenated after your walk. Let me know if there's anything specific you'd like a summary of your evening or any reminders before heading back inside. Just let me know!",
+  "Smart Assistant Interaction B": "How's your walk going so far? Enjoying the sunshine today?"
+}

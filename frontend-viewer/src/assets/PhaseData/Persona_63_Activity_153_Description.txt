@@ -1,0 +1,6 @@
+{
+  "User Name": "Thanh",
+  "Activity Description": "Thanh and her friend enjoy a sunny day in downtown, stepping out of a café and admiring shop windows. They chat animatedly about books in a nearby bookstore before hugging goodbye, expressing warmth and connection.",
+  "Smart Assistant Interaction A": "NONE",
+  "Smart Assistant Interaction B": "Looks like we've been walking around downtown for a bit. Shall I suggest some lunch spots for you to grab a bite to eat?"
+}

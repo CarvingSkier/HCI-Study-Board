@@ -1,0 +1,6 @@
+{
+  "User Name": "Thanh",
+  "Activity Description": "In a cozy bedroom during late evening, Thanh prepares for sleep by setting a book down on her nightstand, unplugging her phone, and turning off the lamp. She then lies down comfortably under the covers, ready to unwind after a long week.",
+  "Smart Assistant Interaction A": "NONE",
+  "Smart Assistant Interaction B": "Goodnight, Thanh. I've dimmed the room lights and set the thermostat to a cozy 68 degrees to ensure you stay comfortable throughout the night."
+}

@@ -1,0 +1,6 @@
+{
+  "User Name": "Thanh",
+  "Activity Description": "Thanh is in her cozy kitchen preparing breakfast. She stretches as she walks in, grabs a hard-boiled egg from the fridge, toasts bread, and spreads peanut butter. Finally, she sits at the table with a coffee mug, enjoying her meal.",
+  "Smart Assistant Interaction A": "NONE",
+  "Smart Assistant Interaction B": "Good morning, Thanh! Your coffee is ready. Would you like me to brew a fresh pot as well?"
+}

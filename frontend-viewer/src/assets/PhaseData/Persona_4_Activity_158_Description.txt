@@ -1,0 +1,6 @@
+{
+  "User Name": "Hong",
+  "Activity Description": "Hong is completing a laundry task in his cozy living room, pulling warm clothes from the dryer and carrying them to the bedroom. He is focused on sorting and folding the clothes, feeling a sense of accomplishment as he finishes the task.",
+  "Smart Assistant Interaction A": "NONE",
+  "Smart Assistant Interaction B": "Alright, I'll keep an eye on the laundry, and when it's done, I'll remind you to put it away. Can I also run a quick scan of the weather forecast for tonight?"
+}

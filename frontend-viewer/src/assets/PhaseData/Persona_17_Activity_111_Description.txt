@@ -1,0 +1,6 @@
+{
+  "User Name": "Marybeth",
+  "Activity Description": "Marybeth is walking towards her car in a cozy grocery store parking structure, reflecting on her day. Inside the store, she prepares to shop while holding a basket, checking items off her list, and feeling accomplished as she checks out with her groceries.",
+  "Smart Assistant Interaction A": "Hey Marybeth! Hope you found everything you needed at the store. Ready to head home now?",
+  "Smart Assistant Interaction B": "Hey, sounds like you're heading to the grocery store. Would you like to add any recipes or meal ideas to your shopping list, or would you rather I focus on just suggesting some popular Midwestern comfort food options?"
+}

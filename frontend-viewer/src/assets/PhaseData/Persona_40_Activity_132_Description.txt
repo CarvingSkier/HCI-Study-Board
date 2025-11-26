@@ -1,0 +1,6 @@
+{
+  "User Name": "Javier",
+  "Activity Description": "Javier sits at his desk in the early afternoon, reviewing a task list on his laptop. He types and checks off items, pausing to reflect before sending an email. He feels a sense of accomplishment as he completes a task.",
+  "Smart Assistant Interaction A": "Good afternoon! It looks like you’re getting ready to wrap up your week here at the office. Just wanted to remind you that it might be a good idea to double-check those urgent emails again before sending them off. Otherwise, enjoy the rest of your day!",
+  "Smart Assistant Interaction B": "Looks like you're wrapping up your work tasks for the day, Javier! How does a nice afternoon cup of coffee sound to help you unwind?"
+}

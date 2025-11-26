@@ -1,0 +1,6 @@
+{
+  "User Name": "Javier",
+  "Activity Description": "Javier is sitting on the couch in his cozy living room, answering a phone call with a surprised expression. He smiles and engages in a lively conversation, sharing stories about his weekend before waving goodbye, feeling content after the chat.",
+  "Smart Assistant Interaction A": "NONE",
+  "Smart Assistant Interaction B": "Hey, how was your weekend? I feel like I've been cooped up all day, I'm itching for a hike or a run."
+}

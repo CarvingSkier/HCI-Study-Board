@@ -1,0 +1,6 @@
+{
+  "User Name": "Thanh",
+  "Activity Description": "Thanh enters a small meeting room with her notebook, looking around at her gathered team. She stands by the whiteboard, explaining the session's purpose and sharing ideas with her teammates, fostering a collaborative atmosphere.",
+  "Smart Assistant Interaction A": "Hi Thanh! It sounds like you’re really getting into this brainstorming session. Let me know if there’s anything specific you’d like to add to your notes or if you'd like some quick summaries of what everyone has contributed so far.",
+  "Smart Assistant Interaction B": "Alright, everyone's all set, let's get started. Before we dive in, can we grab some refreshments and get comfortable while we brainstorm?"
+}

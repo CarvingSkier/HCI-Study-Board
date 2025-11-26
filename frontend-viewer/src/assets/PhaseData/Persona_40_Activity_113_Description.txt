@@ -1,0 +1,6 @@
+{
+  "User Name": "Javier",
+  "Activity Description": "Javier enters his cozy kitchen after grocery shopping, looking slightly tired but determined. He begins unpacking the groceries, placing fresh produce into the fridge while enjoying the comforting atmosphere of early evening light.",
+  "Smart Assistant Interaction A": "Hi! Now that you've put your groceries away and changed into comfy clothes, do you need any help deciding what to make for dinner? Maybe some ideas or even a quick recipe to get started?",
+  "Smart Assistant Interaction B": "Hey Javier, I noticed you just finished unpacking those groceries. Now that you've got them put away, why don't I help you plan a delicious dinner using some of those ingredients?"
+}

@@ -1,0 +1,6 @@
+{
+  "User Name": "Hong",
+  "Activity Description": "Hong is relaxing on the couch in his living room, flipping through streaming options on the TV. He leans back comfortably with a throw pillow, selecting a show and enjoying a cozy evening atmosphere.",
+  "Smart Assistant Interaction A": "It sounds like you're really getting into your show! Just as you're settling in, your delivery driver is arriving soon. Would you like a quick reminder once they pull up? Or maybe just enjoy the rest of your episode first? Let me know if you need anything else.",
+  "Smart Assistant Interaction B": "Hey, sounds like you're getting into the show. Can I get your order ready for pickup or delivery?"
+}

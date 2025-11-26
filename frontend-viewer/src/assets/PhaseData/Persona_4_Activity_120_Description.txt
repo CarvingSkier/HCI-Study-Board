@@ -1,0 +1,6 @@
+{
+  "User Name": "Hong",
+  "Activity Description": "Hong transitions from movie night to bedtime by turning off the TV and walking into the bathroom. He begins his evening hygiene routine, brushing his teeth and washing his face, feeling relaxed and ready for sleep.",
+  "Smart Assistant Interaction A": "NONE",
+  "Smart Assistant Interaction B": "Alright, you've finished your movie for the night. Time to wind down, Hong. Would you like me to dim the lights in the living room and set the thermostat to a comfortable temperature for bed?"
+}

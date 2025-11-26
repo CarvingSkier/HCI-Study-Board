@@ -1,0 +1,6 @@
+{
+  "User Name": "Marybeth",
+  "Activity Description": "Marybeth is in her cozy kitchen, preparing breakfast while enjoying the morning light. She brews coffee and gathers ingredients, feeling relaxed and content as she chops vegetables for an omelet.",
+  "Smart Assistant Interaction A": "It sounds like you're taking your sweet time this morning. Enjoy your leisurely breakfast! Once you've wrapped up your meal, just let me know if there's anything else I can do to support your relaxing Sunday.",
+  "Smart Assistant Interaction B": "Good morning! How's your day shaping up so far, and would you like some recommendations for a delicious breakfast or a great article to catch up on while you eat?"
+}

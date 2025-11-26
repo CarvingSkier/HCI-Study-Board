@@ -1,0 +1,6 @@
+{
+  "User Name": "Marybeth",
+  "Activity Description": "Marybeth is preparing for bed in her cozy apartment bathroom. She turns on the light, brushes her teeth, and applies night cream while feeling satisfied with her evening routine.",
+  "Smart Assistant Interaction A": "Hello! All set with your hygiene routine. If you'd like, I can remind you about tomorrow's schedule once you're all settled. Just let me know! 😊",
+  "Smart Assistant Interaction B": "Goodnight, Marybeth. Your evening hygiene routine is all set; the lights in the living room have been turned off, and I've made sure all your favorite lights in the bathroom are now off as well."
+}

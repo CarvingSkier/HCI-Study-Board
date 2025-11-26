@@ -1,0 +1,6 @@
+{
+  "User Name": "Barbara",
+  "Activity Description": "Barbara is seated at a conference table with her manager, discussing feedback on her presentation. They are engaged in a positive conversation, reviewing notes and addressing client questions in a calm and focused atmosphere.",
+  "Smart Assistant Interaction A": "NONE",
+  "Smart Assistant Interaction B": "All done, glad to hear the presentation went well! I'll get started on that email summary right away, can I send it to you by the end of the week?"
+}

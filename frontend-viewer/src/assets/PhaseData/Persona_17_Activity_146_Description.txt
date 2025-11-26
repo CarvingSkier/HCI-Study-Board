@@ -1,0 +1,6 @@
+{
+  "User Name": "Marybeth",
+  "Activity Description": "Marybeth is settling into bed in her cozy bedroom, propping up pillows comfortably as she prepares to read. She turns on the bedside lamp, picks up her book, and becomes engrossed in the story, looking excited as she reaches a thrilling moment. After finishing, she closes the book with a satisfied expression, ready for sleep.",
+  "Smart Assistant Interaction A": "NONE",
+  "Smart Assistant Interaction B": "Goodnight, Marybeth. Before you drift off to sleep, I'll make sure your kitchen is set for the morning, and your favorite book is still open to the right page."
+}

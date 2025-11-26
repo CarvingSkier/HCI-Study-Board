@@ -1,0 +1,6 @@
+{
+  "User Name": "Javier",
+  "Activity Description": "Javier finishes dinner and relaxes on the couch, preparing to watch a show. He snuggles deeper into the couch, remote in hand, and checks the episode list before settling back with a smile, ready for a cozy evening.",
+  "Smart Assistant Interaction A": "NONE",
+  "Smart Assistant Interaction B": "Sounds like you're getting lost in your show! Would you like me to dim the lights and keep the volume at a comfortable level for the next hour or so?"
+}

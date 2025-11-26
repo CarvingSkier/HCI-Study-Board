@@ -1,0 +1,6 @@
+{
+  "User Name": "Hong",
+  "Activity Description": "Hong is organizing his cluttered desk in his cozy home office on a warm morning. He sorts through scattered papers, placing some in a folder and recycling others, feeling a sense of progress. After updating his task list on the laptop, he wipes down the now tidy desk, looking satisfied with his efforts.",
+  "Smart Assistant Interaction A": "Hey Hong! Sounds like you’re making great progress on your desk organization. If you need any help setting up a backup plan for Monday, just let me know. Otherwise, enjoy the satisfaction of a tidy workspace and a smooth transition into the weekend!",
+  "Smart Assistant Interaction B": "Alright, let's get that workspace of yours organized in no time. Why don't you take a few minutes to sort through those papers on your desk and file them away?"
+}

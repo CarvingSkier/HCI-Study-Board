@@ -1,0 +1,6 @@
+{
+  "User Name": "Thanh",
+  "Activity Description": "Thanh is enjoying a cozy morning routine at home. She finishes her breakfast at the kitchen table, then heads to the bathroom with a towel draped over her shoulder, ready to unwind with a long shower before getting dressed and checking her appearance in the mirror.",
+  "Smart Assistant Interaction A": "RANKING: 1. timing_and_interruption, 2. communication_and_interaction_style, 3. autonomy_and_control, 4. context_adaptation, 5. domain_priorities",
+  "Smart Assistant Interaction B": "NONE\n\n(time: 9:30:00 am - 9:35:00 am)"
+}

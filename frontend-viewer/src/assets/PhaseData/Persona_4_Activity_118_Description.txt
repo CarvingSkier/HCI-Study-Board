@@ -1,0 +1,6 @@
+{
+  "User Name": "Hong",
+  "Activity Description": "Hong is relaxing on the couch in his cozy living room, scrolling through social media on his phone. He smiles at a funny meme, enjoying the light-hearted content, before pausing to consider a news article. After setting his phone aside, he feels satisfied and connected.",
+  "Smart Assistant Interaction A": "NONE",
+  "Smart Assistant Interaction B": "Hey, sounds like you're unwinding after a long day. What caught your eye on social media tonight?"
+}

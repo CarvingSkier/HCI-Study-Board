@@ -1,0 +1,6 @@
+{
+  "User Name": "Marybeth",
+  "Activity Description": "Marybeth is greeting the pizza delivery driver at her front door. She carries the pizza boxes into her cozy kitchen, excited by the delicious aroma. Later, she enjoys a slice of pizza on the couch while watching TV, feeling satisfied after a long week.",
+  "Smart Assistant Interaction A": "Hey there! Enjoying your pizza and catching up on your show? If you're interested, I can share some fun pizza-themed ideas or even suggest a new recipe if you'd like to explore more flavors next time. Just let me know how I can help make your evening cozy! 😊",
+  "Smart Assistant Interaction B": "Hey, sounds like you're enjoying your pizza and show time! Would you like me to bring over a glass of water or keep the lights dimmed while you continue watching?"
+}

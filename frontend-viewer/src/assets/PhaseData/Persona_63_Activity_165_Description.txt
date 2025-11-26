@@ -1,0 +1,6 @@
+{
+  "User Name": "Thanh",
+  "Activity Description": "Thanh is nestled in bed, enjoying a mystery novel as the warm light from a bedside lamp creates a cozy atmosphere. She turns the pages rapidly, fully engaged in the story, and reflects on the satisfying ending with a smile.",
+  "Smart Assistant Interaction A": "NONE",
+  "Smart Assistant Interaction B": "Goodnight, Thanh. I've got your favorite book recommendations saved for you, and I noticed you finished \"The Mysterious Affair at Styles\". Would you like me to suggest a new whodunit to start with?"
+}
